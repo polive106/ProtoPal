@@ -5,6 +5,7 @@
     "version": "1.0.0",
     "scheme": "protopal",
     "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,

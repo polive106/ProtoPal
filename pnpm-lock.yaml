@@ -7,6 +7,7 @@ settings:
 overrides:
   esbuild: '>=0.25.0'
   diff: '>=8.0.3'
+  react-native-safe-area-context: 4.12.0
 
 importers:
 
@@ -2054,7 +2055,7 @@ packages:
       '@react-navigation/native': ^7.2.2
       react: '>= 18.2.0'
       react-native: '*'
-      react-native-safe-area-context: '>= 4.0.0'
+      react-native-safe-area-context: 4.12.0
       react-native-screens: '>= 4.0.0'
 
   '@react-navigation/core@7.17.2':
@@ -2069,7 +2070,7 @@ packages:
       '@react-navigation/native': ^7.2.2
       react: '>= 18.2.0'
       react-native: '*'
-      react-native-safe-area-context: '>= 4.0.0'
+      react-native-safe-area-context: 4.12.0
     peerDependenciesMeta:
       '@react-native-masked-view/masked-view':
         optional: true
@@ -2080,7 +2081,7 @@ packages:
       '@react-navigation/native': ^7.2.2
       react: '>= 18.2.0'
       react-native: '*'
-      react-native-safe-area-context: '>= 4.0.0'
+      react-native-safe-area-context: 4.12.0
       react-native-screens: '>= 4.0.0'
 
   '@react-navigation/native@7.2.2':
@@ -3800,7 +3801,7 @@ packages:
       expo-constants: ~17.0.8
       expo-linking: ~7.0.5
       react-native-reanimated: '*'
-      react-native-safe-area-context: '*'
+      react-native-safe-area-context: 4.12.0
       react-native-screens: '*'
     peerDependenciesMeta:
       '@react-navigation/drawer':
