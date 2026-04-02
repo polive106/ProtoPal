@@ -1,0 +1,28 @@
+{
+  "permissions": {},
+  "enabledPlugins": {},
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [".claude/hooks/pre-commit-gate.sh"]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          ".claude/hooks/validate-story-format.sh",
+          ".claude/hooks/check-agents-claude-sync.sh"
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          ".claude/hooks/validate-story-format.sh",
+          ".claude/hooks/check-backlog-sync.sh"
+        ]
+      }
+    ]
+  }
+}

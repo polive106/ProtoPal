@@ -1,0 +1,44 @@
+{
+  "name": "acme-app",
+  "version": "0.0.1",
+  "private": true,
+  "packageManager": "pnpm@9.4.0",
+  "description": "Fullstack monorepo scaffold with agentic workflow",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "test": "turbo test",
+    "test:e2e": "tsx e2e/setup-e2e.ts && playwright test",
+    "test:e2e:api": "tsx e2e/setup-e2e.ts && playwright test --project=api",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "lint": "turbo lint && tsc --noEmit -p e2e/tsconfig.json",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "clean": "turbo clean && rm -rf node_modules",
+    "db:seed": "pnpm --filter @acme/database db:seed",
+    "prepare": "husky"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": ">=0.25.0",
+      "diff": ">=8.0.3"
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@types/bcrypt": "^6.0.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.0.10",
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^11.10.0",
+    "drizzle-orm": "^0.39.3",
+    "husky": "^9.1.7",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "turbo": "^2.7.5",
+    "typescript": "^5.9.3"
+  }
+}

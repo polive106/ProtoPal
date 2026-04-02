@@ -1,0 +1,12 @@
+# Cursor Rules
+
+This project uses AGENTS.md as the source of truth for all agent instructions.
+
+@import AGENTS.md
+
+## Cursor-Specific Notes
+
+- Skills are located at `.agents/skills/` — read the relevant SKILL.md before starting a task
+- Always follow the TDD mandate: write failing tests first
+- Use data-testid selectors in E2E tests (never getByRole/getByLabel/getByText)
+- Layer order: Domain → Database → API → Frontend → E2E

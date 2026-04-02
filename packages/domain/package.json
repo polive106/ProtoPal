@@ -1,0 +1,19 @@
+{
+  "name": "@acme/domain",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@acme/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.16"
+  }
+}

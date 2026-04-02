@@ -1,0 +1,65 @@
+export const testCredentials = {
+  admin: { email: 'admin@example.com', password: 'Admin123!' },
+  user: { email: 'user@example.com', password: 'User1234!' },
+};
+
+export const testData = {
+  roles: { admin: 'role-admin', user: 'role-user' },
+  users: { admin: 'user-admin-1', user: 'user-regular-1' },
+  notes: { note1: 'note-1', note2: 'note-2', note3: 'note-3' },
+};
+
+export const apiUrls = {
+  base: 'http://localhost:3000',
+};
+
+export const testIds = {
+  login: {
+    card: 'login-card',
+    inputEmail: 'login-input-email',
+    inputPassword: 'login-input-password',
+    btnSubmit: 'login-btn-submit',
+    alertError: 'login-alert-error',
+    linkRegister: 'login-link-register',
+  },
+  register: {
+    card: 'register-card',
+    inputFirstName: 'register-input-firstName',
+    inputLastName: 'register-input-lastName',
+    inputEmail: 'register-input-email',
+    inputPassword: 'register-input-password',
+    btnSubmit: 'register-btn-submit',
+    alertError: 'register-alert-error',
+    linkLogin: 'register-link-login',
+  },
+  app: {
+    header: 'app-header',
+    userName: 'app-user-name',
+    btnLogout: 'app-btn-logout',
+    navNotes: 'nav-link-notes',
+    navHome: 'nav-link-home',
+  },
+  dashboard: {
+    page: 'dashboard-page',
+    title: 'dashboard-title',
+    linkNotes: 'dashboard-link-notes',
+  },
+  notes: {
+    page: 'notes-page',
+    pageTitle: 'notes-page-title',
+    btnCreate: 'notes-btn-create',
+    list: 'notes-list',
+    form: 'notes-form',
+    inputTitle: 'notes-input-title',
+    inputContent: 'notes-input-content',
+    btnSave: 'notes-btn-save',
+    btnCancel: 'notes-btn-cancel',
+    alertError: 'notes-alert-error',
+    card: (id: string) => `notes-card-${id}`,
+    title: (id: string) => `notes-title-${id}`,
+    content: (id: string) => `notes-content-${id}`,
+    btnEdit: (id: string) => `notes-btn-edit-${id}`,
+    btnDelete: (id: string) => `notes-btn-delete-${id}`,
+    drawer: 'notes-drawer',
+  },
+};
