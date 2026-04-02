@@ -9,6 +9,7 @@ dist/
 
 # Database
 *.db
+*.db-journal
 *.sqlite
 data/
 
