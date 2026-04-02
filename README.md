@@ -75,6 +75,19 @@ Every guardrail is documented in `AGENTS.md` so AI tools enforce them automatica
 - **`docs/backlog/`** — Epics and stories in structured markdown. Agents can pick up work and understand context
 - **`adr/`** — Architecture Decision Records so agents understand *why* things are built this way
 
+### Product Management from Your Phone
+
+The backlog isn't just documentation — it's an **executable product management system**. Features flow from idea to merged PR through a chain of skills that any AI coding tool can run. See [`PRODUCT_MANAGEMENT.md`](PRODUCT_MANAGEMENT.md) for the full guide.
+
+| Step | Skill | What Happens |
+|------|-------|-------------|
+| Brainstorm | `/discuss-feature` | Interview-driven exploration — the agent probes your idea, challenges assumptions, and synthesizes structured requirements |
+| Write stories | `/create-story` | Analyzes the codebase to derive technical tasks, file paths, and Gherkin test scenarios, then writes the story to the backlog |
+| Check priority | `/review-backlog` | Scans all epic/story statuses and tells you what to implement next |
+| Build it | `/implement-story` | Implements end-to-end with TDD (Domain → Database → API → Frontend → E2E), runs the full CI suite, and opens a PR |
+
+The typical workflow: kick off `/implement-story` from the Claude mobile app, and come back to a PR ready for review.
+
 ## Stack
 
 | Package | Technology |

@@ -6,23 +6,24 @@ disable-model-invocation: true
 
 ## Steps
 
-1. **Read the story** — read the story file from `docs/backlog/`
-2. **Understand the acceptance criteria** — every checkbox must be satisfied
-3. **Follow layer order** — Domain → Database → API → Frontend → E2E
-4. **TDD for each layer**:
+1. **Check branch** — verify you are NOT on `main`. If on `main`, create and switch to a feature branch (e.g., `feat/e2-us01-jwt-token-security`) before proceeding. Never commit directly to `main`.
+2. **Read the story** — read the story file from `docs/backlog/`
+3. **Understand the acceptance criteria** — every checkbox must be satisfied
+4. **Follow layer order** — Domain → Database → API → Frontend → E2E
+5. **TDD for each layer**:
    - Write failing test
    - Write minimum implementation
    - Verify test passes
    - Refactor if needed
-5. **Add E2E tests** — use `/add-e2e-tests` skill
-6. **Verify everything passes**:
+6. **Add E2E tests** — use `/add-e2e-tests` skill
+7. **Verify everything passes**:
    ```bash
    pnpm lint
    pnpm test
    pnpm test:e2e
    ```
-7. **Update story status** — mark checkboxes and set status to "Done"
-8. **Update USER_FEATURES.md** — add new features for affected user types
+8. **Update story status** — mark checkboxes and set status to "Done"
+9. **Update USER_FEATURES.md** — add new features for affected user types
 
 ## Example: Implementing a Note use case
 
