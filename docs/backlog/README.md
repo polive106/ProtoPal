@@ -46,6 +46,11 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 9. E2-US06: Password Reset Flow
 10. E2-US07: Security Headers & Audit Logging
 
+### Phase 3: Mobile App (Pending)
+11. E3-US01: Mobile Project Shell & Design System
+12. E3-US02: Mobile Auth
+13. E3-US03: Mobile Notes CRUD & Agent Tooling
+
 ## Status Conventions
 
 - **Pending**: Not started
