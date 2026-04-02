@@ -77,7 +77,9 @@ Every guardrail is documented in `AGENTS.md` so AI tools enforce them automatica
 
 ### Product Management from Your Phone
 
-The backlog isn't just documentation — it's an **executable product management system**. Features flow from idea to merged PR through a chain of skills that any AI coding tool can run. See [`PRODUCT_MANAGEMENT.md`](PRODUCT_MANAGEMENT.md) for the full guide.
+With the right architecture and tooling, AI agents can build production-ready software — not prototypes, real features with tests, CI, and code review. You don't need BMAD, GSD, PAUL, or external tools like Obsidian, Linear, or Jira. Everything lives in the repo as plain markdown — the skills, the backlog, the stories. Any AI coding tool can read them. `git log` is your activity feed. Pull requests are your review process. **The repo is the single source of truth.**
+
+The backlog in `docs/backlog/` isn't just documentation — it's an **executable product management system**. Features flow from idea to merged PR through a chain of skills. See [`PRODUCT_MANAGEMENT.md`](PRODUCT_MANAGEMENT.md) for the full guide.
 
 | Step | Skill | What Happens |
 |------|-------|-------------|
