@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "ProtoPal",
+    "slug": "protopal",
+    "version": "1.0.0",
+    "scheme": "protopal",
+    "orientation": "portrait",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.acme.protopal"
+    },
+    "android": {
+      "package": "com.acme.protopal",
+      "adaptiveIcon": {
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

@@ -3,14 +3,14 @@
 **User Story**: As a developer, I want an Expo project and mobile design system in the monorepo so that agents have the foundation to scaffold mobile features.
 
 **Acceptance Criteria**:
-- [ ] Expo managed workflow project in `packages/mobile/` with Expo Router file-based navigation
-- [ ] `packages/design-system-mobile/` with React Native Reusables + NativeWind (Button, Input, Card, Label, Toast, PageSpinner, ErrorAlert)
-- [ ] TanStack Query configured for data fetching with same defaults as web (staleTime: 60s, retry: 1)
-- [ ] Mobile API client in `packages/mobile/src/lib/api.ts` with Bearer auth support
-- [ ] Unit test setup with Vitest + `@testing-library/react-native`
-- [ ] CI workflow `.github/workflows/e2e-mobile.yml` with `workflow_dispatch` trigger
-- [ ] Workspace, Turbo, and root scripts configured for mobile packages
-- [ ] App launches and renders a placeholder home screen
+- [x] Expo managed workflow project in `packages/mobile/` with Expo Router file-based navigation
+- [x] `packages/design-system-mobile/` with React Native Reusables + NativeWind (Button, Input, Card, Label, Toast, PageSpinner, ErrorAlert)
+- [x] TanStack Query configured for data fetching with same defaults as web (staleTime: 60s, retry: 1)
+- [x] Mobile API client in `packages/mobile/src/lib/api.ts` with Bearer auth support
+- [x] Unit test setup with Vitest + `@testing-library/react-native`
+- [x] CI workflow `.github/workflows/e2e-mobile.yml` with `workflow_dispatch` trigger
+- [x] Workspace, Turbo, and root scripts configured for mobile packages
+- [x] App launches and renders a placeholder home screen
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -36,7 +36,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

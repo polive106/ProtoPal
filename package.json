@@ -14,6 +14,8 @@
     "test:e2e:headed": "playwright test --headed",
     "lint": "turbo lint && tsc --noEmit -p e2e/tsconfig.json",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "dev:mobile": "pnpm --filter @acme/mobile dev",
+    "test:e2e:mobile": "echo 'Maestro E2E tests - requires device/emulator'",
     "clean": "turbo clean && rm -rf node_modules",
     "db:seed": "pnpm --filter @acme/database db:seed",
     "prepare": "husky"
