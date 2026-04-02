@@ -8,6 +8,8 @@ A production-ready fullstack monorepo scaffold built for **agentic development**
 
 ## What's Inside
 
+With the right architecture and tooling, AI agents can build production-ready software — real features with tests, CI, and code review. You don't need BMAD, GSD, PAUL, or external tools like Obsidian, Linear, or Jira. Everything lives in the repo as plain markdown — the skills, the backlog, the stories. Any AI coding tool can read them. `git log` is your activity feed. Pull requests are your review process. **The repo is the single source of truth.**
+
 - **Authentication** — Register, login, logout with JWT HTTP-only cookies and protected routes
 - **RBAC** — Admin and User roles with different permissions
 - **Example CRUD entity** — Notes (create, read, update, delete, user-scoped)
@@ -18,7 +20,7 @@ A production-ready fullstack monorepo scaffold built for **agentic development**
 
 ## Built for Agents
 
-ProtoPal is designed from the ground up for AI-assisted development. Not through a proprietary CLI or plugin system — through **plain markdown files** that work with Claude Code, Cursor, Windsurf, Copilot, and 30+ other AI coding tools.
+ProtoPal is designed from the ground up for AI-assisted development. The `.agents/` directory contains **plain markdown files** that work with Claude Code, Cursor, Windsurf, Copilot, and 30+ other AI coding tools.
 
 ### Skills, Not Plugins
 
@@ -43,7 +45,7 @@ The `.agents/skills/` directory contains **14 reusable workflow prompts** — pl
 
 ### Architecture as Guardrails
 
-The hexagonal architecture isn't just a pattern — it's a **safety net for agents**. Strict dependency direction means an AI tool physically can't couple layers incorrectly:
+The hexagonal architecture acts as a **safety net for agents**. Strict dependency direction means an AI tool physically can't couple layers incorrectly:
 
 ```
 Domain (zero deps) → Database → API → Frontend → E2E
@@ -53,7 +55,7 @@ Domain (zero deps) → Database → API → Frontend → E2E
 - **Database** implements Domain ports (adapter pattern) — the coupling boundary is explicit
 - **Layer implementation order** is enforced: Domain → Database → API → Frontend → E2E
 
-This isn't theoretical — the scaffold already proves it:
+The scaffold already proves it:
 
 - **Swap databases**: The app ships with both SQLite (local dev/E2E tests) and PostgreSQL (production) adapters. Switching between them is a single injection change. Want MongoDB? Implement the Domain port — the business logic doesn't change
 - **Swap API frameworks**: This repo started on Hono, then moved to NestJS for a project with stricter security requirements. The migration only touched the API adapter layer — Domain and Database stayed untouched
@@ -77,9 +79,7 @@ Every guardrail is documented in `AGENTS.md` so AI tools enforce them automatica
 
 ### Product Management from Your Phone
 
-With the right architecture and tooling, AI agents can build production-ready software — not prototypes, real features with tests, CI, and code review. You don't need BMAD, GSD, PAUL, or external tools like Obsidian, Linear, or Jira. Everything lives in the repo as plain markdown — the skills, the backlog, the stories. Any AI coding tool can read them. `git log` is your activity feed. Pull requests are your review process. **The repo is the single source of truth.**
-
-The backlog in `docs/backlog/` isn't just documentation — it's an **executable product management system**. Features flow from idea to merged PR through a chain of skills. See [`PRODUCT_MANAGEMENT.md`](PRODUCT_MANAGEMENT.md) for the full guide.
+The backlog in `docs/backlog/` is an **executable product management system**. Features flow from idea to merged PR through a chain of skills. See [`PRODUCT_MANAGEMENT.md`](PRODUCT_MANAGEMENT.md) for the full guide.
 
 | Step | Skill | What Happens |
 |------|-------|-------------|
