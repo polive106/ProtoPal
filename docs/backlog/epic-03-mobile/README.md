@@ -11,3 +11,4 @@ Add an Expo React Native mobile app to the monorepo, with its own design system,
 | E3-US01 | Mobile Project Shell & Design System | S | Pending |
 | E3-US02 | Mobile Auth | S | Pending |
 | E3-US03 | Mobile Notes CRUD & Agent Tooling | S | Pending |
+| E3-US04 | Maestro E2E Tests in CI | S | Pending |
