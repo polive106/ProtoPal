@@ -1,0 +1,25 @@
+name: Mobile E2E Tests
+on:
+  workflow_dispatch:
+
+jobs:
+  e2e-mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.4.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # Maestro E2E tests will be configured here once
+      # a device/emulator setup is added to CI.
+      # For now, this workflow validates the build step.
+      - name: Verify mobile build
+        run: pnpm --filter @acme/mobile build

@@ -1,0 +1,9 @@
+appId: com.acme.protopal
+---
+- launchApp
+- assertVisible:
+    id: "home-screen"
+- assertVisible:
+    id: "home-text-title"
+- assertVisible:
+    text: "ProtoPal"
