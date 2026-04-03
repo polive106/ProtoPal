@@ -1,9 +1,6 @@
 appId: com.acme.protopal
 ---
-- launchApp
+- launchApp:
+    clearState: true
 - assertVisible:
-    id: "home-screen"
-- assertVisible:
-    id: "home-text-title"
-- assertVisible:
-    text: "ProtoPal"
+    id: "login-card"

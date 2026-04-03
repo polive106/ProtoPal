@@ -19,7 +19,9 @@ export class AuthGuard implements CanActivate {
     if (isPublic) return true;
 
     const request = context.switchToHttp().getRequest<Request>();
-    const token = (request.cookies as Record<string, string>)?.auth_token;
+    const token =
+      (request.cookies as Record<string, string>)?.auth_token ??
+      this.extractBearerToken(request);
 
     if (!token) {
       throw new UnauthorizedException('Authentication required');
@@ -32,5 +34,13 @@ export class AuthGuard implements CanActivate {
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
     }
+  }
+
+  private extractBearerToken(request: Request): string | undefined {
+    const authorization = request.headers.authorization;
+    if (authorization?.startsWith('Bearer ')) {
+      return authorization.slice(7);
+    }
+    return undefined;
   }
 }
