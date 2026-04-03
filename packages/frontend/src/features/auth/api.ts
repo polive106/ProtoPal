@@ -1,25 +1,7 @@
 import { api } from '@/lib/api';
+import type { AuthUser, LoginRequest, RegisterRequest } from '@acme/shared';
 
-export interface AuthUser {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  status: string;
-  roles: Array<{ roleId: string; roleName: string }>;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-}
+export type { AuthUser, LoginRequest, RegisterRequest };
 
 export const authApi = {
   login: (data: LoginRequest) => api.post<{ user: AuthUser }>('/auth/login', data),
