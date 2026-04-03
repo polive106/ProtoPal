@@ -79,6 +79,7 @@ describe('AuthController', () => {
       expect(result).toEqual(
         expect.objectContaining({
           message: 'Login successful',
+          token: 'token',
           user: expect.objectContaining({ id: 'u1', email: dto.email }),
         }),
       );

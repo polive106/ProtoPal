@@ -1,0 +1,26 @@
+appId: com.acme.protopal
+---
+- launchApp:
+    clearState: true
+- assertVisible:
+    id: "login-card"
+- tapOn:
+    id: "login-link-register"
+- assertVisible:
+    id: "register-card"
+- tapOn:
+    id: "register-input-first-name"
+- inputText: "Test"
+- tapOn:
+    id: "register-input-last-name"
+- inputText: "User"
+- tapOn:
+    id: "register-input-email"
+- inputText: "testuser@protopal.com"
+- tapOn:
+    id: "register-input-password"
+- inputText: "Password1!"
+- tapOn:
+    id: "register-btn-submit"
+- assertVisible:
+    id: "login-card"

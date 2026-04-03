@@ -1,3 +1,4 @@
 appId: com.acme.protopal
 flows:
   - "../flows/*"
+  - "../flows/**/*"

@@ -103,6 +103,7 @@ export class AuthController {
 
       return {
         message: 'Login successful',
+        token,
         user: {
           id: userWithRoles.userId,
           email: userWithRoles.email,

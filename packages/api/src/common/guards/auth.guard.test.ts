@@ -1,8 +1,14 @@
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 
-function createContext(cookies: Record<string, string> = {}) {
-  const request: any = { cookies };
+function createContext(
+  cookies: Record<string, string> = {},
+  headers: Record<string, string> = {},
+) {
+  const request: any = {
+    cookies,
+    headers,
+  };
   return {
     switchToHttp: () => ({ getRequest: () => request }),
     getHandler: () => () => {},
@@ -57,5 +63,49 @@ describe('AuthGuard', () => {
     expect(result).toBe(true);
     const request = context.switchToHttp().getRequest() as any;
     expect(request.user).toEqual(payload);
+  });
+
+  it('falls back to Bearer token when no cookie is present', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue(false);
+    const payload = { sub: 1, email: 'test@test.com' };
+    mockJwtService.verifyToken.mockResolvedValue(payload);
+    const context = createContext({}, { authorization: 'Bearer valid-bearer-token' });
+
+    const result = await guard.canActivate(context);
+
+    expect(result).toBe(true);
+    expect(mockJwtService.verifyToken).toHaveBeenCalledWith('valid-bearer-token');
+    const request = context.switchToHttp().getRequest() as any;
+    expect(request.user).toEqual(payload);
+  });
+
+  it('prefers cookie over Bearer token when both are present', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue(false);
+    const payload = { sub: 1, email: 'test@test.com' };
+    mockJwtService.verifyToken.mockResolvedValue(payload);
+    const context = createContext(
+      { auth_token: 'cookie-token' },
+      { authorization: 'Bearer bearer-token' },
+    );
+
+    const result = await guard.canActivate(context);
+
+    expect(result).toBe(true);
+    expect(mockJwtService.verifyToken).toHaveBeenCalledWith('cookie-token');
+  });
+
+  it('throws UnauthorizedException when Bearer token is invalid', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue(false);
+    mockJwtService.verifyToken.mockRejectedValue(new Error('invalid'));
+    const context = createContext({}, { authorization: 'Bearer bad-token' });
+
+    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
+  });
+
+  it('throws UnauthorizedException when no cookie and no Bearer token', async () => {
+    mockReflector.getAllAndOverride.mockReturnValue(false);
+    const context = createContext({}, {});
+
+    await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
   });
 });
