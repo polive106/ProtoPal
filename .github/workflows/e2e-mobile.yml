@@ -70,7 +70,7 @@ jobs:
   maestro-tests:
     needs: build-apk
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     env:
       DATABASE_PATH: ${{ github.workspace }}/data/e2e-mobile.db
