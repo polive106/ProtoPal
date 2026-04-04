@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "expo start",
     "build": "echo 'Mobile build requires expo prebuild — use dev for local development'",
+    "prebuild": "expo prebuild --platform android --no-install",
+    "build:android": "cd android && ./gradlew assembleDebug",
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest watch"
