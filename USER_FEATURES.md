@@ -32,3 +32,9 @@
 | View notes | Done | E1-US03 |
 | Email verification | Pending | E2-US02 |
 | Password reset | Pending | E2-US06 |
+| Mobile: Login | Done | E3-US02 |
+| Mobile: Register | Done | E3-US02 |
+| Mobile: View notes | Done | E3-US03 |
+| Mobile: Create notes | Done | E3-US03 |
+| Mobile: Edit notes | Done | E3-US03 |
+| Mobile: Delete notes | Done | E3-US03 |

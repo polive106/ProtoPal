@@ -46,6 +46,8 @@ A fullstack monorepo with authentication, RBAC, and an example CRUD entity (Note
 | `@acme/api` | NestJS + class-validator |
 | `@acme/design-system` | Radix UI components |
 | `@acme/frontend` | React + Vite + TanStack Router/Query + Tailwind |
+| `@acme/mobile` | Expo + React Native + NativeWind + TanStack Query |
+| `@acme/design-system-mobile` | Mobile Radix-inspired components (NativeWind) |
 
 ## Architecture Rules
 
@@ -56,9 +58,9 @@ A fullstack monorepo with authentication, RBAC, and an example CRUD entity (Note
 3. API depends on Domain, not vice versa
 4. Frontend knows nothing about Database internals
 
-**Layer order when implementing**: Domain → Database → API → Frontend → E2E
+**Layer order when implementing**: Domain → Database → API → Frontend → Mobile → E2E
 
-**E2E tests are the final mandatory step** — no feature is complete without them.
+**E2E tests are the final mandatory step** — no feature is complete without them (Playwright for web, Maestro for mobile).
 
 ## Frontend Architecture (Feature Sliced Design)
 
@@ -121,6 +123,52 @@ Each frontend feature is a self-contained **slice** in `packages/frontend/src/fe
 - **Zod v4** is used across the monorepo (frontend + API) — Zod 4 supports Standard Schema v1 natively
 - **`@tanstack/zod-form-adapter` is NOT needed** — TanStack Form v1 supports Zod 4 via Standard Schema directly
 - **Zod 4 breaking change**: `.errors` getter removed from `ZodError` — use `.issues` instead
+
+## Mobile Architecture (Feature Sliced Design)
+
+The mobile app (`packages/mobile/`) mirrors the frontend architecture using React Native + Expo Router.
+
+### Slice Structure (same as frontend)
+| File/Dir | Purpose |
+|----------|---------|
+| `api.ts` | TypeScript interfaces + API object wrapping `lib/api` |
+| `widgets/` | Pure presentational React Native components — stateless, props-only |
+| `hooks/` | Custom hooks — state, effects, mutations (one per file) |
+| `ui/` | Composed feature implementations — wire hooks + widgets |
+| `schemas.ts` | Zod validation schemas |
+| `index.ts` | Barrel re-exporting all sub-layers |
+
+### Key Differences from Frontend
+- **`testID`** prop (not `data-testid`) — React Native convention, used by Maestro
+- **NativeWind** for styling (Tailwind CSS → React Native styles)
+- **Expo Router** for file-based routing (`app/` directory)
+- **`expo-secure-store`** for token storage (not cookies)
+- **Bearer token** auth (not cookie-based)
+
+### Mobile Testing Strategy
+| Tier | Location | What is real | What is mocked |
+|------|----------|-------------|----------------|
+| Hook unit tests | `hooks/*.test.ts` | Hook logic, state | API module, providers |
+| Widget tests | `widgets/*.test.tsx` | Component rendering | RN components (mocked to DOM) |
+| E2E (Maestro) | `maestro/flows/` | Full app | Nothing |
+
+### Mobile testID Naming Convention
+Same pattern as frontend: `{screen}-{element-type}-{name}` in kebab-case. Use `testID` prop on React Native components.
+
+### Maestro E2E Tests
+Mobile E2E tests use Maestro YAML flows in `packages/mobile/maestro/flows/`. Flows use `id:` selectors matching `testID` props.
+
+```yaml
+appId: com.acme.protopal
+---
+- launchApp:
+    clearState: true
+- tapOn:
+    id: "login-input-email"
+- inputText: "user@example.com"
+- assertVisible:
+    id: "dashboard-screen"
+```
 
 ## Process Rules
 
@@ -205,6 +253,7 @@ pnpm test:e2e --headed                # With visible browser
 pnpm dev                                # All dev servers
 pnpm --filter @acme/api dev             # API only (port 3000)
 pnpm --filter @acme/frontend dev        # Frontend only (port 5173)
+pnpm dev:mobile                         # Mobile dev (Expo)
 
 # Database
 pnpm --filter @acme/database db:push    # Apply schema to SQLite
@@ -214,7 +263,8 @@ pnpm --filter @acme/database db:studio  # Visual database explorer
 # Testing
 pnpm test                               # All unit tests
 pnpm --filter @acme/domain test:watch   # TDD mode
-pnpm test:e2e                           # E2E tests
+pnpm test:e2e                           # E2E tests (Playwright)
+pnpm test:e2e:mobile                    # Mobile E2E (Maestro — requires device/emulator)
 
 # Building
 pnpm build                              # Build all packages

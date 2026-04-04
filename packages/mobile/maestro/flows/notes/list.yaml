@@ -1,0 +1,20 @@
+appId: com.acme.protopal
+---
+- launchApp:
+    clearState: true
+- assertVisible:
+    id: "login-card"
+- tapOn:
+    id: "login-input-email"
+- inputText: "admin@protopal.com"
+- tapOn:
+    id: "login-input-password"
+- inputText: "Password1!"
+- tapOn:
+    id: "login-btn-submit"
+- assertVisible:
+    id: "dashboard-screen"
+- tapOn:
+    id: "dashboard-btn-notes"
+- assertVisible:
+    id: "notes-list"

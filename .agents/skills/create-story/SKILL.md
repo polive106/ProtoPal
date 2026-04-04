@@ -59,7 +59,9 @@ The agent derives everything else by analyzing the codebase.
 | Database | ... | ... |
 | API | ... | ... |
 | Frontend | ... | ... |
+| Mobile | ... | ... |
 | E2E | ... | ... |
+| E2E Mobile | ... | ... |
 
 **Dependencies**: <story IDs or "None">
 

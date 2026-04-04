@@ -3,17 +3,17 @@
 **User Story**: As a developer, I want the mobile app to include Notes CRUD and updated agent skills so that agents can implement full-stack features including mobile.
 
 **Acceptance Criteria**:
-- [ ] Notes list screen displaying user's notes
-- [ ] Note detail screen with full content
-- [ ] Create note screen with title and content fields
-- [ ] Edit note screen with pre-filled fields
-- [ ] Delete note with confirmation
-- [ ] Notes scoped to authenticated user
-- [ ] Additional design-system-mobile components as needed (Sheet/Dialog, EmptyState, Skeleton)
-- [ ] Maestro E2E flows for full notes CRUD
-- [ ] AGENTS.md updated with mobile layer in architecture rules, implementation order, and testing mandates
-- [ ] Skills updated: `implement-story`, `scaffold`, `add-e2e-tests`, `add-unit-tests`, `create-story` include mobile layer
-- [ ] `testID` props on all interactive elements following `{screen}-{element-type}-{name}` convention
+- [x] Notes list screen displaying user's notes
+- [x] Note detail screen with full content
+- [x] Create note screen with title and content fields
+- [x] Edit note screen with pre-filled fields
+- [x] Delete note with confirmation
+- [x] Notes scoped to authenticated user
+- [x] Additional design-system-mobile components as needed (Sheet/Dialog, EmptyState, Skeleton)
+- [x] Maestro E2E flows for full notes CRUD
+- [x] AGENTS.md updated with mobile layer in architecture rules, implementation order, and testing mandates
+- [x] Skills updated: `implement-story`, `scaffold`, `add-e2e-tests`, `add-unit-tests`, `create-story` include mobile layer
+- [x] `testID` props on all interactive elements following `{screen}-{element-type}-{name}` convention
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -46,7 +46,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

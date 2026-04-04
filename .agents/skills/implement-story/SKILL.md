@@ -9,7 +9,7 @@ disable-model-invocation: true
 1. **Check branch** — verify you are NOT on `main`. If on `main`, create and switch to a feature branch (e.g., `feat/e2-us01-jwt-token-security`) before proceeding. Never commit directly to `main`.
 2. **Read the story** — read the story file from `docs/backlog/`
 3. **Understand the acceptance criteria** — every checkbox must be satisfied
-4. **Follow layer order** — Domain → Database → API → Frontend → E2E
+4. **Follow layer order** — Domain → Database → API → Frontend → Mobile → E2E
 5. **TDD for each layer**:
    - Write failing test
    - Write minimum implementation
@@ -21,6 +21,7 @@ disable-model-invocation: true
    pnpm lint
    pnpm test
    pnpm test:e2e
+   pnpm test:e2e:mobile  # if mobile layer is affected
    ```
 8. **Update story status** — mark checkboxes and set status to "Done"
 9. **Update USER_FEATURES.md** — add new features for affected user types
@@ -46,8 +47,12 @@ packages/api/src/controllers/notes.controller.ts
 # 6. Build frontend feature
 packages/frontend/src/features/notes/
 
-# 7. Add E2E tests
+# 7. Build mobile feature (if applicable)
+packages/mobile/src/features/notes/
+
+# 8. Add E2E tests (Playwright for web, Maestro for mobile)
 e2e/tests/notes/crud.spec.ts
+packages/mobile/maestro/flows/notes/
 ```
 
 ## Definition of Done

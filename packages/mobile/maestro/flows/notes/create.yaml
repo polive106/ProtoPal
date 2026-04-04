@@ -1,0 +1,32 @@
+appId: com.acme.protopal
+---
+- launchApp:
+    clearState: true
+- assertVisible:
+    id: "login-card"
+- tapOn:
+    id: "login-input-email"
+- inputText: "admin@protopal.com"
+- tapOn:
+    id: "login-input-password"
+- inputText: "Password1!"
+- tapOn:
+    id: "login-btn-submit"
+- assertVisible:
+    id: "dashboard-screen"
+- tapOn:
+    id: "dashboard-btn-notes"
+- tapOn:
+    id: "notes-btn-create"
+- assertVisible:
+    id: "notes-form"
+- tapOn:
+    id: "notes-input-title"
+- inputText: "E2E Test Note"
+- tapOn:
+    id: "notes-input-content"
+- inputText: "This note was created by a Maestro E2E test."
+- tapOn:
+    id: "notes-btn-save"
+- assertVisible:
+    id: "notes-list"
