@@ -10,7 +10,7 @@ on:
 jobs:
   e2e-mobile:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     env:
       DATABASE_PATH: ${{ github.workspace }}/data/e2e-mobile.db
@@ -83,9 +83,9 @@ jobs:
       - name: Run Maestro E2E tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 31
           arch: x86_64
-          target: google_apis
+          target: default
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
