@@ -8,12 +8,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  e2e-mobile:
+  build-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
-
+    timeout-minutes: 30
     env:
-      DATABASE_PATH: ${{ github.workspace }}/data/e2e-mobile.db
       EXPO_PUBLIC_API_URL: http://10.0.2.2:3000
 
     steps:
@@ -36,17 +34,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-            packages/mobile/android/.gradle
-          key: gradle-${{ runner.os }}-${{ hashFiles('packages/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'packages/mobile/android/build.gradle', 'packages/mobile/android/app/build.gradle') }}
-          restore-keys: |
-            gradle-${{ runner.os }}-
-
       - name: Cache Expo prebuild
         uses: actions/cache@v4
         with:
@@ -55,19 +42,62 @@ jobs:
           restore-keys: |
             expo-prebuild-${{ runner.os }}-
 
-      - name: Seed test database
-        run: DATABASE_PATH=${{ env.DATABASE_PATH }} pnpm tsx packages/database/src/seed.ts
-
       - name: Expo prebuild
         working-directory: packages/mobile
         run: npx expo prebuild --platform android --no-install
 
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('packages/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'packages/mobile/android/**/*.gradle') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
       - name: Build debug APK
         working-directory: packages/mobile/android
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2
 
-      - name: Verify APK exists
-        run: ls -la packages/mobile/android/app/build/outputs/apk/debug/
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: packages/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 1
+
+  maestro-tests:
+    needs: build-apk
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    env:
+      DATABASE_PATH: ${{ github.workspace }}/data/e2e-mobile.db
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.4.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: debug-apk
+          path: apk
+
+      - name: Seed test database
+        run: DATABASE_PATH=${{ env.DATABASE_PATH }} pnpm tsx packages/database/src/seed.ts
 
       - name: Install Maestro CLI
         run: |
@@ -90,12 +120,8 @@ jobs:
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: |
-            # Start API server fresh (background process from earlier steps may have died)
+            # Start API server
             DATABASE_PATH=${{ env.DATABASE_PATH }} pnpm --filter @acme/api start &
-            API_PID=$!
-            echo "API server started with PID $API_PID"
-
-            # Wait for API
             for i in $(seq 1 30); do
               if curl -s http://localhost:3000/health > /dev/null 2>&1; then
                 echo "API server is ready"
@@ -105,14 +131,11 @@ jobs:
                 echo "ERROR: API server failed to start"
                 exit 1
               fi
-              echo "Waiting for API server... ($i/30)"
               sleep 2
             done
 
-            # Install APK
-            adb install packages/mobile/android/app/build/outputs/apk/debug/app-debug.apk
-
-            # Run Maestro flows
+            # Install and test
+            adb install apk/app-debug.apk
             $HOME/.maestro/bin/maestro test packages/mobile/maestro/flows/
 
       - name: Upload Maestro artifacts
