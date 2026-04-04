@@ -105,6 +105,60 @@ describe('useMyHook', () => {
 });
 ```
 
+### Mobile Hook Tests (mock API + RN modules)
+
+```typescript
+// @vitest-environment jsdom
+vi.mock('expo-router', () => ({ useRouter: vi.fn() }));
+vi.mock('expo-secure-store', () => ({
+  getItemAsync: vi.fn(), setItemAsync: vi.fn(), deleteItemAsync: vi.fn(),
+}));
+vi.mock('../api', () => ({
+  myApi: { list: vi.fn(), create: vi.fn() },
+}));
+
+import { renderHook, waitFor } from '@testing-library/react';
+import React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useMyHook } from './useMyHook';
+
+function createWrapper() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children);
+}
+
+describe('useMyHook', () => {
+  it('fetches data', async () => {
+    const { result } = renderHook(() => useMyHook(), { wrapper: createWrapper() });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+  });
+});
+```
+
+### Mobile Widget Tests (mock RN components to DOM)
+
+```typescript
+// @vitest-environment jsdom
+vi.mock('react-native', () => {
+  const React = require('react');
+  return {
+    View: (props: any) => React.createElement('div', props),
+    Text: (props: any) => React.createElement('span', props),
+    Pressable: ({ testID, onPress, children, ...props }: any) =>
+      React.createElement('div', { 'data-testid': testID, onClick: onPress, ...props }, children),
+  };
+});
+
+vi.mock('@acme/design-system-mobile', () => {
+  const React = require('react');
+  return {
+    Card: ({ children, ...props }: any) => React.createElement('div', props, children),
+    // ... mock other components
+  };
+});
+```
+
 ### Frontend Integration Tests (mock only API boundary)
 
 ```typescript

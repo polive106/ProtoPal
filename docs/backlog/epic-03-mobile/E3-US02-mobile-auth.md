@@ -3,17 +3,17 @@
 **User Story**: As a user, I want to log in and register on the mobile app so that I can access my data on the go.
 
 **Acceptance Criteria**:
-- [ ] API auth guard accepts `Authorization: Bearer` header as fallback alongside cookies
-- [ ] AuthProvider with `expo-secure-store` token management
-- [ ] Login screen with email/password fields and validation
-- [ ] Register screen with name/email/password fields and validation
-- [ ] Authenticated layout with auth guard redirecting to login
-- [ ] Dashboard screen after successful login
-- [ ] Logout clears SecureStore and redirects to login
-- [ ] Feature-sliced architecture: `features/auth/{api,hooks,ui,schemas,index}.ts`
-- [ ] `testID` props on all interactive elements
-- [ ] Unit tests for auth hooks
-- [ ] Maestro E2E flows for login and registration
+- [x] API auth guard accepts `Authorization: Bearer` header as fallback alongside cookies
+- [x] AuthProvider with `expo-secure-store` token management
+- [x] Login screen with email/password fields and validation
+- [x] Register screen with name/email/password fields and validation
+- [x] Authenticated layout with auth guard redirecting to login
+- [x] Dashboard screen after successful login
+- [x] Logout clears SecureStore and redirects to login
+- [x] Feature-sliced architecture: `features/auth/{api,hooks,ui,schemas,index}.ts`
+- [x] `testID` props on all interactive elements
+- [x] Unit tests for auth hooks
+- [x] Maestro E2E flows for login and registration
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -38,7 +38,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

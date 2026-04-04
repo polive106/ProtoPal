@@ -83,6 +83,23 @@ export class MyEntitiesController {
 }
 ```
 
+## Mobile Feature Template
+
+```typescript
+// packages/mobile/src/features/my-entity/api.ts
+import { api } from '@/lib/api';
+
+export interface MyEntity { id: string; name: string; userId: string; createdAt: string; updatedAt: string; }
+
+export const myEntityApi = {
+  list: () => api.get<{ items: MyEntity[] }>('/my-entities').then(r => r.items),
+  get: (id: string) => api.get<{ item: MyEntity }>(`/my-entities/${id}`).then(r => r.item),
+  create: (data: { name: string }) => api.post<{ item: MyEntity }>('/my-entities', data).then(r => r.item),
+  update: (id: string, data: { name?: string }) => api.patch<{ item: MyEntity }>(`/my-entities/${id}`, data).then(r => r.item),
+  delete: (id: string) => api.delete(`/my-entities/${id}`),
+};
+```
+
 ## Checklist
 - [ ] Entity + DTOs in domain
 - [ ] Repository port in domain
@@ -98,5 +115,9 @@ export class MyEntitiesController {
 - [ ] Frontend widgets + widget tests
 - [ ] Frontend ui/ compositions + integration tests
 - [ ] Frontend routes (thin wrappers)
-- [ ] E2E tests
+- [ ] Mobile hooks + hook tests
+- [ ] Mobile widgets + widget tests
+- [ ] Mobile ui/ compositions
+- [ ] Mobile screens (Expo Router)
+- [ ] E2E tests (Playwright for web, Maestro for mobile)
 - [ ] Export from index.ts files

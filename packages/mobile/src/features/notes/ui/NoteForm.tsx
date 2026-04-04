@@ -1,0 +1,98 @@
+import React from 'react';
+import { View, Text, TextInput, ScrollView } from 'react-native';
+import {
+  Button,
+  Input,
+  Label,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+  CardFooter,
+  ErrorAlert,
+} from '@acme/design-system-mobile';
+import { useNoteForm } from '../hooks';
+
+function getFieldError(errors: unknown[]): string {
+  const first = errors[0];
+  if (typeof first === 'string') return first;
+  if (first && typeof first === 'object' && 'message' in first) return String((first as any).message);
+  return 'Invalid';
+}
+
+interface NoteFormProps {
+  note?: { id: string; title: string; content: string };
+}
+
+export function NoteForm({ note }: NoteFormProps) {
+  const { form, serverError, setServerError, isPending, isEdit } = useNoteForm(note);
+
+  return (
+    <ScrollView className="flex-1 px-4 pt-4" testID="notes-form">
+      <Card>
+        <CardHeader>
+          <CardTitle>{isEdit ? 'Edit Note' : 'New Note'}</CardTitle>
+        </CardHeader>
+        <CardContent className="gap-4">
+          {serverError && (
+            <ErrorAlert
+              testID="notes-alert-error"
+              message={serverError}
+              onDismiss={() => setServerError(null)}
+            />
+          )}
+
+          <form.Field name="title">
+            {(field) => (
+              <View className="gap-2">
+                <Label>Title</Label>
+                <Input
+                  testID="notes-input-title"
+                  value={field.state.value}
+                  onChangeText={(text) => field.handleChange(text)}
+                  onBlur={() => field.handleBlur()}
+                  placeholder="Note title"
+                />
+                {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
+                  <Text className="text-sm text-red-500">{getFieldError(field.state.meta.errors)}</Text>
+                )}
+              </View>
+            )}
+          </form.Field>
+
+          <form.Field name="content">
+            {(field) => (
+              <View className="gap-2">
+                <Label>Content</Label>
+                <TextInput
+                  testID="notes-input-content"
+                  value={field.state.value}
+                  onChangeText={(text) => field.handleChange(text)}
+                  onBlur={() => field.handleBlur()}
+                  placeholder="Write your note..."
+                  multiline
+                  numberOfLines={8}
+                  textAlignVertical="top"
+                  className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+                />
+                {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
+                  <Text className="text-sm text-red-500">{getFieldError(field.state.meta.errors)}</Text>
+                )}
+              </View>
+            )}
+          </form.Field>
+        </CardContent>
+        <CardFooter className="gap-3">
+          <Button
+            testID="notes-btn-save"
+            className="flex-1"
+            disabled={isPending}
+            onPress={() => form.handleSubmit()}
+          >
+            {isPending ? 'Saving...' : isEdit ? 'Update' : 'Create'}
+          </Button>
+        </CardFooter>
+      </Card>
+    </ScrollView>
+  );
+}
