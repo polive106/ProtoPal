@@ -52,7 +52,7 @@ export class LoginUser {
     }
 
     if (user.status === 'pending') {
-      throw new LoginUserError('Your account is pending approval');
+      throw new LoginUserError('Please verify your email');
     }
 
     if (user.status === 'rejected') {

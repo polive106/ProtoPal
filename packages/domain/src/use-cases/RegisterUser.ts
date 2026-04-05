@@ -2,6 +2,9 @@ import type { UserRepository } from '../ports/UserRepository';
 import type { RoleRepository } from '../ports/RoleRepository';
 import type { UserRoleRepository } from '../ports/UserRoleRepository';
 import type { PasswordHasher } from '../ports/PasswordHasher';
+import type { VerificationTokenRepository } from '../ports/VerificationTokenRepository';
+import type { EmailService } from '../ports/EmailService';
+import type { TokenGenerator } from '../ports/TokenGenerator';
 import type { User } from '../entities/User';
 
 export interface RegisterUserDTO {
@@ -11,6 +14,11 @@ export interface RegisterUserDTO {
   lastName: string;
 }
 
+export interface RegisterUserResult {
+  user: User;
+  verificationToken: string;
+}
+
 export class RegisterUserError extends Error {
   constructor(message: string) {
     super(message);
@@ -18,15 +26,20 @@ export class RegisterUserError extends Error {
   }
 }
 
+const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+
 export class RegisterUser {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly roleRepository: RoleRepository,
     private readonly userRoleRepository: UserRoleRepository,
-    private readonly passwordHasher: PasswordHasher
+    private readonly passwordHasher: PasswordHasher,
+    private readonly verificationTokenRepository: VerificationTokenRepository,
+    private readonly emailService: EmailService,
+    private readonly tokenGenerator: TokenGenerator,
   ) {}
 
-  async execute(dto: RegisterUserDTO): Promise<User> {
+  async execute(dto: RegisterUserDTO): Promise<RegisterUserResult> {
     const normalizedEmail = dto.email?.toLowerCase().trim() || '';
     const firstName = dto.firstName?.trim() || '';
     const lastName = dto.lastName?.trim() || '';
@@ -47,7 +60,7 @@ export class RegisterUser {
       passwordHash,
       firstName,
       lastName,
-      status: 'approved',
+      status: 'pending',
     });
 
     const userRole = await this.roleRepository.findByName('user');
@@ -58,7 +71,18 @@ export class RegisterUser {
       });
     }
 
-    return user;
+    const rawToken = this.tokenGenerator.generate();
+    const tokenHash = this.tokenGenerator.hash(rawToken);
+
+    await this.verificationTokenRepository.create({
+      userId: user.id,
+      tokenHash,
+      expiresAt: new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS),
+    });
+
+    await this.emailService.sendVerificationEmail(normalizedEmail, rawToken);
+
+    return { user, verificationToken: rawToken };
   }
 
   private validateEmail(email: string): void {

@@ -6,3 +6,6 @@ export const NOTE_REPOSITORY = 'NoteRepository';
 export const TOKEN_BLACKLIST_REPOSITORY = 'TokenBlacklistRepository';
 export const PASSWORD_HASHER = 'PasswordHasher';
 export const JWT_SERVICE = 'JwtService';
+export const VERIFICATION_TOKEN_REPOSITORY = 'VerificationTokenRepository';
+export const EMAIL_SERVICE = 'EmailService';
+export const TOKEN_GENERATOR = 'TokenGenerator';

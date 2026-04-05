@@ -1,12 +1,24 @@
 import { Test } from '@nestjs/testing';
 import { BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
-import { RegisterUser, RegisterUserError, LoginUser, LoginUserError, GetUserRoles } from '@acme/domain';
+import {
+  RegisterUser,
+  RegisterUserError,
+  LoginUser,
+  LoginUserError,
+  GetUserRoles,
+  VerifyEmail,
+  VerifyEmailError,
+  ResendVerification,
+  ResendVerificationError,
+} from '@acme/domain';
 import { AuthController } from './auth.controller';
 import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
 
 const mockRegisterUser = { execute: vi.fn() };
 const mockLoginUser = { execute: vi.fn() };
 const mockGetUserRoles = { execute: vi.fn() };
+const mockVerifyEmail = { execute: vi.fn() };
+const mockResendVerification = { execute: vi.fn() };
 const mockJwtService = { generateToken: vi.fn(), verifyToken: vi.fn() };
 const mockTokenBlacklistRepo = { add: vi.fn(), exists: vi.fn(), deleteExpired: vi.fn() };
 
@@ -22,6 +34,8 @@ describe('AuthController', () => {
         { provide: RegisterUser, useValue: mockRegisterUser },
         { provide: LoginUser, useValue: mockLoginUser },
         { provide: GetUserRoles, useValue: mockGetUserRoles },
+        { provide: VerifyEmail, useValue: mockVerifyEmail },
+        { provide: ResendVerification, useValue: mockResendVerification },
         { provide: JWT_SERVICE, useValue: mockJwtService },
         { provide: TOKEN_BLACKLIST_REPOSITORY, useValue: mockTokenBlacklistRepo },
       ],
@@ -33,16 +47,18 @@ describe('AuthController', () => {
   describe('register', () => {
     const dto = { email: 'test@example.com', password: 'Password1!', firstName: 'Test', lastName: 'User' };
 
-    it('returns 201 with user on success', async () => {
-      const user = { id: 'u1', email: dto.email, firstName: dto.firstName, lastName: dto.lastName, status: 'approved' };
-      mockRegisterUser.execute.mockResolvedValue(user);
+    it('returns 201 with pending user on success', async () => {
+      const user = { id: 'u1', email: dto.email, firstName: dto.firstName, lastName: dto.lastName, status: 'pending' };
+      mockRegisterUser.execute.mockResolvedValue({ user, verificationToken: 'test-token' });
 
       const result = await controller.register(dto);
 
-      expect(result).toEqual({
-        message: 'Registration successful.',
-        user: { id: 'u1', email: dto.email, firstName: dto.firstName, lastName: dto.lastName, status: 'approved' },
-      });
+      expect(result).toEqual(
+        expect.objectContaining({
+          message: expect.stringContaining('Please check your email'),
+          user: expect.objectContaining({ id: 'u1', status: 'pending' }),
+        }),
+      );
     });
 
     it('throws BadRequestException on RegisterUserError', async () => {
@@ -56,6 +72,43 @@ describe('AuthController', () => {
       mockRegisterUser.execute.mockRejectedValue(err);
 
       await expect(controller.register(dto)).rejects.toThrow(err);
+    });
+  });
+
+  describe('verify', () => {
+    it('returns success when token is valid', async () => {
+      const user = { id: 'u1', email: 'test@example.com', firstName: 'Test', lastName: 'User', status: 'approved' };
+      mockVerifyEmail.execute.mockResolvedValue(user);
+
+      const result = await controller.verify('valid-token');
+
+      expect(result.message).toContain('Email verified successfully');
+      expect(result.user.status).toBe('approved');
+    });
+
+    it('throws BadRequestException on VerifyEmailError', async () => {
+      mockVerifyEmail.execute.mockRejectedValue(new VerifyEmailError('Invalid or expired'));
+
+      await expect(controller.verify('bad-token')).rejects.toThrow(BadRequestException);
+    });
+  });
+
+  describe('resendVerificationEmail', () => {
+    it('returns success message', async () => {
+      mockResendVerification.execute.mockResolvedValue({ verificationToken: 'new-token' });
+
+      const result = await controller.resendVerificationEmail({ email: 'test@example.com' });
+
+      expect(result.message).toContain('Verification email sent');
+    });
+
+    it('throws BadRequestException on ResendVerificationError', async () => {
+      mockResendVerification.execute.mockRejectedValue(
+        new ResendVerificationError('No pending account found'),
+      );
+
+      await expect(controller.resendVerificationEmail({ email: 'test@example.com' }))
+        .rejects.toThrow(BadRequestException);
     });
   });
 

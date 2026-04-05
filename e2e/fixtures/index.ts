@@ -32,6 +32,22 @@ export const testIds = {
     alertError: 'register-alert-error',
     linkLogin: 'register-link-login',
   },
+  checkEmail: {
+    card: 'check-email-card',
+    textMessage: 'check-email-text-message',
+    btnResend: 'check-email-btn-resend',
+    textResent: 'check-email-text-resent',
+    alertError: 'check-email-alert-error',
+    linkLogin: 'check-email-link-login',
+  },
+  verify: {
+    card: 'verify-card',
+    textLoading: 'verify-text-loading',
+    alertSuccess: 'verify-alert-success',
+    alertError: 'verify-alert-error',
+    linkLogin: 'verify-link-login',
+    linkRegister: 'verify-link-register',
+  },
   app: {
     header: 'app-header',
     userName: 'app-user-name',

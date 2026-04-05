@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { apiUrl, registerUser, loginAs, createNote } from '../fixtures/api-helpers';
+import { apiUrl, registerAndVerify, createNote } from '../fixtures/api-helpers';
 
 let cookie: string;
 const testUser = {
@@ -10,8 +10,8 @@ const testUser = {
 };
 
 test.beforeAll(async ({ request }) => {
-  await registerUser(request, testUser);
-  cookie = await loginAs(request, testUser);
+  const result = await registerAndVerify(request, testUser);
+  cookie = result.cookie;
 });
 
 test.describe('Notes API @api', () => {
@@ -100,8 +100,8 @@ test.describe('Notes API @api', () => {
       firstName: 'Other',
       lastName: 'User',
     };
-    await registerUser(request, secondUser);
-    const secondCookie = await loginAs(request, secondUser);
+    const secondResult = await registerAndVerify(request, secondUser);
+    const secondCookie = secondResult.cookie;
 
     // Try to access first user's note
     const response = await request.get(apiUrl(`/notes/${created.note.id}`), {

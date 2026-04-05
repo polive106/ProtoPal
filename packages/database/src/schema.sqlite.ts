@@ -50,6 +50,18 @@ export const tokenBlacklist = sqliteTable('token_blacklist', {
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
 });
 
+// === VERIFICATION TOKENS ===
+export const verificationTokens = sqliteTable('verification_tokens', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+  verifiedAt: integer('verified_at', { mode: 'timestamp_ms' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+});
+
 // === NOTES ===
 export const notes = sqliteTable('notes', {
   id: text('id').primaryKey(),

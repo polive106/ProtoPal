@@ -25,6 +25,34 @@ export async function loginAs(
   return match ? `auth_token=${match[1]}` : '';
 }
 
+export async function registerAndVerify(
+  request: APIRequestContext,
+  userData: { email: string; password: string; firstName: string; lastName: string },
+): Promise<{ cookie: string }> {
+  const regResponse = await registerUser(request, userData);
+  const regBody = await regResponse.json();
+  const token = regBody.verificationToken;
+  if (token) {
+    await request.get(apiUrl(`/auth/verify?token=${token}`));
+  }
+  const cookie = await loginAs(request, { email: userData.email, password: userData.password });
+  return { cookie };
+}
+
+export async function verifyEmail(
+  request: APIRequestContext,
+  token: string,
+) {
+  return request.get(apiUrl(`/auth/verify?token=${token}`));
+}
+
+export async function resendVerification(
+  request: APIRequestContext,
+  email: string,
+) {
+  return request.post(apiUrl('/auth/resend-verification'), { data: { email } });
+}
+
 export async function createNote(
   request: APIRequestContext,
   cookie: string,

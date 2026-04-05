@@ -93,7 +93,7 @@ describe('LoginUser', () => {
 
   it('should throw if account is pending', async () => {
     vi.mocked(userRepo.findByEmail).mockResolvedValue(createMockUser({ status: 'pending' }));
-    await expect(loginUser.execute({ email: 'test@example.com', password: 'pass' })).rejects.toThrow('pending');
+    await expect(loginUser.execute({ email: 'test@example.com', password: 'pass' })).rejects.toThrow('Please verify your email');
   });
 
   it('should throw if account is rejected', async () => {
