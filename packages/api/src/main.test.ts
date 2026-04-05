@@ -99,20 +99,13 @@ describe('validateStartupEnv', () => {
     );
   });
 
-  it('exits in production when JWT_SECRET is not set', () => {
-    process.env.NODE_ENV = 'production';
+  it('throws when JWT_SECRET is not set regardless of NODE_ENV', () => {
+    process.env.NODE_ENV = 'development';
     delete process.env.JWT_SECRET;
-    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    const exitSpy = vi
-      .spyOn(process, 'exit')
-      .mockImplementation(() => undefined as never);
 
-    validateStartupEnv();
-
-    expect(errorSpy).toHaveBeenCalledWith(
-      'FATAL: JWT_SECRET is required in production',
+    expect(() => validateStartupEnv()).toThrow(
+      'FATAL: JWT_SECRET environment variable is required',
     );
-    expect(exitSpy).toHaveBeenCalledWith(1);
   });
 
   it('does not exit when all critical env vars are present', () => {

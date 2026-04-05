@@ -6,6 +6,7 @@ import {
   DrizzleRoleRepository,
   DrizzleUserRoleRepository,
   DrizzleNoteRepository,
+  DrizzleTokenBlacklistRepository,
 } from '@acme/database';
 import {
   DATABASE_CONNECTION,
@@ -13,6 +14,7 @@ import {
   ROLE_REPOSITORY,
   USER_ROLE_REPOSITORY,
   NOTE_REPOSITORY,
+  TOKEN_BLACKLIST_REPOSITORY,
 } from './tokens';
 
 function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnection) => unknown) {
@@ -33,6 +35,7 @@ function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnec
     repositoryProvider(ROLE_REPOSITORY, DrizzleRoleRepository),
     repositoryProvider(USER_ROLE_REPOSITORY, DrizzleUserRoleRepository),
     repositoryProvider(NOTE_REPOSITORY, DrizzleNoteRepository),
+    repositoryProvider(TOKEN_BLACKLIST_REPOSITORY, DrizzleTokenBlacklistRepository),
   ],
   exports: [
     DATABASE_CONNECTION,
@@ -40,6 +43,7 @@ function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnec
     ROLE_REPOSITORY,
     USER_ROLE_REPOSITORY,
     NOTE_REPOSITORY,
+    TOKEN_BLACKLIST_REPOSITORY,
   ],
 })
 export class DatabaseModule {}

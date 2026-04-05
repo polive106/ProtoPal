@@ -42,6 +42,14 @@ export const userRoles = sqliteTable('user_roles', {
   assignedBy: text('assigned_by').references(() => users.id),
 });
 
+// === TOKEN BLACKLIST ===
+export const tokenBlacklist = sqliteTable('token_blacklist', {
+  id: text('id').primaryKey(),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+});
+
 // === NOTES ===
 export const notes = sqliteTable('notes', {
   id: text('id').primaryKey(),

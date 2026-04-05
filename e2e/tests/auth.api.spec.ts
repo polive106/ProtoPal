@@ -67,6 +67,30 @@ test.describe('Auth API @api', () => {
     expect(response.status()).toBe(401);
   });
 
+  test('Logout invalidates the token', async ({ request }) => {
+    // Login to get a token
+    const cookie = await loginAs(request, testCredentials.user);
+    expect(cookie).toContain('auth_token');
+
+    // Verify the token works
+    const meResponse = await request.get(apiUrl('/auth/me'), {
+      headers: { Cookie: cookie },
+    });
+    expect(meResponse.status()).toBe(200);
+
+    // Logout with the token
+    const logoutResponse = await request.post(apiUrl('/auth/logout'), {
+      headers: { Cookie: cookie },
+    });
+    expect(logoutResponse.ok()).toBeTruthy();
+
+    // Use the same token to access /auth/me → should be 401
+    const revokedResponse = await request.get(apiUrl('/auth/me'), {
+      headers: { Cookie: cookie },
+    });
+    expect(revokedResponse.status()).toBe(401);
+  });
+
   test('Full flow: register → login → me → logout', async ({ request }) => {
     const email = `auth-flow-${Date.now()}@example.com`;
     const password = 'TestPass1';

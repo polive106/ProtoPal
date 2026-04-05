@@ -12,6 +12,7 @@ export * from './ports/NoteRepository';
 
 // Service Ports
 export * from './ports/PasswordHasher';
+export * from './ports/TokenBlacklistRepository';
 
 // Use Cases
 export * from './use-cases/RegisterUser';

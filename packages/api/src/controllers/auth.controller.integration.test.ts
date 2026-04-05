@@ -11,6 +11,7 @@ import {
 import { AuthController } from './auth.controller';
 import { createTestApp, authCookie, mockUserPayload } from '../testing/test-app';
 import { clearRateLimitStore } from '../common/guards/rate-limit.guard';
+import { TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
 import type { JwtService } from '../services';
 
 describe('AuthController (integration)', () => {
@@ -20,6 +21,11 @@ describe('AuthController (integration)', () => {
   const mockRegisterUser = { execute: vi.fn() };
   const mockLoginUser = { execute: vi.fn() };
   const mockGetUserRoles = { execute: vi.fn() };
+  const mockTokenBlacklistRepo = {
+    add: vi.fn().mockResolvedValue(undefined),
+    exists: vi.fn().mockResolvedValue(false),
+    deleteExpired: vi.fn().mockResolvedValue(0),
+  };
 
   beforeAll(async () => {
     const result = await createTestApp({
@@ -28,6 +34,7 @@ describe('AuthController (integration)', () => {
         { provide: RegisterUser, useValue: mockRegisterUser },
         { provide: LoginUser, useValue: mockLoginUser },
         { provide: GetUserRoles, useValue: mockGetUserRoles },
+        { provide: TOKEN_BLACKLIST_REPOSITORY, useValue: mockTokenBlacklistRepo },
       ],
     });
     app = result.app;
@@ -40,6 +47,9 @@ describe('AuthController (integration)', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
+    mockTokenBlacklistRepo.add.mockResolvedValue(undefined);
+    mockTokenBlacklistRepo.exists.mockResolvedValue(false);
+    mockTokenBlacklistRepo.deleteExpired.mockResolvedValue(0);
     clearRateLimitStore();
   });
 
@@ -196,6 +206,27 @@ describe('AuthController (integration)', () => {
         ? res.headers['set-cookie'][0]
         : res.headers['set-cookie'];
       expect(cookie).toContain('auth_token=');
+    });
+
+    it('blacklists token and subsequent requests are rejected', async () => {
+      const cookie = await authCookie(jwtService);
+
+      // Logout with the token
+      const logoutRes = await request(app.getHttpServer())
+        .post('/auth/logout')
+        .set('Cookie', cookie);
+      expect(logoutRes.status).toBe(200);
+      expect(mockTokenBlacklistRepo.add).toHaveBeenCalled();
+
+      // Simulate blacklist check returning true for the blacklisted token
+      mockTokenBlacklistRepo.exists.mockResolvedValue(true);
+
+      // Try to access protected endpoint with the same token
+      const meRes = await request(app.getHttpServer())
+        .get('/auth/me')
+        .set('Cookie', cookie);
+
+      expect(meRes.status).toBe(401);
     });
   });
 });

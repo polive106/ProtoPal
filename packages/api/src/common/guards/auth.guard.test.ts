@@ -108,4 +108,43 @@ describe('AuthGuard', () => {
 
     await expect(guard.canActivate(context)).rejects.toThrow(UnauthorizedException);
   });
+
+  describe('with token blacklist', () => {
+    let guardWithBlacklist: AuthGuard;
+    let mockBlacklistRepo: { exists: ReturnType<typeof vi.fn> };
+
+    beforeEach(() => {
+      mockBlacklistRepo = { exists: vi.fn() };
+      guardWithBlacklist = new AuthGuard(
+        mockJwtService as any,
+        mockReflector as any,
+        mockBlacklistRepo as any,
+      );
+    });
+
+    it('rejects a blacklisted token', async () => {
+      mockReflector.getAllAndOverride.mockReturnValue(false);
+      mockBlacklistRepo.exists.mockResolvedValue(true);
+      const context = createContext({ auth_token: 'blacklisted-token' });
+
+      await expect(guardWithBlacklist.canActivate(context)).rejects.toThrow(
+        'Token has been revoked',
+      );
+      expect(mockJwtService.verifyToken).not.toHaveBeenCalled();
+    });
+
+    it('allows a non-blacklisted token', async () => {
+      mockReflector.getAllAndOverride.mockReturnValue(false);
+      mockBlacklistRepo.exists.mockResolvedValue(false);
+      const payload = { sub: 1, email: 'test@test.com' };
+      mockJwtService.verifyToken.mockResolvedValue(payload);
+      const context = createContext({ auth_token: 'valid-token' });
+
+      const result = await guardWithBlacklist.canActivate(context);
+
+      expect(result).toBe(true);
+      expect(mockBlacklistRepo.exists).toHaveBeenCalled();
+      expect(mockJwtService.verifyToken).toHaveBeenCalledWith('valid-token');
+    });
+  });
 });

@@ -18,12 +18,11 @@ export class JwtService {
   private readonly secret: Uint8Array;
   private readonly expiresIn: string;
 
-  constructor(secret?: string, expiresIn = '24h') {
-    const secretValue = secret || process.env.JWT_SECRET || 'development-jwt-secret-at-least-32-characters';
-    if (process.env.NODE_ENV === 'production' && secretValue.length < 32) {
-      throw new Error('JWT_SECRET must be at least 32 characters in production');
+  constructor(secret: string, expiresIn = '24h') {
+    if (!secret || secret.length < 32) {
+      throw new Error('JWT_SECRET must be at least 32 characters');
     }
-    this.secret = new TextEncoder().encode(secretValue);
+    this.secret = new TextEncoder().encode(secret);
     this.expiresIn = expiresIn;
   }
 

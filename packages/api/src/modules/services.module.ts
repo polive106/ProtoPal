@@ -10,7 +10,7 @@ import { PASSWORD_HASHER, JWT_SERVICE } from './tokens';
     },
     {
       provide: JWT_SERVICE,
-      useFactory: () => new JwtService(),
+      useFactory: () => new JwtService(process.env.JWT_SECRET!),
     },
   ],
   exports: [PASSWORD_HASHER, JWT_SERVICE],

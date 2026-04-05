@@ -3,6 +3,7 @@ import {
   Post,
   Get,
   Body,
+  Req,
   Res,
   Inject,
   HttpCode,
@@ -11,19 +12,21 @@ import {
   UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import {
   RegisterUser,
   RegisterUserError,
   LoginUser,
   LoginUserError,
   GetUserRoles,
+  type TokenBlacklistRepository,
 } from '@acme/domain';
 import { JwtService, type JwtPayload, type JwtRole } from '../services';
 import { Public, CurrentUser } from '../common/decorators';
 import { ZodValidationPipe } from '../common/decorators';
 import { RateLimit } from '../common/guards';
-import { JWT_SERVICE } from '../modules/tokens';
+import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
+import { hashToken } from '../common/utils/hash-token';
 import { registerSchema, loginSchema, type RegisterDto, type LoginDto } from './dto/auth.dto';
 
 @Controller('auth')
@@ -33,6 +36,7 @@ export class AuthController {
     @Inject(LoginUser) private readonly loginUser: LoginUser,
     @Inject(GetUserRoles) private readonly getUserRoles: GetUserRoles,
     @Inject(JWT_SERVICE) private readonly jwtService: JwtService,
+    @Inject(TOKEN_BLACKLIST_REPOSITORY) private readonly tokenBlacklistRepo: TokenBlacklistRepository,
   ) {}
 
   @Public()
@@ -147,7 +151,27 @@ export class AuthController {
   @Public()
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  logout(@Res({ passthrough: true }) res: Response) {
+  async logout(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token =
+      (req.cookies as Record<string, string>)?.auth_token ??
+      (req.headers.authorization?.startsWith('Bearer ')
+        ? req.headers.authorization.slice(7)
+        : undefined);
+
+    if (token) {
+      try {
+        const payload = await this.jwtService.verifyToken(token);
+        const exp = (payload as any).exp;
+        const expiresAt = exp ? new Date(exp * 1000) : new Date(Date.now() + 24 * 60 * 60 * 1000);
+        await this.tokenBlacklistRepo.add(hashToken(token), expiresAt);
+      } catch {
+        // Token is already invalid/expired — no need to blacklist
+      }
+    }
+
     res.clearCookie('auth_token', { path: '/' });
     return { message: 'Logged out successfully' };
   }
