@@ -3,15 +3,23 @@ import type { AuthUser, LoginRequest, RegisterRequest } from '@acme/shared';
 
 export type { AuthUser, LoginRequest, RegisterRequest };
 
+interface UserSummary {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  status: string;
+}
+
 export interface RegisterResponse {
   message: string;
-  user: { id: string; email: string; firstName: string; lastName: string; status: string };
+  user: UserSummary;
   verificationToken?: string;
 }
 
 export interface VerifyEmailResponse {
   message: string;
-  user: { id: string; email: string; firstName: string; lastName: string; status: string };
+  user: UserSummary;
 }
 
 export interface ResendVerificationResponse {

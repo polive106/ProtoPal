@@ -6,6 +6,7 @@ import type { VerificationTokenRepository } from '../ports/VerificationTokenRepo
 import type { EmailService } from '../ports/EmailService';
 import type { TokenGenerator } from '../ports/TokenGenerator';
 import type { User } from '../entities/User';
+import { VERIFICATION_TOKEN_EXPIRY_MS } from '../constants';
 
 export interface RegisterUserDTO {
   email: string;
@@ -25,8 +26,6 @@ export class RegisterUserError extends Error {
     this.name = 'RegisterUserError';
   }
 }
-
-const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export class RegisterUser {
   constructor(

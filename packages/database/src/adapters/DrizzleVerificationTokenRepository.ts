@@ -53,18 +53,14 @@ export class DrizzleVerificationTokenRepository implements VerificationTokenRepo
 
   async markVerified(id: string): Promise<VerificationToken> {
     const now = new Date();
-    this.db
+    const rows = this.db
       .update(verificationTokens)
       .set({ verifiedAt: now })
       .where(eq(verificationTokens.id, id))
-      .run();
-    const row = this.db
-      .select()
-      .from(verificationTokens)
-      .where(eq(verificationTokens.id, id))
-      .get();
+      .returning();
+    const row = rows.get();
     if (!row) {
-      throw new Error('Verification token not found after update');
+      throw new Error('Verification token not found');
     }
     return this.mapRow(row);
   }

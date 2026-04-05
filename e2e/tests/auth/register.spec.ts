@@ -59,7 +59,7 @@ test.describe('Register', () => {
       await page.getByTestId(testIds.register.inputEmail).fill(email);
       await page.getByTestId(testIds.register.inputPassword).fill('TestPass1');
       await page.getByTestId(testIds.register.btnSubmit).click();
-      await expect(page.getByTestId('check-email-card')).toBeVisible({ timeout: 10000 });
+      await expect(page.getByTestId(testIds.checkEmail.card)).toBeVisible({ timeout: 10000 });
     });
   });
 });

@@ -17,6 +17,7 @@ export class TokenCleanupService implements OnModuleInit, OnModuleDestroy {
     this.intervalId = setInterval(() => {
       this.cleanup();
     }, CLEANUP_INTERVAL_MS);
+    this.intervalId.unref();
   }
 
   onModuleDestroy() {

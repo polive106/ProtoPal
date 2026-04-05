@@ -2,6 +2,7 @@ import type { UserRepository } from '../ports/UserRepository';
 import type { VerificationTokenRepository } from '../ports/VerificationTokenRepository';
 import type { EmailService } from '../ports/EmailService';
 import type { TokenGenerator } from '../ports/TokenGenerator';
+import { VERIFICATION_TOKEN_EXPIRY_MS } from '../constants';
 
 export interface ResendVerificationDTO {
   email: string;
@@ -17,8 +18,6 @@ export class ResendVerificationError extends Error {
     this.name = 'ResendVerificationError';
   }
 }
-
-const VERIFICATION_TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
 
 export class ResendVerification {
   constructor(

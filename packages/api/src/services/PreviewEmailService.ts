@@ -1,4 +1,4 @@
-import { writeFileSync } from 'fs';
+import { writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { exec } from 'child_process';
@@ -45,7 +45,7 @@ export class PreviewEmailService implements EmailService {
 </html>`;
 
     const filePath = join(tmpdir(), `email-preview-${Date.now()}.html`);
-    writeFileSync(filePath, html);
+    await writeFile(filePath, html);
 
     const openCmd = process.platform === 'darwin' ? 'open' : 'xdg-open';
     exec(`${openCmd} "${filePath}"`, (err) => {

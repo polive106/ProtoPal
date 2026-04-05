@@ -7,5 +7,7 @@ export function useVerifyEmail(token: string) {
     queryFn: () => authApi.verifyEmail(token),
     enabled: !!token,
     retry: false,
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 }
