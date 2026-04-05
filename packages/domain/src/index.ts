@@ -21,6 +21,9 @@ export * from './ports/VerificationTokenRepository';
 export * from './ports/EmailService';
 export * from './ports/TokenGenerator';
 
+// Domain Services
+export * from './services/VerificationService';
+
 // Use Cases
 export * from './use-cases/RegisterUser';
 export * from './use-cases/LoginUser';
