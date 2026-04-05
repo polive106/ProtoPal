@@ -1,10 +1,9 @@
 name: Mobile E2E Tests
 
+# Maestro E2E tests are fully configured but restricted to manual dispatch.
+# The Android emulator setup exceeds GitHub Actions free-tier runner time limits.
+# To enable automatic runs, add push/pull_request triggers below.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 jobs:
