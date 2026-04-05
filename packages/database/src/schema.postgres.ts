@@ -42,6 +42,14 @@ export const userRoles = pgTable('user_roles', {
   assignedBy: text('assigned_by').references(() => users.id),
 });
 
+// === TOKEN BLACKLIST ===
+export const tokenBlacklist = pgTable('token_blacklist', {
+  id: text('id').primaryKey(),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at').notNull(),
+});
+
 // === NOTES ===
 export const notes = pgTable('notes', {
   id: text('id').primaryKey(),

@@ -8,7 +8,8 @@ import { AuthGuard, RolesGuard, RateLimitGuard } from './common/guards';
 import { HttpExceptionFilter } from './common/filters';
 import { LoggingInterceptor } from './common/interceptors';
 import { JwtService } from './services';
-import { JWT_SERVICE } from './modules/tokens';
+import type { TokenBlacklistRepository } from '@acme/domain';
+import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY } from './modules/tokens';
 
 export const DEFAULT_ORIGINS = [
   'http://localhost:5173',
@@ -41,9 +42,8 @@ export function validateStartupEnv(): void {
   if (!process.env.NODE_ENV) {
     console.warn('WARNING: NODE_ENV is not explicitly set');
   }
-  if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
-    console.error('FATAL: JWT_SECRET is required in production');
-    process.exit(1);
+  if (!process.env.JWT_SECRET) {
+    throw new Error('FATAL: JWT_SECRET environment variable is required');
   }
 }
 
@@ -66,8 +66,9 @@ async function bootstrap() {
 
   const reflector = app.get(Reflector);
   const jwtService = app.get<JwtService>(JWT_SERVICE);
+  const tokenBlacklistRepo = app.get<TokenBlacklistRepository>(TOKEN_BLACKLIST_REPOSITORY);
   app.useGlobalGuards(
-    new AuthGuard(jwtService, reflector),
+    new AuthGuard(jwtService, reflector, tokenBlacklistRepo),
     new RolesGuard(reflector),
     new RateLimitGuard(reflector),
   );
@@ -80,4 +81,6 @@ async function bootstrap() {
   console.log(`Server running at http://localhost:${port}`);
 }
 
-bootstrap();
+if (!process.env.VITEST) {
+  bootstrap();
+}

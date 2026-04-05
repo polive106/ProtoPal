@@ -10,6 +10,14 @@ const payload = {
 };
 
 describe('JwtService', () => {
+  it('throws when secret is too short', () => {
+    expect(() => new JwtService('short')).toThrow('JWT_SECRET must be at least 32 characters');
+  });
+
+  it('throws when secret is empty', () => {
+    expect(() => new JwtService('')).toThrow('JWT_SECRET must be at least 32 characters');
+  });
+
   const service = new JwtService('test-secret-that-is-at-least-32-chars!');
 
   it('generateToken produces a string', async () => {

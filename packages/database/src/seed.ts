@@ -93,6 +93,14 @@ async function seed() {
         updated_at INTEGER NOT NULL
       )
     `);
+    db.run(sql`
+      CREATE TABLE IF NOT EXISTS token_blacklist (
+        id TEXT PRIMARY KEY,
+        token_hash TEXT NOT NULL UNIQUE,
+        expires_at INTEGER NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    `);
   }
 
   const now = Date.now();

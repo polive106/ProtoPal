@@ -2,12 +2,13 @@ import { Test } from '@nestjs/testing';
 import { BadRequestException, UnauthorizedException, NotFoundException } from '@nestjs/common';
 import { RegisterUser, RegisterUserError, LoginUser, LoginUserError, GetUserRoles } from '@acme/domain';
 import { AuthController } from './auth.controller';
-import { JWT_SERVICE } from '../modules/tokens';
+import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
 
 const mockRegisterUser = { execute: vi.fn() };
 const mockLoginUser = { execute: vi.fn() };
 const mockGetUserRoles = { execute: vi.fn() };
 const mockJwtService = { generateToken: vi.fn(), verifyToken: vi.fn() };
+const mockTokenBlacklistRepo = { add: vi.fn(), exists: vi.fn(), deleteExpired: vi.fn() };
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -22,6 +23,7 @@ describe('AuthController', () => {
         { provide: LoginUser, useValue: mockLoginUser },
         { provide: GetUserRoles, useValue: mockGetUserRoles },
         { provide: JWT_SERVICE, useValue: mockJwtService },
+        { provide: TOKEN_BLACKLIST_REPOSITORY, useValue: mockTokenBlacklistRepo },
       ],
     }).compile();
 
@@ -123,12 +125,39 @@ describe('AuthController', () => {
   });
 
   describe('logout', () => {
-    it('clears auth_token cookie and returns message', () => {
+    it('clears auth_token cookie and returns message', async () => {
+      const mockReq = { cookies: {}, headers: {} } as any;
       const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
 
-      const result = controller.logout(mockRes);
+      const result = await controller.logout(mockReq, mockRes);
 
       expect(mockRes.clearCookie).toHaveBeenCalledWith('auth_token', { path: '/' });
+      expect(result).toEqual({ message: 'Logged out successfully' });
+    });
+
+    it('blacklists token from cookie on logout', async () => {
+      const mockReq = { cookies: { auth_token: 'my-token' }, headers: {} } as any;
+      const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
+      mockJwtService.verifyToken.mockResolvedValue({ exp: Math.floor(Date.now() / 1000) + 3600 });
+      mockTokenBlacklistRepo.add.mockResolvedValue(undefined);
+
+      await controller.logout(mockReq, mockRes);
+
+      expect(mockTokenBlacklistRepo.add).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(Date),
+      );
+      expect(mockRes.clearCookie).toHaveBeenCalledWith('auth_token', { path: '/' });
+    });
+
+    it('still succeeds when token is invalid', async () => {
+      const mockReq = { cookies: { auth_token: 'bad-token' }, headers: {} } as any;
+      const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
+      mockJwtService.verifyToken.mockRejectedValue(new Error('invalid'));
+
+      const result = await controller.logout(mockReq, mockRes);
+
+      expect(mockTokenBlacklistRepo.add).not.toHaveBeenCalled();
       expect(result).toEqual({ message: 'Logged out successfully' });
     });
   });

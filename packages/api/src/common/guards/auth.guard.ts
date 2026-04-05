@@ -1,14 +1,17 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
+import type { TokenBlacklistRepository } from '@acme/domain';
 import { JwtService } from '../../services/JwtService';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
+import { hashToken } from '../utils/hash-token';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly reflector: Reflector,
+    private readonly tokenBlacklistRepo?: TokenBlacklistRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -27,9 +30,16 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException('Authentication required');
     }
 
+    if (this.tokenBlacklistRepo) {
+      const isBlacklisted = await this.tokenBlacklistRepo.exists(hashToken(token));
+      if (isBlacklisted) {
+        throw new UnauthorizedException('Token has been revoked');
+      }
+    }
+
     try {
       const payload = await this.jwtService.verifyToken(token);
-      (request as any).user = payload;
+      request.user = payload;
       return true;
     } catch {
       throw new UnauthorizedException('Invalid or expired token');
