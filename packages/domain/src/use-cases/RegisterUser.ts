@@ -2,11 +2,8 @@ import type { UserRepository } from '../ports/UserRepository';
 import type { RoleRepository } from '../ports/RoleRepository';
 import type { UserRoleRepository } from '../ports/UserRoleRepository';
 import type { PasswordHasher } from '../ports/PasswordHasher';
-import type { VerificationTokenRepository } from '../ports/VerificationTokenRepository';
-import type { EmailService } from '../ports/EmailService';
-import type { TokenGenerator } from '../ports/TokenGenerator';
+import type { VerificationService } from '../services/VerificationService';
 import type { User } from '../entities/User';
-import { VERIFICATION_TOKEN_EXPIRY_MS } from '../constants';
 
 export interface RegisterUserDTO {
   email: string;
@@ -33,9 +30,7 @@ export class RegisterUser {
     private readonly roleRepository: RoleRepository,
     private readonly userRoleRepository: UserRoleRepository,
     private readonly passwordHasher: PasswordHasher,
-    private readonly verificationTokenRepository: VerificationTokenRepository,
-    private readonly emailService: EmailService,
-    private readonly tokenGenerator: TokenGenerator,
+    private readonly verificationService: VerificationService,
   ) {}
 
   async execute(dto: RegisterUserDTO): Promise<RegisterUserResult> {
@@ -70,16 +65,10 @@ export class RegisterUser {
       });
     }
 
-    const rawToken = this.tokenGenerator.generate();
-    const tokenHash = this.tokenGenerator.hash(rawToken);
-
-    await this.verificationTokenRepository.create({
-      userId: user.id,
-      tokenHash,
-      expiresAt: new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS),
-    });
-
-    await this.emailService.sendVerificationEmail(normalizedEmail, rawToken);
+    const rawToken = await this.verificationService.createAndSendVerification(
+      user.id,
+      normalizedEmail,
+    );
 
     return { user, verificationToken: rawToken };
   }

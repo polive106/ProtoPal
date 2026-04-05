@@ -9,3 +9,4 @@ export const JWT_SERVICE = 'JwtService';
 export const VERIFICATION_TOKEN_REPOSITORY = 'VerificationTokenRepository';
 export const EMAIL_SERVICE = 'EmailService';
 export const TOKEN_GENERATOR = 'TokenGenerator';
+export const VERIFICATION_SERVICE = 'VerificationService';

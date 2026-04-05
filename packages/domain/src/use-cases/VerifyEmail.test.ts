@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { VerifyEmail, VerifyEmailError } from './VerifyEmail';
-import type { VerificationTokenRepository } from '../ports/VerificationTokenRepository';
 import type { UserRepository } from '../ports/UserRepository';
-import type { TokenGenerator } from '../ports/TokenGenerator';
+import type { VerificationService } from '../services/VerificationService';
 import type { VerificationToken } from '../entities/VerificationToken';
 
 function createMockToken(overrides: Partial<VerificationToken> = {}): VerificationToken {
@@ -18,19 +17,17 @@ function createMockToken(overrides: Partial<VerificationToken> = {}): Verificati
 }
 
 describe('VerifyEmail', () => {
-  let verificationTokenRepo: VerificationTokenRepository;
+  let verificationService: VerificationService;
   let userRepo: UserRepository;
-  let tokenGenerator: TokenGenerator;
   let verifyEmail: VerifyEmail;
 
   beforeEach(() => {
-    verificationTokenRepo = {
-      create: vi.fn(),
-      findByTokenHash: vi.fn().mockResolvedValue(createMockToken()),
-      findActiveByUserId: vi.fn(),
+    verificationService = {
+      createAndSendVerification: vi.fn(),
+      invalidateUserTokens: vi.fn(),
+      findTokenByRaw: vi.fn().mockResolvedValue(createMockToken()),
       markVerified: vi.fn().mockResolvedValue(createMockToken({ verifiedAt: new Date() })),
-      invalidateByUserId: vi.fn(),
-    };
+    } as unknown as VerificationService;
     userRepo = {
       create: vi.fn(),
       findById: vi.fn(),
@@ -49,32 +46,27 @@ describe('VerifyEmail', () => {
       }),
       delete: vi.fn(),
     };
-    tokenGenerator = {
-      generate: vi.fn(),
-      hash: vi.fn().mockReturnValue('hashed-token'),
-    };
-    verifyEmail = new VerifyEmail(verificationTokenRepo, userRepo, tokenGenerator);
+    verifyEmail = new VerifyEmail(verificationService, userRepo);
   });
 
   it('should verify a valid token and approve the user', async () => {
     const result = await verifyEmail.execute({ token: 'raw-token-123' });
 
-    expect(tokenGenerator.hash).toHaveBeenCalledWith('raw-token-123');
-    expect(verificationTokenRepo.findByTokenHash).toHaveBeenCalledWith('hashed-token');
-    expect(verificationTokenRepo.markVerified).toHaveBeenCalledWith('vt-1');
+    expect(verificationService.findTokenByRaw).toHaveBeenCalledWith('raw-token-123');
+    expect(verificationService.markVerified).toHaveBeenCalledWith('vt-1');
     expect(userRepo.update).toHaveBeenCalledWith('user-1', { status: 'approved' });
     expect(result.status).toBe('approved');
   });
 
   it('should throw if token is not found', async () => {
-    vi.mocked(verificationTokenRepo.findByTokenHash).mockResolvedValue(null);
+    vi.mocked(verificationService.findTokenByRaw).mockResolvedValue(null);
 
     await expect(verifyEmail.execute({ token: 'invalid-token' }))
       .rejects.toThrow('Invalid or expired verification token');
   });
 
   it('should throw if token is expired', async () => {
-    vi.mocked(verificationTokenRepo.findByTokenHash).mockResolvedValue(
+    vi.mocked(verificationService.findTokenByRaw).mockResolvedValue(
       createMockToken({ expiresAt: new Date(Date.now() - 1000) }),
     );
 
@@ -83,7 +75,7 @@ describe('VerifyEmail', () => {
   });
 
   it('should throw if token is already verified', async () => {
-    vi.mocked(verificationTokenRepo.findByTokenHash).mockResolvedValue(
+    vi.mocked(verificationService.findTokenByRaw).mockResolvedValue(
       createMockToken({ verifiedAt: new Date() }),
     );
 

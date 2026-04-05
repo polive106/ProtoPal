@@ -1,6 +1,5 @@
-import type { VerificationTokenRepository } from '../ports/VerificationTokenRepository';
+import type { VerificationService } from '../services/VerificationService';
 import type { UserRepository } from '../ports/UserRepository';
-import type { TokenGenerator } from '../ports/TokenGenerator';
 import type { User } from '../entities/User';
 
 export interface VerifyEmailDTO {
@@ -16,9 +15,8 @@ export class VerifyEmailError extends Error {
 
 export class VerifyEmail {
   constructor(
-    private readonly verificationTokenRepository: VerificationTokenRepository,
+    private readonly verificationService: VerificationService,
     private readonly userRepository: UserRepository,
-    private readonly tokenGenerator: TokenGenerator,
   ) {}
 
   async execute(dto: VerifyEmailDTO): Promise<User> {
@@ -27,8 +25,7 @@ export class VerifyEmail {
       throw new VerifyEmailError('Verification token is required');
     }
 
-    const tokenHash = this.tokenGenerator.hash(rawToken);
-    const verificationToken = await this.verificationTokenRepository.findByTokenHash(tokenHash);
+    const verificationToken = await this.verificationService.findTokenByRaw(rawToken);
 
     if (!verificationToken || verificationToken.expiresAt < new Date()) {
       throw new VerifyEmailError('Invalid or expired verification token');
@@ -38,7 +35,7 @@ export class VerifyEmail {
       throw new VerifyEmailError('Email has already been verified');
     }
 
-    await this.verificationTokenRepository.markVerified(verificationToken.id);
+    await this.verificationService.markVerified(verificationToken.id);
     const user = await this.userRepository.update(verificationToken.userId, {
       status: 'approved',
     });

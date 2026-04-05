@@ -1,8 +1,5 @@
 import type { UserRepository } from '../ports/UserRepository';
-import type { VerificationTokenRepository } from '../ports/VerificationTokenRepository';
-import type { EmailService } from '../ports/EmailService';
-import type { TokenGenerator } from '../ports/TokenGenerator';
-import { VERIFICATION_TOKEN_EXPIRY_MS } from '../constants';
+import type { VerificationService } from '../services/VerificationService';
 
 export interface ResendVerificationDTO {
   email: string;
@@ -22,9 +19,7 @@ export class ResendVerificationError extends Error {
 export class ResendVerification {
   constructor(
     private readonly userRepository: UserRepository,
-    private readonly verificationTokenRepository: VerificationTokenRepository,
-    private readonly emailService: EmailService,
-    private readonly tokenGenerator: TokenGenerator,
+    private readonly verificationService: VerificationService,
   ) {}
 
   async execute(dto: ResendVerificationDTO): Promise<ResendVerificationResult> {
@@ -38,18 +33,8 @@ export class ResendVerification {
       throw new ResendVerificationError('No pending account found for this email');
     }
 
-    await this.verificationTokenRepository.invalidateByUserId(user.id);
-
-    const rawToken = this.tokenGenerator.generate();
-    const tokenHash = this.tokenGenerator.hash(rawToken);
-
-    await this.verificationTokenRepository.create({
-      userId: user.id,
-      tokenHash,
-      expiresAt: new Date(Date.now() + VERIFICATION_TOKEN_EXPIRY_MS),
-    });
-
-    await this.emailService.sendVerificationEmail(email, rawToken);
+    await this.verificationService.invalidateUserTokens(user.id);
+    const rawToken = await this.verificationService.createAndSendVerification(user.id, email);
 
     return { verificationToken: rawToken };
   }

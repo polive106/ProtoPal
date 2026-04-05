@@ -20,6 +20,7 @@ import {
   GetNote,
   VerifyEmail,
   ResendVerification,
+  VerificationService,
 } from '@acme/domain';
 import { DatabaseModule } from './database.module';
 import { ServicesModule } from './services.module';
@@ -33,11 +34,22 @@ import {
   VERIFICATION_TOKEN_REPOSITORY,
   EMAIL_SERVICE,
   TOKEN_GENERATOR,
+  VERIFICATION_SERVICE,
 } from './tokens';
 
 @Module({
   imports: [DatabaseModule, ServicesModule],
   providers: [
+    {
+      provide: VERIFICATION_SERVICE,
+      useFactory: (
+        verificationTokenRepo: VerificationTokenRepository,
+        emailService: EmailService,
+        tokenGenerator: TokenGenerator,
+      ) =>
+        new VerificationService(verificationTokenRepo, emailService, tokenGenerator),
+      inject: [VERIFICATION_TOKEN_REPOSITORY, EMAIL_SERVICE, TOKEN_GENERATOR],
+    },
     {
       provide: RegisterUser,
       useFactory: (
@@ -45,27 +57,21 @@ import {
         roleRepo: RoleRepository,
         userRoleRepo: UserRoleRepository,
         hasher: PasswordHasher,
-        verificationTokenRepo: VerificationTokenRepository,
-        emailService: EmailService,
-        tokenGenerator: TokenGenerator,
+        verificationService: VerificationService,
       ) =>
         new RegisterUser(
           userRepo,
           roleRepo,
           userRoleRepo,
           hasher,
-          verificationTokenRepo,
-          emailService,
-          tokenGenerator,
+          verificationService,
         ),
       inject: [
         USER_REPOSITORY,
         ROLE_REPOSITORY,
         USER_ROLE_REPOSITORY,
         PASSWORD_HASHER,
-        VERIFICATION_TOKEN_REPOSITORY,
-        EMAIL_SERVICE,
-        TOKEN_GENERATOR,
+        VERIFICATION_SERVICE,
       ],
     },
     {
@@ -80,32 +86,19 @@ import {
     {
       provide: VerifyEmail,
       useFactory: (
-        verificationTokenRepo: VerificationTokenRepository,
+        verificationService: VerificationService,
         userRepo: UserRepository,
-        tokenGenerator: TokenGenerator,
-      ) => new VerifyEmail(verificationTokenRepo, userRepo, tokenGenerator),
-      inject: [VERIFICATION_TOKEN_REPOSITORY, USER_REPOSITORY, TOKEN_GENERATOR],
+      ) => new VerifyEmail(verificationService, userRepo),
+      inject: [VERIFICATION_SERVICE, USER_REPOSITORY],
     },
     {
       provide: ResendVerification,
       useFactory: (
         userRepo: UserRepository,
-        verificationTokenRepo: VerificationTokenRepository,
-        emailService: EmailService,
-        tokenGenerator: TokenGenerator,
+        verificationService: VerificationService,
       ) =>
-        new ResendVerification(
-          userRepo,
-          verificationTokenRepo,
-          emailService,
-          tokenGenerator,
-        ),
-      inject: [
-        USER_REPOSITORY,
-        VERIFICATION_TOKEN_REPOSITORY,
-        EMAIL_SERVICE,
-        TOKEN_GENERATOR,
-      ],
+        new ResendVerification(userRepo, verificationService),
+      inject: [USER_REPOSITORY, VERIFICATION_SERVICE],
     },
     {
       provide: GetUserRoles,
