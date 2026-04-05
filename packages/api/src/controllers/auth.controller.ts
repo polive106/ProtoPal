@@ -164,7 +164,7 @@ export class AuthController {
     if (token) {
       try {
         const payload = await this.jwtService.verifyToken(token);
-        const exp = (payload as any).exp;
+        const exp = (payload as JwtPayload & { exp?: number }).exp;
         const expiresAt = exp ? new Date(exp * 1000) : new Date(Date.now() + 24 * 60 * 60 * 1000);
         await this.tokenBlacklistRepo.add(hashToken(token), expiresAt);
       } catch {
