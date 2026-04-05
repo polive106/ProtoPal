@@ -27,3 +27,13 @@ export interface RegisterRequest {
   firstName: string;
   lastName: string;
 }
+
+/** API-facing Note (timestamps are ISO strings) */
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+}
