@@ -24,7 +24,8 @@ disable-model-invocation: true
    pnpm test:e2e:mobile  # if mobile layer is affected
    ```
 8. **Update story status** — mark checkboxes and set status to "Done"
-9. **Update USER_FEATURES.md** — add new features for affected user types
+9. **Update epic README** — set the story's status column to "Done" in the epic README table
+10. **Update USER_FEATURES.md** — add new features for affected user types
 
 ## Example: Implementing a Note use case
 
@@ -61,4 +62,5 @@ packages/mobile/maestro/flows/notes/
 - [ ] Lint passes (`pnpm lint`)
 - [ ] E2E tests pass (`pnpm test:e2e`)
 - [ ] Story status updated to "Done"
+- [ ] Epic README status column updated to "Done"
 - [ ] USER_FEATURES.md updated
