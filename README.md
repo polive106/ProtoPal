@@ -148,10 +148,24 @@ pnpm test:watch                       # Watch mode
 pnpm test:e2e                         # E2E tests (requires pnpm dev)
 pnpm test:e2e --headed                # With visible browser
 
+# Mobile E2E Testing (requires Android emulator + Maestro CLI)
+pnpm build:mobile                     # Build Android debug APK
+pnpm test:e2e:mobile                  # Run Maestro E2E tests
+
 # Building
 pnpm build                            # Build all packages
 pnpm lint                             # Type check all packages
 ```
+
+## CI Workflows
+
+| Workflow | File | Trigger | What it does |
+|----------|------|---------|-------------|
+| Tests | `test.yml` | push/PR to main | Lint + unit tests |
+| E2E Tests | `e2e.yml` | push/PR to main | Playwright browser E2E tests |
+| Mobile E2E Tests | `e2e-mobile.yml` | manual (`workflow_dispatch`) | Builds Android debug APK + runs Maestro flows on emulator |
+
+> **Note:** Mobile E2E tests are fully configured but trigger manually only because the Android emulator + SDK download exceeds GitHub Actions free-tier runner limits (~45+ min). To enable automatic runs, add `push`/`pull_request` triggers to `e2e-mobile.yml` or use self-hosted runners with more capacity.
 
 ## Project Structure
 

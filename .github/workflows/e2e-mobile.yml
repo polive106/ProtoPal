@@ -1,25 +1,148 @@
 name: Mobile E2E Tests
+
+# Maestro E2E tests are fully configured but restricted to manual dispatch.
+# The Android emulator setup exceeds GitHub Actions free-tier runner time limits.
+# To enable automatic runs, add push/pull_request triggers below.
 on:
   workflow_dispatch:
 
 jobs:
-  e2e-mobile:
+  build-apk:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      EXPO_PUBLIC_API_URL: http://10.0.2.2:3000
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
         with:
           version: 9.4.0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
 
-      # Maestro E2E tests will be configured here once
-      # a device/emulator setup is added to CI.
-      # For now, this workflow validates the build step.
-      - name: Verify mobile build
-        run: pnpm --filter @acme/mobile build
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Expo prebuild
+        uses: actions/cache@v4
+        with:
+          path: packages/mobile/android
+          key: expo-prebuild-${{ runner.os }}-${{ hashFiles('packages/mobile/app.json', 'packages/mobile/package.json') }}
+          restore-keys: |
+            expo-prebuild-${{ runner.os }}-
+
+      - name: Expo prebuild
+        working-directory: packages/mobile
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('packages/mobile/android/gradle/wrapper/gradle-wrapper.properties', 'packages/mobile/android/**/*.gradle') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Build debug APK
+        working-directory: packages/mobile/android
+        run: ./gradlew assembleDebug -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: packages/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 1
+
+  maestro-tests:
+    needs: build-apk
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    env:
+      DATABASE_PATH: ${{ github.workspace }}/data/e2e-mobile.db
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.4.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: debug-apk
+          path: apk
+
+      - name: Seed test database
+        run: DATABASE_PATH=${{ env.DATABASE_PATH }} pnpm tsx packages/database/src/seed.ts
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run Maestro E2E tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          arch: x86_64
+          target: default
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: |
+            # Start API server
+            DATABASE_PATH=${{ env.DATABASE_PATH }} pnpm --filter @acme/api start &
+            for i in $(seq 1 30); do
+              if curl -s http://localhost:3000/health > /dev/null 2>&1; then
+                echo "API server is ready"
+                break
+              fi
+              if [ "$i" -eq 30 ]; then
+                echo "ERROR: API server failed to start"
+                exit 1
+              fi
+              sleep 2
+            done
+
+            # Install and test
+            adb install apk/app-debug.apk
+            $HOME/.maestro/bin/maestro test packages/mobile/maestro/flows/
+
+      - name: Upload Maestro artifacts
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: maestro-artifacts
+          path: |
+            ~/.maestro/tests/
+            /tmp/maestro-screenshots/
+          retention-days: 7

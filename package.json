@@ -15,7 +15,8 @@
     "lint": "turbo lint && tsc --noEmit -p e2e/tsconfig.json",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "dev:mobile": "pnpm --filter @acme/mobile dev",
-    "test:e2e:mobile": "echo 'Maestro E2E tests - requires device/emulator'",
+    "test:e2e:mobile": "tsx e2e/run-e2e-mobile.ts",
+    "build:mobile": "pnpm --filter @acme/mobile prebuild && pnpm --filter @acme/mobile build:android",
     "clean": "turbo clean && rm -rf node_modules",
     "db:seed": "pnpm --filter @acme/database db:seed",
     "prepare": "husky"

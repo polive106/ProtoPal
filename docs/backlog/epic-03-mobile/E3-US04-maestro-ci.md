@@ -31,7 +31,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin
@@ -53,3 +53,15 @@ Scenario: API is available for authenticated flows
   Then the API server responds to auth requests
   And the seeded test user can log in successfully
 ```
+
+**Implementation Notes**:
+
+The CI workflow (`e2e-mobile.yml`) is fully configured with both APK build and Maestro test
+jobs, but the trigger is restricted to `workflow_dispatch` (manual) only. The Android emulator
+setup (SDK download + emulator boot + test execution) exceeds GitHub Actions free-tier runner
+time limits (~45+ min). To enable automatic runs, add `push`/`pull_request` triggers to the
+workflow or use self-hosted runners with more capacity.
+
+For local testing, use:
+- `pnpm build:mobile` — builds the Android debug APK (Expo prebuild + Gradle assembleDebug)
+- `pnpm test:e2e:mobile` — seeds the database, starts the API, installs the APK, and runs all Maestro flows

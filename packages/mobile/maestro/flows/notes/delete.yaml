@@ -6,10 +6,10 @@ appId: com.acme.protopal
     id: "login-card"
 - tapOn:
     id: "login-input-email"
-- inputText: "admin@protopal.com"
+- inputText: "admin@example.com"
 - tapOn:
     id: "login-input-password"
-- inputText: "Password1!"
+- inputText: "Admin123!"
 - tapOn:
     id: "login-btn-submit"
 - assertVisible:
