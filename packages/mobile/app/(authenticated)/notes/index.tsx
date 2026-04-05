@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FlatList, View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 import {
@@ -6,16 +6,13 @@ import {
   PageSpinner,
   ErrorAlert,
   EmptyState,
-  ConfirmDialog,
 } from '@acme/design-system-mobile';
-import { useNotes, useDeleteNote } from '@/features/notes/hooks';
+import { useNotes } from '@/features/notes/hooks';
 import { NoteCard } from '@/features/notes/widgets/NoteCard';
 
 export default function NotesListScreen() {
   const router = useRouter();
   const { data: notes, isLoading, error } = useNotes();
-  const deleteNote = useDeleteNote();
-  const [deleteId, setDeleteId] = useState<string | null>(null);
 
   if (isLoading) return <PageSpinner label="Loading notes..." />;
   if (error) return <ErrorAlert testID="notes-alert-error" message={error.message} />;
@@ -66,19 +63,6 @@ export default function NotesListScreen() {
         )}
       />
 
-      <ConfirmDialog
-        testID="notes-confirm-delete"
-        visible={!!deleteId}
-        title="Delete Note"
-        message="Are you sure you want to delete this note? This cannot be undone."
-        onConfirm={() => {
-          if (deleteId) {
-            deleteNote.mutate(deleteId);
-            setDeleteId(null);
-          }
-        }}
-        onCancel={() => setDeleteId(null)}
-      />
     </View>
   );
 }

@@ -4,6 +4,9 @@ import type { UserRepository } from '../ports/UserRepository';
 import type { RoleRepository } from '../ports/RoleRepository';
 import type { UserRoleRepository } from '../ports/UserRoleRepository';
 import type { PasswordHasher } from '../ports/PasswordHasher';
+import type { VerificationTokenRepository } from '../ports/VerificationTokenRepository';
+import type { EmailService } from '../ports/EmailService';
+import type { TokenGenerator } from '../ports/TokenGenerator';
 import type { User } from '../entities/User';
 
 function createMockUser(overrides: Partial<User> = {}): User {
@@ -14,7 +17,7 @@ function createMockUser(overrides: Partial<User> = {}): User {
     firstName: 'John',
     lastName: 'Doe',
     isActive: true,
-    status: 'approved',
+    status: 'pending',
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
@@ -26,6 +29,9 @@ describe('RegisterUser', () => {
   let roleRepo: RoleRepository;
   let userRoleRepo: UserRoleRepository;
   let hasher: PasswordHasher;
+  let verificationTokenRepo: VerificationTokenRepository;
+  let emailService: EmailService;
+  let tokenGenerator: TokenGenerator;
   let registerUser: RegisterUser;
 
   beforeEach(() => {
@@ -54,10 +60,39 @@ describe('RegisterUser', () => {
       hash: vi.fn().mockResolvedValue('hashed-password'),
       verify: vi.fn(),
     };
-    registerUser = new RegisterUser(userRepo, roleRepo, userRoleRepo, hasher);
+    verificationTokenRepo = {
+      create: vi.fn().mockResolvedValue({
+        id: 'vt-1',
+        userId: 'user-1',
+        tokenHash: 'hashed-token',
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        verifiedAt: null,
+        createdAt: new Date(),
+      }),
+      findByTokenHash: vi.fn(),
+      findActiveByUserId: vi.fn(),
+      markVerified: vi.fn(),
+      invalidateByUserId: vi.fn(),
+    };
+    emailService = {
+      sendVerificationEmail: vi.fn().mockResolvedValue(undefined),
+    };
+    tokenGenerator = {
+      generate: vi.fn().mockReturnValue('raw-token-123'),
+      hash: vi.fn().mockReturnValue('hashed-token'),
+    };
+    registerUser = new RegisterUser(
+      userRepo,
+      roleRepo,
+      userRoleRepo,
+      hasher,
+      verificationTokenRepo,
+      emailService,
+      tokenGenerator,
+    );
   });
 
-  it('should register a new user successfully', async () => {
+  it('should register a new user with pending status', async () => {
     const result = await registerUser.execute({
       email: 'test@example.com',
       password: 'Password1',
@@ -65,11 +100,36 @@ describe('RegisterUser', () => {
       lastName: 'Doe',
     });
 
-    expect(result).toBeDefined();
-    expect(result.email).toBe('test@example.com');
+    expect(result.user).toBeDefined();
+    expect(result.user.email).toBe('test@example.com');
     expect(hasher.hash).toHaveBeenCalledWith('Password1');
-    expect(userRepo.create).toHaveBeenCalled();
+    expect(userRepo.create).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'pending' }),
+    );
     expect(userRoleRepo.create).toHaveBeenCalled();
+  });
+
+  it('should generate a verification token and send email', async () => {
+    const result = await registerUser.execute({
+      email: 'test@example.com',
+      password: 'Password1',
+      firstName: 'John',
+      lastName: 'Doe',
+    });
+
+    expect(tokenGenerator.generate).toHaveBeenCalled();
+    expect(tokenGenerator.hash).toHaveBeenCalledWith('raw-token-123');
+    expect(verificationTokenRepo.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        userId: 'user-1',
+        tokenHash: 'hashed-token',
+      }),
+    );
+    expect(emailService.sendVerificationEmail).toHaveBeenCalledWith(
+      'test@example.com',
+      'raw-token-123',
+    );
+    expect(result.verificationToken).toBe('raw-token-123');
   });
 
   it('should throw if email is already registered', async () => {

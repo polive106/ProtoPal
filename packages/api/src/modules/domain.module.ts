@@ -5,6 +5,9 @@ import type {
   UserRoleRepository,
   NoteRepository,
   PasswordHasher,
+  VerificationTokenRepository,
+  EmailService,
+  TokenGenerator,
 } from '@acme/domain';
 import {
   RegisterUser,
@@ -15,6 +18,8 @@ import {
   UpdateNote,
   DeleteNote,
   GetNote,
+  VerifyEmail,
+  ResendVerification,
 } from '@acme/domain';
 import { DatabaseModule } from './database.module';
 import { ServicesModule } from './services.module';
@@ -25,6 +30,9 @@ import {
   NOTE_REPOSITORY,
   PASSWORD_HASHER,
   JWT_SERVICE,
+  VERIFICATION_TOKEN_REPOSITORY,
+  EMAIL_SERVICE,
+  TOKEN_GENERATOR,
 } from './tokens';
 
 @Module({
@@ -37,8 +45,28 @@ import {
         roleRepo: RoleRepository,
         userRoleRepo: UserRoleRepository,
         hasher: PasswordHasher,
-      ) => new RegisterUser(userRepo, roleRepo, userRoleRepo, hasher),
-      inject: [USER_REPOSITORY, ROLE_REPOSITORY, USER_ROLE_REPOSITORY, PASSWORD_HASHER],
+        verificationTokenRepo: VerificationTokenRepository,
+        emailService: EmailService,
+        tokenGenerator: TokenGenerator,
+      ) =>
+        new RegisterUser(
+          userRepo,
+          roleRepo,
+          userRoleRepo,
+          hasher,
+          verificationTokenRepo,
+          emailService,
+          tokenGenerator,
+        ),
+      inject: [
+        USER_REPOSITORY,
+        ROLE_REPOSITORY,
+        USER_ROLE_REPOSITORY,
+        PASSWORD_HASHER,
+        VERIFICATION_TOKEN_REPOSITORY,
+        EMAIL_SERVICE,
+        TOKEN_GENERATOR,
+      ],
     },
     {
       provide: LoginUser,
@@ -48,6 +76,36 @@ import {
         hasher: PasswordHasher,
       ) => new LoginUser(userRepo, userRoleRepo, hasher),
       inject: [USER_REPOSITORY, USER_ROLE_REPOSITORY, PASSWORD_HASHER],
+    },
+    {
+      provide: VerifyEmail,
+      useFactory: (
+        verificationTokenRepo: VerificationTokenRepository,
+        userRepo: UserRepository,
+        tokenGenerator: TokenGenerator,
+      ) => new VerifyEmail(verificationTokenRepo, userRepo, tokenGenerator),
+      inject: [VERIFICATION_TOKEN_REPOSITORY, USER_REPOSITORY, TOKEN_GENERATOR],
+    },
+    {
+      provide: ResendVerification,
+      useFactory: (
+        userRepo: UserRepository,
+        verificationTokenRepo: VerificationTokenRepository,
+        emailService: EmailService,
+        tokenGenerator: TokenGenerator,
+      ) =>
+        new ResendVerification(
+          userRepo,
+          verificationTokenRepo,
+          emailService,
+          tokenGenerator,
+        ),
+      inject: [
+        USER_REPOSITORY,
+        VERIFICATION_TOKEN_REPOSITORY,
+        EMAIL_SERVICE,
+        TOKEN_GENERATOR,
+      ],
     },
     {
       provide: GetUserRoles,
@@ -85,6 +143,8 @@ import {
     ServicesModule,
     RegisterUser,
     LoginUser,
+    VerifyEmail,
+    ResendVerification,
     GetUserRoles,
     CreateNote,
     ListNotes,

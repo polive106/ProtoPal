@@ -51,6 +51,11 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 12. E3-US02: Mobile Auth
 13. E3-US03: Mobile Notes CRUD & Agent Tooling
 
+### Phase 4: Tech Debt (Pending)
+14. E4-US01: Share Validation Schemas via @acme/shared
+15. E4-US02: Share Note Type and Query Keys via @acme/shared
+16. E4-US03: Reduce RegisterUser Constructor Parameter Sprawl
+
 ## Status Conventions
 
 - **Pending**: Not started

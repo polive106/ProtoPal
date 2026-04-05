@@ -35,7 +35,7 @@ describe('useRegistrationForm', () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  it('form.handleSubmit calls authApi.register and navigates to /login', async () => {
+  it('form.handleSubmit calls authApi.register and navigates to /check-email', async () => {
     const { authApi } = await import('../api');
 
     const { result } = renderHook(() => useRegistrationForm());
@@ -52,7 +52,7 @@ describe('useRegistrationForm', () => {
     });
 
     expect(authApi.register).toHaveBeenCalledWith(validFormData);
-    expect(mockNavigate).toHaveBeenCalledWith({ to: '/login' });
+    expect(mockNavigate).toHaveBeenCalledWith({ to: '/check-email', search: { email: validFormData.email } });
   });
 
   it('sets serverError when register fails with ApiError', async () => {

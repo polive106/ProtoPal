@@ -7,6 +7,10 @@ import {
   LoginUser,
   LoginUserError,
   GetUserRoles,
+  VerifyEmail,
+  VerifyEmailError,
+  ResendVerification,
+  ResendVerificationError,
 } from '@acme/domain';
 import { AuthController } from './auth.controller';
 import { createTestApp, authCookie, mockUserPayload } from '../testing/test-app';
@@ -21,6 +25,8 @@ describe('AuthController (integration)', () => {
   const mockRegisterUser = { execute: vi.fn() };
   const mockLoginUser = { execute: vi.fn() };
   const mockGetUserRoles = { execute: vi.fn() };
+  const mockVerifyEmail = { execute: vi.fn() };
+  const mockResendVerification = { execute: vi.fn() };
   const mockTokenBlacklistRepo = {
     add: vi.fn().mockResolvedValue(undefined),
     exists: vi.fn().mockResolvedValue(false),
@@ -34,6 +40,8 @@ describe('AuthController (integration)', () => {
         { provide: RegisterUser, useValue: mockRegisterUser },
         { provide: LoginUser, useValue: mockLoginUser },
         { provide: GetUserRoles, useValue: mockGetUserRoles },
+        { provide: VerifyEmail, useValue: mockVerifyEmail },
+        { provide: ResendVerification, useValue: mockResendVerification },
         { provide: TOKEN_BLACKLIST_REPOSITORY, useValue: mockTokenBlacklistRepo },
       ],
     });
@@ -61,22 +69,8 @@ describe('AuthController (integration)', () => {
       lastName: 'Doe',
     };
 
-    it('returns 201 on success', async () => {
+    it('returns 201 on success with pending status', async () => {
       mockRegisterUser.execute.mockResolvedValue({
-        id: 'user-1',
-        email: validBody.email,
-        firstName: validBody.firstName,
-        lastName: validBody.lastName,
-        status: 'pending',
-      });
-
-      const res = await request(app.getHttpServer())
-        .post('/auth/register')
-        .send(validBody);
-
-      expect(res.status).toBe(201);
-      expect(res.body).toEqual({
-        message: 'Registration successful.',
         user: {
           id: 'user-1',
           email: validBody.email,
@@ -84,7 +78,17 @@ describe('AuthController (integration)', () => {
           lastName: validBody.lastName,
           status: 'pending',
         },
+        verificationToken: 'test-token-123',
       });
+
+      const res = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(validBody);
+
+      expect(res.status).toBe(201);
+      expect(res.body.message).toContain('Please check your email');
+      expect(res.body.user.status).toBe('pending');
+      expect(res.body.verificationToken).toBe('test-token-123');
     });
 
     it('returns 400 on validation error', async () => {

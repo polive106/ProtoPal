@@ -3,6 +3,7 @@ import {
   Post,
   Get,
   Body,
+  Query,
   Req,
   Res,
   Inject,
@@ -19,6 +20,10 @@ import {
   LoginUser,
   LoginUserError,
   GetUserRoles,
+  VerifyEmail,
+  VerifyEmailError,
+  ResendVerification,
+  ResendVerificationError,
   type TokenBlacklistRepository,
 } from '@acme/domain';
 import { JwtService, type JwtPayload, type JwtRole } from '../services';
@@ -27,7 +32,14 @@ import { ZodValidationPipe } from '../common/decorators';
 import { RateLimit } from '../common/guards';
 import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
 import { hashToken } from '../common/utils/hash-token';
-import { registerSchema, loginSchema, type RegisterDto, type LoginDto } from './dto/auth.dto';
+import {
+  registerSchema,
+  loginSchema,
+  resendVerificationSchema,
+  type RegisterDto,
+  type LoginDto,
+  type ResendVerificationDto,
+} from './dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -35,6 +47,8 @@ export class AuthController {
     @Inject(RegisterUser) private readonly registerUser: RegisterUser,
     @Inject(LoginUser) private readonly loginUser: LoginUser,
     @Inject(GetUserRoles) private readonly getUserRoles: GetUserRoles,
+    @Inject(VerifyEmail) private readonly verifyEmail: VerifyEmail,
+    @Inject(ResendVerification) private readonly resendVerification: ResendVerification,
     @Inject(JWT_SERVICE) private readonly jwtService: JwtService,
     @Inject(TOKEN_BLACKLIST_REPOSITORY) private readonly tokenBlacklistRepo: TokenBlacklistRepository,
   ) {}
@@ -45,14 +59,41 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async register(@Body(new ZodValidationPipe(registerSchema)) dto: RegisterDto) {
     try {
-      const user = await this.registerUser.execute({
+      const result = await this.registerUser.execute({
         email: dto.email,
         password: dto.password,
         firstName: dto.firstName,
         lastName: dto.lastName,
       });
+      const response: Record<string, unknown> = {
+        message: 'Registration successful. Please check your email to verify your account.',
+        user: {
+          id: result.user.id,
+          email: result.user.email,
+          firstName: result.user.firstName,
+          lastName: result.user.lastName,
+          status: result.user.status,
+        },
+      };
+      if (process.env.NODE_ENV !== 'production') {
+        response.verificationToken = result.verificationToken;
+      }
+      return response;
+    } catch (error) {
+      if (error instanceof RegisterUserError) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  @Public()
+  @Get('verify')
+  async verify(@Query('token') token: string) {
+    try {
+      const user = await this.verifyEmail.execute({ token: token || '' });
       return {
-        message: 'Registration successful.',
+        message: 'Email verified successfully. You can now log in.',
         user: {
           id: user.id,
           email: user.email,
@@ -62,7 +103,31 @@ export class AuthController {
         },
       };
     } catch (error) {
-      if (error instanceof RegisterUserError) {
+      if (error instanceof VerifyEmailError) {
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  @Public()
+  @Post('resend-verification')
+  @RateLimit({ windowMs: 60 * 60 * 1000, max: 3, keyPrefix: 'resend-verification' })
+  @HttpCode(HttpStatus.OK)
+  async resendVerificationEmail(
+    @Body(new ZodValidationPipe(resendVerificationSchema)) dto: ResendVerificationDto,
+  ) {
+    try {
+      const result = await this.resendVerification.execute({ email: dto.email });
+      const response: Record<string, unknown> = {
+        message: 'Verification email sent. Please check your inbox.',
+      };
+      if (process.env.NODE_ENV !== 'production') {
+        response.verificationToken = result.verificationToken;
+      }
+      return response;
+    } catch (error) {
+      if (error instanceof ResendVerificationError) {
         throw new BadRequestException(error.message);
       }
       throw error;

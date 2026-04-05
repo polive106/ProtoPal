@@ -1,5 +1,7 @@
-import { createHash } from 'crypto';
+import { CryptoTokenGenerator } from '../../services/CryptoTokenGenerator';
+
+const tokenGenerator = new CryptoTokenGenerator();
 
 export function hashToken(token: string): string {
-  return createHash('sha256').update(token).digest('hex');
+  return tokenGenerator.hash(token);
 }

@@ -51,7 +51,7 @@ test.describe('Register', () => {
       await expect(page.getByTestId(testIds.register.btnSubmit)).toBeVisible();
     });
 
-    test('should register and redirect to login', async ({ page }) => {
+    test('should register and redirect to check-email page', async ({ page }) => {
       await page.goto('/register');
       const email = `ui-test-${Date.now()}@example.com`;
       await page.getByTestId(testIds.register.inputFirstName).fill('UI');
@@ -59,7 +59,7 @@ test.describe('Register', () => {
       await page.getByTestId(testIds.register.inputEmail).fill(email);
       await page.getByTestId(testIds.register.inputPassword).fill('TestPass1');
       await page.getByTestId(testIds.register.btnSubmit).click();
-      await expect(page.getByTestId(testIds.login.card)).toBeVisible({ timeout: 10000 });
+      await expect(page.getByTestId(testIds.checkEmail.card)).toBeVisible({ timeout: 10000 });
     });
   });
 });

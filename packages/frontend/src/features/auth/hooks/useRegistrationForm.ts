@@ -18,7 +18,7 @@ export function useRegistrationForm() {
       setIsLoading(true);
       try {
         await authApi.register(value);
-        navigate({ to: '/login' });
+        navigate({ to: '/check-email', search: { email: value.email } });
       } catch (error) {
         if (error instanceof ApiError) {
           setServerError(error.message);

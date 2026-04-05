@@ -7,6 +7,7 @@ import {
   DrizzleUserRoleRepository,
   DrizzleNoteRepository,
   DrizzleTokenBlacklistRepository,
+  DrizzleVerificationTokenRepository,
 } from '@acme/database';
 import {
   DATABASE_CONNECTION,
@@ -15,6 +16,7 @@ import {
   USER_ROLE_REPOSITORY,
   NOTE_REPOSITORY,
   TOKEN_BLACKLIST_REPOSITORY,
+  VERIFICATION_TOKEN_REPOSITORY,
 } from './tokens';
 
 function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnection) => unknown) {
@@ -36,6 +38,7 @@ function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnec
     repositoryProvider(USER_ROLE_REPOSITORY, DrizzleUserRoleRepository),
     repositoryProvider(NOTE_REPOSITORY, DrizzleNoteRepository),
     repositoryProvider(TOKEN_BLACKLIST_REPOSITORY, DrizzleTokenBlacklistRepository),
+    repositoryProvider(VERIFICATION_TOKEN_REPOSITORY, DrizzleVerificationTokenRepository),
   ],
   exports: [
     DATABASE_CONNECTION,
@@ -44,6 +47,7 @@ function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnec
     USER_ROLE_REPOSITORY,
     NOTE_REPOSITORY,
     TOKEN_BLACKLIST_REPOSITORY,
+    VERIFICATION_TOKEN_REPOSITORY,
   ],
 })
 export class DatabaseModule {}

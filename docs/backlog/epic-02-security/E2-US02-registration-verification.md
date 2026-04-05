@@ -3,14 +3,14 @@
 **User Story**: As a platform operator, I want new accounts to require email verification before gaining access so that only legitimate users can use the system.
 
 **Acceptance Criteria**:
-- [ ] New users are created with `status: 'pending'` instead of `'approved'`
-- [ ] A verification token is generated and stored on registration
-- [ ] A verification email is sent with a time-limited link
-- [ ] `GET /auth/verify?token=...` endpoint verifies the token and sets status to `'approved'`
-- [ ] Login rejects users with `status: 'pending'` with a clear message
-- [ ] Expired verification tokens are rejected
-- [ ] Users can request a new verification email via `POST /auth/resend-verification`
-- [ ] Frontend shows appropriate messaging for pending accounts
+- [x] New users are created with `status: 'pending'` instead of `'approved'`
+- [x] A verification token is generated and stored on registration
+- [x] A verification email is sent with a time-limited link
+- [x] `GET /auth/verify?token=...` endpoint verifies the token and sets status to `'approved'`
+- [x] Login rejects users with `status: 'pending'` with a clear message
+- [x] Expired verification tokens are rejected
+- [x] Users can request a new verification email via `POST /auth/resend-verification`
+- [x] Frontend shows appropriate messaging for pending accounts
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -32,7 +32,7 @@
 
 **Complexity**: L
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

@@ -101,6 +101,16 @@ async function seed() {
         created_at INTEGER NOT NULL
       )
     `);
+    db.run(sql`
+      CREATE TABLE IF NOT EXISTS verification_tokens (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        token_hash TEXT NOT NULL UNIQUE,
+        expires_at INTEGER NOT NULL,
+        verified_at INTEGER,
+        created_at INTEGER NOT NULL
+      )
+    `);
   }
 
   const now = Date.now();

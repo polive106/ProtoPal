@@ -50,6 +50,18 @@ export const tokenBlacklist = pgTable('token_blacklist', {
   createdAt: timestamp('created_at').notNull(),
 });
 
+// === VERIFICATION TOKENS ===
+export const verificationTokens = pgTable('verification_tokens', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: timestamp('expires_at').notNull(),
+  verifiedAt: timestamp('verified_at'),
+  createdAt: timestamp('created_at').notNull(),
+});
+
 // === NOTES ===
 export const notes = pgTable('notes', {
   id: text('id').primaryKey(),

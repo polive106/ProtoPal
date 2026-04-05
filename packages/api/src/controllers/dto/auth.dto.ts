@@ -17,5 +17,10 @@ export const registerSchema = z.object({
   lastName: z.string().min(1),
 });
 
+export const resendVerificationSchema = z.object({
+  email: z.string().email(),
+});
+
 export type LoginDto = z.infer<typeof loginSchema>;
 export type RegisterDto = z.infer<typeof registerSchema>;
+export type ResendVerificationDto = z.infer<typeof resendVerificationSchema>;

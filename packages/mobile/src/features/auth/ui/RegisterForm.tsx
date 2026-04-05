@@ -14,13 +14,7 @@ import {
   ErrorAlert,
 } from '@acme/design-system-mobile';
 import { useRegistrationForm } from '../hooks';
-
-function getFieldError(errors: unknown[]): string {
-  const first = errors[0];
-  if (typeof first === 'string') return first;
-  if (first && typeof first === 'object' && 'message' in first) return String((first as any).message);
-  return 'Invalid';
-}
+import { getFieldError } from '@/lib/formUtils';
 
 export function RegisterForm() {
   const { form, serverError, setServerError, isLoading } = useRegistrationForm();
