@@ -1,1 +1,3 @@
-export { queryKeys } from '@acme/shared';
+import { createQueryKeys } from '@acme/shared';
+
+export const queryKeys = createQueryKeys('frontend');
