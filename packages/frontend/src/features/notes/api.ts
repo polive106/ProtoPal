@@ -1,13 +1,5 @@
 import { api } from '@/lib/api';
-
-export interface Note {
-  id: string;
-  title: string;
-  content: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Note } from '@acme/shared';
 
 export const notesApi = {
   list: () => api.get<{ notes: Note[] }>('/notes').then((r) => r.notes),

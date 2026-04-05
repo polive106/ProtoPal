@@ -1,4 +1,5 @@
-export { notesApi, type Note } from './api';
+export { notesApi } from './api';
+export type { Note } from '@acme/shared';
 export { noteFormSchema, type NoteFormData } from './schemas';
 export {
   useNotes,
