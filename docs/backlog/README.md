@@ -45,16 +45,21 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 8. E2-US05: Persistent Rate Limiting
 9. E2-US06: Password Reset Flow
 10. E2-US07: Security Headers & Audit Logging
+11. E2-US08: Input Validation Hardening & Payload Size Limits
+12. E2-US09: User Enumeration Prevention
+13. E2-US10: Token Exposure Reduction
+14. E2-US11: Seed Data & Production Safety Guards
+15. E2-US12: Dependency Security Scanning & Supply Chain Protection
 
 ### Phase 3: Mobile App (Pending)
-11. E3-US01: Mobile Project Shell & Design System
-12. E3-US02: Mobile Auth
-13. E3-US03: Mobile Notes CRUD & Agent Tooling
+16. E3-US01: Mobile Project Shell & Design System
+17. E3-US02: Mobile Auth
+18. E3-US03: Mobile Notes CRUD & Agent Tooling
 
 ### Phase 4: Tech Debt (Pending)
-14. E4-US01: Share Validation Schemas via @acme/shared
-15. E4-US02: Share Note Type and Query Keys via @acme/shared
-16. E4-US03: Reduce RegisterUser Constructor Parameter Sprawl
+19. E4-US01: Share Validation Schemas via @acme/shared
+20. E4-US02: Share Note Type and Query Keys via @acme/shared
+21. E4-US03: Reduce RegisterUser Constructor Parameter Sprawl
 
 ## Status Conventions
 
