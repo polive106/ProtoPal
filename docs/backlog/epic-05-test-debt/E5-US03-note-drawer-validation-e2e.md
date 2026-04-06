@@ -3,15 +3,15 @@
 **User Story**: As a developer, I want comprehensive UI E2E tests for the note drawer so that validation errors, edit flows, and form states are verified end-to-end.
 
 **Acceptance Criteria**:
-- [ ] E2E test verifies "Title is required" inline error on empty blur
-- [ ] E2E test verifies "Content is required" inline error on empty blur
-- [ ] E2E test verifies title at exactly 255 chars succeeds (positive boundary)
-- [ ] E2E test verifies content at exactly 50,000 chars succeeds (positive boundary)
-- [ ] E2E test verifies cancel button closes drawer without saving
-- [ ] E2E test verifies edit flow: open existing note → form pre-fills → update → drawer closes
-- [ ] E2E test verifies drawer shows "Edit Note" title and "Update" button in edit mode
-- [ ] E2E test verifies "Saving..." button text during creation
-- [ ] E2E test verifies delete note flow from list
+- [x] E2E test verifies "Title is required" inline error on empty blur
+- [x] E2E test verifies "Content is required" inline error on empty blur
+- [x] E2E test verifies title at exactly 255 chars succeeds (positive boundary)
+- [x] E2E test verifies content at exactly 50,000 chars succeeds (positive boundary)
+- [x] E2E test verifies cancel button closes drawer without saving
+- [x] E2E test verifies edit flow: open existing note → form pre-fills → update → drawer closes
+- [x] E2E test verifies drawer shows "Edit Note" title and "Update" button in edit mode
+- [x] E2E test verifies "Saving..." button text during creation
+- [x] E2E test verifies delete note flow from list
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -22,7 +22,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin
