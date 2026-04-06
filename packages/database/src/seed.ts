@@ -111,6 +111,16 @@ async function seed() {
         created_at INTEGER NOT NULL
       )
     `);
+    db.run(sql`
+      CREATE TABLE IF NOT EXISTS rate_limit_entries (
+        key TEXT PRIMARY KEY,
+        count INTEGER NOT NULL DEFAULT 0,
+        window_start INTEGER NOT NULL,
+        prev_count INTEGER NOT NULL DEFAULT 0,
+        prev_window_start INTEGER,
+        expires_at INTEGER NOT NULL
+      )
+    `);
   }
 
   const now = Date.now();
