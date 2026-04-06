@@ -14,7 +14,6 @@ import {
 } from '@acme/domain';
 import { AuthController } from './auth.controller';
 import { createTestApp, authCookie, mockUserPayload } from '../testing/test-app';
-import { clearRateLimitStore } from '../common/guards/rate-limit.guard';
 import { TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
 import { AuditLogService } from '../services';
 import type { JwtService } from '../services';
@@ -61,7 +60,7 @@ describe('AuthController (integration)', () => {
     mockTokenBlacklistRepo.add.mockResolvedValue(undefined);
     mockTokenBlacklistRepo.exists.mockResolvedValue(false);
     mockTokenBlacklistRepo.deleteExpired.mockResolvedValue(0);
-    clearRateLimitStore();
+    process.env.DISABLE_RATE_LIMIT = 'true';
   });
 
   describe('POST /auth/register', () => {

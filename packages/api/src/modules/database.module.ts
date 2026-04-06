@@ -7,6 +7,7 @@ import {
   DrizzleUserRoleRepository,
   DrizzleNoteRepository,
   DrizzleTokenBlacklistRepository,
+  DrizzleRateLimitRepository,
   DrizzleVerificationTokenRepository,
 } from '@acme/database';
 import {
@@ -16,6 +17,7 @@ import {
   USER_ROLE_REPOSITORY,
   NOTE_REPOSITORY,
   TOKEN_BLACKLIST_REPOSITORY,
+  RATE_LIMIT_REPOSITORY,
   VERIFICATION_TOKEN_REPOSITORY,
 } from './tokens';
 
@@ -38,6 +40,7 @@ function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnec
     repositoryProvider(USER_ROLE_REPOSITORY, DrizzleUserRoleRepository),
     repositoryProvider(NOTE_REPOSITORY, DrizzleNoteRepository),
     repositoryProvider(TOKEN_BLACKLIST_REPOSITORY, DrizzleTokenBlacklistRepository),
+    repositoryProvider(RATE_LIMIT_REPOSITORY, DrizzleRateLimitRepository),
     repositoryProvider(VERIFICATION_TOKEN_REPOSITORY, DrizzleVerificationTokenRepository),
   ],
   exports: [
@@ -47,6 +50,7 @@ function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnec
     USER_ROLE_REPOSITORY,
     NOTE_REPOSITORY,
     TOKEN_BLACKLIST_REPOSITORY,
+    RATE_LIMIT_REPOSITORY,
     VERIFICATION_TOKEN_REPOSITORY,
   ],
 })

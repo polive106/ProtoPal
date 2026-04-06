@@ -14,7 +14,6 @@ import {
 } from '@acme/domain';
 import { NotesController } from './notes.controller';
 import { createTestApp, authCookie } from '../testing/test-app';
-import { clearRateLimitStore } from '../common/guards/rate-limit.guard';
 import type { JwtService } from '../services';
 
 describe('NotesController (integration)', () => {
@@ -50,7 +49,7 @@ describe('NotesController (integration)', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-    clearRateLimitStore();
+    process.env.DISABLE_RATE_LIMIT = 'true';
   });
 
   describe('GET /notes', () => {

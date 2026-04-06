@@ -17,6 +17,7 @@ export * from './ports/NoteRepository';
 // Service Ports
 export * from './ports/PasswordHasher';
 export * from './ports/TokenBlacklistRepository';
+export * from './ports/RateLimitRepository';
 export * from './ports/VerificationTokenRepository';
 export * from './ports/EmailService';
 export * from './ports/TokenGenerator';
