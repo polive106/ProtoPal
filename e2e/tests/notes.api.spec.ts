@@ -119,7 +119,7 @@ test.describe('Notes API @api', () => {
     expect(response.status()).toBe(400);
   });
 
-  test('Create note with oversized title → 400', async ({ request }) => {
+  test('Create note with title exceeding 255 chars → 400', async ({ request }) => {
     const response = await request.post(apiUrl('/notes'), {
       data: { title: 'A'.repeat(256), content: 'Valid content' },
       headers: { Cookie: cookie },
@@ -128,7 +128,7 @@ test.describe('Notes API @api', () => {
     expect(response.status()).toBe(400);
   });
 
-  test('Create note with oversized content → 400', async ({ request }) => {
+  test('Create note with content exceeding 50,000 chars → 400', async ({ request }) => {
     const response = await request.post(apiUrl('/notes'), {
       data: { title: 'Valid title', content: 'A'.repeat(50_001) },
       headers: { Cookie: cookie },

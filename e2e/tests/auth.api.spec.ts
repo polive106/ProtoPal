@@ -189,7 +189,7 @@ test.describe('Auth API @api', () => {
     expect(revokedResponse.status()).toBe(401);
   });
 
-  test('Register with oversized password → 400', async ({ request }) => {
+  test('Register with password exceeding 72 chars → 400', async ({ request }) => {
     const response = await registerUser(request, {
       email: `auth-long-pw-${Date.now()}@example.com`,
       password: 'A'.repeat(71) + 'a1',
