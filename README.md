@@ -70,6 +70,33 @@ Every guardrail is documented in `AGENTS.md` so AI tools enforce them automatica
 - **Pre-commit checklist** — The `review` skill covers security, testing, architecture, and code quality
 - **Database conventions** — Snake_case columns, seed scripts updated with every schema change
 
+### Automated Hooks
+
+The `.claude/hooks/` directory contains **5 shell scripts** that run automatically to enforce consistency. These hooks are registered in `.claude/settings.json` and fire on specific events — no manual intervention required.
+
+#### Session Start
+
+| Hook | What it does |
+|------|-------------|
+| `check-backlog-drift.sh` | Scans all stories for status drift — catches Pending stories whose acceptance criteria are already checked, and status mismatches between story files and epic READMEs. Fires once at the start of every session so stale statuses are caught before any work begins. |
+
+#### Post Tool Use (Edit)
+
+| Hook | Trigger condition | What it does |
+|------|-------------------|-------------|
+| `validate-story-format.sh` | Any edit to a story file | Ensures all required sections exist (User Story, Acceptance Criteria, Technical Tasks, Dependencies, Complexity, Status, Test Scenarios) |
+| `check-story-status-sync.sh` | Any edit to a story file | Verifies the story's `**Status**` field matches the corresponding row in the epic README table — blocks if they're out of sync |
+| `check-agents-claude-sync.sh` | Any edit to `AGENTS.md` or `CLAUDE.md` | Keeps skill tables in sync between both files |
+
+#### Post Tool Use (Write)
+
+| Hook | Trigger condition | What it does |
+|------|-------------------|-------------|
+| `validate-story-format.sh` | New story file created | Same format validation as above |
+| `check-backlog-sync.sh` | New story file created | Verifies the new story ID is referenced in both the epic README and the PRD — blocks if indexes are missing |
+
+These hooks form a **closed loop**: `check-backlog-drift.sh` catches historical drift on session start, `check-story-status-sync.sh` prevents new drift on every edit, and `check-backlog-sync.sh` ensures new stories are properly indexed.
+
 ### Agent-Readable Context
 
 - **`AGENTS.md`** — Universal instructions any AI tool can follow (architecture, testing rules, conventions)
