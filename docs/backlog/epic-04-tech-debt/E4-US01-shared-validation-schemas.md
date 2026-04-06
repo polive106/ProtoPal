@@ -3,11 +3,11 @@
 **User Story**: As a developer, I want auth validation schemas defined once in `@acme/shared` so that the frontend and mobile packages stay in sync without copy-paste.
 
 **Acceptance Criteria**:
-- [ ] `loginSchema` and `registrationSchema` (Zod) live in `@acme/shared`
-- [ ] `packages/frontend/src/features/auth/schemas.ts` re-exports from `@acme/shared`
-- [ ] `packages/mobile/src/features/auth/schemas.ts` re-exports from `@acme/shared`
-- [ ] Existing tests continue to pass without modification
-- [ ] `zod` is added as a dependency to `@acme/shared`
+- [x] `loginSchema` and `registrationSchema` (Zod) live in `@acme/shared`
+- [x] `packages/frontend/src/features/auth/schemas.ts` re-exports from `@acme/shared`
+- [x] `packages/mobile/src/features/auth/schemas.ts` re-exports from `@acme/shared`
+- [x] Existing tests continue to pass without modification
+- [x] `zod` is added as a dependency to `@acme/shared`
 
 **Technical Tasks**:
 | Layer | Task | File(s) |

@@ -3,13 +3,13 @@
 **User Story**: As a platform operator, I want custom security headers and structured audit logs so that the application meets security best practices and incidents are traceable.
 
 **Acceptance Criteria**:
-- [ ] Helmet is configured with a custom Content-Security-Policy
-- [ ] CSP policy restricts script sources, frame ancestors, and object sources
-- [ ] Logging interceptor sanitizes query parameters before logging
-- [ ] Security-relevant events are logged in structured JSON format (login, logout, failed login, registration, password reset, role changes)
-- [ ] Audit log entries include timestamp, action, user ID, IP address, and outcome
-- [ ] Sensitive data (passwords, tokens) is never included in logs
-- [ ] Admin role bypass in RolesGuard is logged for audit trail
+- [x] Helmet is configured with a custom Content-Security-Policy
+- [x] CSP policy restricts script sources, frame ancestors, and object sources
+- [x] Logging interceptor sanitizes query parameters before logging
+- [x] Security-relevant events are logged in structured JSON format (login, logout, failed login, registration, password reset, role changes)
+- [x] Audit log entries include timestamp, action, user ID, IP address, and outcome
+- [x] Sensitive data (passwords, tokens) is never included in logs
+- [x] Admin role bypass in RolesGuard is logged for audit trail
 
 **Technical Tasks**:
 | Layer | Task | File(s) |

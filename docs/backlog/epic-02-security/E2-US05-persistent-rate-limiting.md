@@ -3,12 +3,12 @@
 **User Story**: As a platform operator, I want rate limiting to persist across server restarts and work across multiple instances so that protection is reliable in production.
 
 **Acceptance Criteria**:
-- [ ] Rate limit state is stored in the database (or Redis when available)
-- [ ] Rate limits survive server restarts
-- [ ] Rate limits work correctly across multiple server instances
-- [ ] `clearRateLimitStore()` export is removed or gated behind test-only check
-- [ ] Sliding window algorithm replaces the current fixed window
-- [ ] Rate limit headers are included in responses (X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset)
+- [x] Rate limit state is stored in the database (or Redis when available)
+- [x] Rate limits survive server restarts
+- [x] Rate limits work correctly across multiple server instances
+- [x] `clearRateLimitStore()` export is removed or gated behind test-only check
+- [x] Sliding window algorithm replaces the current fixed window
+- [x] Rate limit headers are included in responses (X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset)
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -26,7 +26,7 @@
 
 **Complexity**: M
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

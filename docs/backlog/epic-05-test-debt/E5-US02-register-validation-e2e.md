@@ -3,19 +3,19 @@
 **User Story**: As a developer, I want comprehensive UI E2E tests for the registration form so that all client-side validation rules are verified to display correctly to users.
 
 **Acceptance Criteria**:
-- [ ] E2E test verifies "First name is required" inline error on empty blur
-- [ ] E2E test verifies "Last name is required" inline error on empty blur
-- [ ] E2E test verifies "Email is required" inline error on empty blur
-- [ ] E2E test verifies "Invalid email address" inline error for malformed email
-- [ ] E2E test verifies "Minimum 8 characters" inline error for short password
-- [ ] E2E test verifies "Must contain an uppercase letter" error
-- [ ] E2E test verifies "Must contain a lowercase letter" error
-- [ ] E2E test verifies "Must contain a number" error
-- [ ] E2E test verifies last name max length (100 chars) error display
-- [ ] E2E test verifies email max length (254 chars) error display
-- [ ] E2E test verifies multiple field errors display simultaneously
-- [ ] E2E test verifies "Creating..." button text during submission
-- [ ] E2E test verifies server error (e.g. duplicate email) shows error alert in UI
+- [x] E2E test verifies "First name is required" inline error on empty blur
+- [x] E2E test verifies "Last name is required" inline error on empty blur
+- [x] E2E test verifies "Email is required" inline error on empty blur
+- [x] E2E test verifies "Invalid email address" inline error for malformed email
+- [x] E2E test verifies "Minimum 8 characters" inline error for short password
+- [x] E2E test verifies "Must contain an uppercase letter" error
+- [x] E2E test verifies "Must contain a lowercase letter" error
+- [x] E2E test verifies "Must contain a number" error
+- [x] E2E test verifies last name max length (100 chars) error display
+- [x] E2E test verifies email max length (254 chars) error display
+- [x] E2E test verifies multiple field errors display simultaneously
+- [x] E2E test verifies "Creating..." button text during submission
+- [x] E2E test verifies server error (e.g. duplicate email) shows error alert in UI
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -26,7 +26,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

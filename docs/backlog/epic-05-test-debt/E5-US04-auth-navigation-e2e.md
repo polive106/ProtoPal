@@ -3,16 +3,16 @@
 **User Story**: As a developer, I want UI E2E tests covering navigation between auth pages and post-auth flows so that link behavior, page transitions, and state rendering are verified.
 
 **Acceptance Criteria**:
-- [ ] E2E test verifies "Sign up" link on login page navigates to /register
-- [ ] E2E test verifies "Sign in" link on register page navigates to /login
-- [ ] E2E test verifies Check Email page renders after registration with email info
-- [ ] E2E test verifies resend verification button on Check Email page works
-- [ ] E2E test verifies "Sign in" link on Check Email page navigates to /login
-- [ ] E2E test verifies Verify Email page shows loading then success state
-- [ ] E2E test verifies Verify Email page shows error for invalid token
-- [ ] E2E test verifies "Sign in" link on Verify success page navigates to /login
-- [ ] E2E test verifies logout redirects to login page
-- [ ] E2E test verifies Dashboard "Notes" link navigates to /notes
+- [x] E2E test verifies "Sign up" link on login page navigates to /register
+- [x] E2E test verifies "Sign in" link on register page navigates to /login
+- [x] E2E test verifies Check Email page renders after registration with email info
+- [x] E2E test verifies resend verification button on Check Email page works
+- [x] E2E test verifies "Sign in" link on Check Email page navigates to /login
+- [x] E2E test verifies Verify Email page shows loading then success state
+- [x] E2E test verifies Verify Email page shows error for invalid token
+- [x] E2E test verifies "Sign in" link on Verify success page navigates to /login
+- [x] E2E test verifies logout redirects to login page
+- [x] E2E test verifies Dashboard "Notes" link navigates to /notes
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -23,7 +23,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

@@ -3,13 +3,13 @@
 **User Story**: As a developer, I want the API-facing `Note` type and `queryKeys` object defined once in `@acme/shared` so that the frontend and mobile packages don't drift apart.
 
 **Acceptance Criteria**:
-- [ ] An API-facing `Note` interface (with string timestamps) is defined in `@acme/shared`
-- [ ] A `queryKeys` object is defined in `@acme/shared`
-- [ ] Frontend `features/notes/api.ts` imports `Note` from `@acme/shared` instead of defining it locally
-- [ ] Mobile `features/notes/api.ts` imports `Note` from `@acme/shared` instead of defining it locally
-- [ ] Frontend `lib/queryKeys.ts` re-exports from `@acme/shared`
-- [ ] Mobile `lib/queryKeys.ts` re-exports from `@acme/shared`
-- [ ] Existing tests continue to pass without modification
+- [x] An API-facing `Note` interface (with string timestamps) is defined in `@acme/shared`
+- [x] A `queryKeys` object is defined in `@acme/shared`
+- [x] Frontend `features/notes/api.ts` imports `Note` from `@acme/shared` instead of defining it locally
+- [x] Mobile `features/notes/api.ts` imports `Note` from `@acme/shared` instead of defining it locally
+- [x] Frontend `lib/queryKeys.ts` re-exports from `@acme/shared`
+- [x] Mobile `lib/queryKeys.ts` re-exports from `@acme/shared`
+- [x] Existing tests continue to pass without modification
 
 **Technical Tasks**:
 | Layer | Task | File(s) |

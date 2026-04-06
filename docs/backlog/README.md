@@ -37,7 +37,7 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 2. E1-US02: Auth System
 3. E1-US03: Notes CRUD
 
-### Phase 2: Security Hardening (Pending)
+### Phase 2: Security Hardening (In Progress)
 4. E2-US01: JWT Secret & Token Revocation
 5. E2-US02: Registration Flow & Email Verification
 6. E2-US03: CORS & Environment Hardening
@@ -51,21 +51,23 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 14. E2-US11: Seed Data & Production Safety Guards
 15. E2-US12: Dependency Security Scanning & Supply Chain Protection
 
-### Phase 3: Mobile App (Pending)
+### Phase 3: Mobile App (Done)
 16. E3-US01: Mobile Project Shell & Design System
 17. E3-US02: Mobile Auth
 18. E3-US03: Mobile Notes CRUD & Agent Tooling
+19. E3-US04: Maestro E2E Tests in CI
 
 ### Phase 4: Tech Debt (Done)
-19. E4-US01: Share Validation Schemas via @acme/shared
-20. E4-US02: Share Note Type and Query Keys via @acme/shared
-21. E4-US03: Reduce RegisterUser Constructor Parameter Sprawl
+20. E4-US01: Share Validation Schemas via @acme/shared
+21. E4-US02: Share Note Type and Query Keys via @acme/shared
+22. E4-US03: Reduce RegisterUser Constructor Parameter Sprawl
 
-### Phase 5: Test Debt (Pending)
-22. E5-US01: Login Form Validation & Error Display E2E Tests
-23. E5-US02: Registration Form Validation & Error Display E2E Tests
-24. E5-US03: Note Drawer Validation & Edit Flow E2E Tests
-25. E5-US04: Auth Navigation & Page Flow E2E Tests
+### Phase 5: Test Debt (Done)
+23. E5-US01: Login Form Validation & Error Display E2E Tests
+24. E5-US02: Registration Form Validation & Error Display E2E Tests
+25. E5-US03: Note Drawer Validation & Edit Flow E2E Tests
+26. E5-US04: Auth Navigation & Page Flow E2E Tests
+27. E5-US05: Notes List States, Dashboard & Layout E2E Tests
 
 ## Status Conventions
 

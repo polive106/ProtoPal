@@ -3,15 +3,15 @@
 **User Story**: As a developer, I want Maestro mobile E2E tests to run automatically on pull requests so that regressions in mobile flows are caught before merge.
 
 **Acceptance Criteria**:
-- [ ] `e2e-mobile.yml` workflow runs on push to main and pull requests to main
-- [ ] Android emulator boots in CI using `reactivecircus/android-emulator-runner`
-- [ ] Expo app is prebuilt and compiled into a debug APK via Gradle
-- [ ] APK is installed on the emulator and Maestro flows execute against it
-- [ ] API server starts in CI with seeded SQLite database so auth/CRUD flows work end-to-end
-- [ ] All existing Maestro flows pass (app-launch, auth/login, auth/register)
-- [ ] Maestro test artifacts (screenshots, logs) uploaded on failure
-- [ ] Workflow uses macOS runner with hardware acceleration for emulator performance
-- [ ] Caching for Gradle, pnpm, and Expo prebuild to keep run times reasonable
+- [x] `e2e-mobile.yml` workflow runs on push to main and pull requests to main
+- [x] Android emulator boots in CI using `reactivecircus/android-emulator-runner`
+- [x] Expo app is prebuilt and compiled into a debug APK via Gradle
+- [x] APK is installed on the emulator and Maestro flows execute against it
+- [x] API server starts in CI with seeded SQLite database so auth/CRUD flows work end-to-end
+- [x] All existing Maestro flows pass (app-launch, auth/login, auth/register)
+- [x] Maestro test artifacts (screenshots, logs) uploaded on failure
+- [x] Workflow uses macOS runner with hardware acceleration for emulator performance
+- [x] Caching for Gradle, pnpm, and Expo prebuild to keep run times reasonable
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
