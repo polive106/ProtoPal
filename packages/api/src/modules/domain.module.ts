@@ -6,6 +6,7 @@ import type {
   NoteRepository,
   PasswordHasher,
   VerificationTokenRepository,
+  PasswordResetTokenRepository,
   EmailService,
   TokenGenerator,
 } from '@acme/domain';
@@ -20,6 +21,8 @@ import {
   GetNote,
   VerifyEmail,
   ResendVerification,
+  RequestPasswordReset,
+  ResetPassword,
   VerificationService,
 } from '@acme/domain';
 import { DatabaseModule } from './database.module';
@@ -35,6 +38,7 @@ import {
   EMAIL_SERVICE,
   TOKEN_GENERATOR,
   VERIFICATION_SERVICE,
+  PASSWORD_RESET_TOKEN_REPOSITORY,
 } from './tokens';
 
 @Module({
@@ -101,6 +105,38 @@ import {
       inject: [USER_REPOSITORY, VERIFICATION_SERVICE],
     },
     {
+      provide: RequestPasswordReset,
+      useFactory: (
+        userRepo: UserRepository,
+        resetTokenRepo: PasswordResetTokenRepository,
+        emailService: EmailService,
+        tokenGenerator: TokenGenerator,
+      ) =>
+        new RequestPasswordReset(userRepo, resetTokenRepo, emailService, tokenGenerator),
+      inject: [
+        USER_REPOSITORY,
+        PASSWORD_RESET_TOKEN_REPOSITORY,
+        EMAIL_SERVICE,
+        TOKEN_GENERATOR,
+      ],
+    },
+    {
+      provide: ResetPassword,
+      useFactory: (
+        resetTokenRepo: PasswordResetTokenRepository,
+        userRepo: UserRepository,
+        hasher: PasswordHasher,
+        tokenGenerator: TokenGenerator,
+      ) =>
+        new ResetPassword(resetTokenRepo, userRepo, hasher, tokenGenerator),
+      inject: [
+        PASSWORD_RESET_TOKEN_REPOSITORY,
+        USER_REPOSITORY,
+        PASSWORD_HASHER,
+        TOKEN_GENERATOR,
+      ],
+    },
+    {
       provide: GetUserRoles,
       useFactory: (userRoleRepo: UserRoleRepository) => new GetUserRoles(userRoleRepo),
       inject: [USER_ROLE_REPOSITORY],
@@ -138,6 +174,8 @@ import {
     LoginUser,
     VerifyEmail,
     ResendVerification,
+    RequestPasswordReset,
+    ResetPassword,
     GetUserRoles,
     CreateNote,
     ListNotes,

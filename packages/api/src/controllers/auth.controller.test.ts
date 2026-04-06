@@ -10,6 +10,8 @@ import {
   VerifyEmailError,
   ResendVerification,
   ResendVerificationError,
+  RequestPasswordReset,
+  ResetPassword,
 } from '@acme/domain';
 import { AuthController } from './auth.controller';
 import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
@@ -20,6 +22,8 @@ const mockLoginUser = { execute: vi.fn() };
 const mockGetUserRoles = { execute: vi.fn() };
 const mockVerifyEmail = { execute: vi.fn() };
 const mockResendVerification = { execute: vi.fn() };
+const mockRequestPasswordReset = { execute: vi.fn() };
+const mockResetPassword = { execute: vi.fn() };
 const mockJwtService = { generateToken: vi.fn(), verifyToken: vi.fn() };
 const mockTokenBlacklistRepo = { add: vi.fn(), exists: vi.fn(), deleteExpired: vi.fn() };
 const mockAuditLogService = { log: vi.fn() };
@@ -38,6 +42,8 @@ describe('AuthController', () => {
         { provide: GetUserRoles, useValue: mockGetUserRoles },
         { provide: VerifyEmail, useValue: mockVerifyEmail },
         { provide: ResendVerification, useValue: mockResendVerification },
+        { provide: RequestPasswordReset, useValue: mockRequestPasswordReset },
+        { provide: ResetPassword, useValue: mockResetPassword },
         { provide: JWT_SERVICE, useValue: mockJwtService },
         { provide: TOKEN_BLACKLIST_REPOSITORY, useValue: mockTokenBlacklistRepo },
         { provide: AuditLogService, useValue: mockAuditLogService },

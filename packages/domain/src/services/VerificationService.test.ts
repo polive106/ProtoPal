@@ -28,6 +28,7 @@ describe('VerificationService', () => {
     };
     emailService = {
       sendVerificationEmail: vi.fn().mockResolvedValue(undefined),
+      sendPasswordResetEmail: vi.fn().mockResolvedValue(undefined),
     };
     tokenGenerator = {
       generate: vi.fn().mockReturnValue('raw-token-123'),

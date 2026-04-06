@@ -11,6 +11,10 @@ import {
   VerifyEmailError,
   ResendVerification,
   ResendVerificationError,
+  RequestPasswordReset,
+  RequestPasswordResetError,
+  ResetPassword,
+  ResetPasswordError,
 } from '@acme/domain';
 import { INPUT_LIMITS } from '@acme/shared';
 import { AuthController } from './auth.controller';
@@ -33,6 +37,8 @@ describe('AuthController (integration)', () => {
     exists: vi.fn().mockResolvedValue(false),
     deleteExpired: vi.fn().mockResolvedValue(0),
   };
+  const mockRequestPasswordReset = { execute: vi.fn() };
+  const mockResetPassword = { execute: vi.fn() };
   const mockAuditLogService = { log: vi.fn() };
 
   beforeAll(async () => {
@@ -45,6 +51,8 @@ describe('AuthController (integration)', () => {
         { provide: VerifyEmail, useValue: mockVerifyEmail },
         { provide: ResendVerification, useValue: mockResendVerification },
         { provide: TOKEN_BLACKLIST_REPOSITORY, useValue: mockTokenBlacklistRepo },
+        { provide: RequestPasswordReset, useValue: mockRequestPasswordReset },
+        { provide: ResetPassword, useValue: mockResetPassword },
         { provide: AuditLogService, useValue: mockAuditLogService },
       ],
     });
@@ -245,6 +253,89 @@ describe('AuthController (integration)', () => {
         .set('Cookie', cookie);
 
       expect(res.status).toBe(404);
+    });
+  });
+
+  describe('POST /auth/forgot-password', () => {
+    it('returns 200 for existing user with resetToken', async () => {
+      mockRequestPasswordReset.execute.mockResolvedValue({
+        resetToken: 'reset-token-123',
+      });
+
+      const res = await request(app.getHttpServer())
+        .post('/auth/forgot-password')
+        .send({ email: 'test@example.com' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.message).toContain('password reset link');
+      expect(res.body.resetToken).toBe('reset-token-123');
+    });
+
+    it('returns 200 for non-existent email (no enumeration)', async () => {
+      mockRequestPasswordReset.execute.mockResolvedValue(null);
+
+      const res = await request(app.getHttpServer())
+        .post('/auth/forgot-password')
+        .send({ email: 'unknown@example.com' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.message).toContain('password reset link');
+      expect(res.body.resetToken).toBeUndefined();
+    });
+
+    it('returns 400 on validation error', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/forgot-password')
+        .send({ email: 'not-an-email' });
+
+      expect(res.status).toBe(400);
+    });
+  });
+
+  describe('POST /auth/reset-password', () => {
+    it('returns 200 on successful password reset', async () => {
+      mockResetPassword.execute.mockResolvedValue({
+        id: 'user-1',
+        email: 'test@example.com',
+        firstName: 'Test',
+        lastName: 'User',
+        status: 'approved',
+      });
+
+      const res = await request(app.getHttpServer())
+        .post('/auth/reset-password')
+        .send({ token: 'valid-token', password: 'NewPass123' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.message).toContain('reset successfully');
+    });
+
+    it('returns 400 on invalid/expired token', async () => {
+      mockResetPassword.execute.mockRejectedValue(
+        new ResetPasswordError('Invalid or expired reset token'),
+      );
+
+      const res = await request(app.getHttpServer())
+        .post('/auth/reset-password')
+        .send({ token: 'bad-token', password: 'NewPass123' });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 on validation error (weak password)', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/reset-password')
+        .send({ token: 'valid-token', password: 'short' });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when token is empty', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/reset-password')
+        .send({ token: '', password: 'NewPass123' });
+
+      expect(res.status).toBe(400);
     });
   });
 

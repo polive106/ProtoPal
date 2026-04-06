@@ -1,2 +1,2 @@
-export { loginSchema, registrationSchema } from '@acme/shared';
-export type { LoginFormData, RegistrationFormData } from '@acme/shared';
+export { loginSchema, registrationSchema, forgotPasswordSchema, resetPasswordSchema } from '@acme/shared';
+export type { LoginFormData, RegistrationFormData, ForgotPasswordFormData, ResetPasswordFormData } from '@acme/shared';

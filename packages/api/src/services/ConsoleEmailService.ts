@@ -5,4 +5,9 @@ export class ConsoleEmailService implements EmailService {
     console.log(`[Email] Verification email for ${email}`);
     console.log(`[Email] Token: ${token}`);
   }
+
+  async sendPasswordResetEmail(email: string, token: string): Promise<void> {
+    console.log(`[Email] Password reset email for ${email}`);
+    console.log(`[Email] Reset token: ${token}`);
+  }
 }

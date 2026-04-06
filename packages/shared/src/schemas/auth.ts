@@ -37,3 +37,26 @@ export const registrationSchema = z.object({
 });
 
 export type RegistrationFormData = z.infer<typeof registrationSchema>;
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'Email is required')
+    .max(INPUT_LIMITS.EMAIL_MAX, `Email must be at most ${INPUT_LIMITS.EMAIL_MAX} characters`)
+    .email('Invalid email address'),
+});
+
+export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+
+export const resetPasswordSchema = z.object({
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .min(8, 'Minimum 8 characters')
+    .max(INPUT_LIMITS.PASSWORD_MAX, `Password must be at most ${INPUT_LIMITS.PASSWORD_MAX} characters`)
+    .regex(/[A-Z]/, 'Must contain an uppercase letter')
+    .regex(/[a-z]/, 'Must contain a lowercase letter')
+    .regex(/[0-9]/, 'Must contain a number'),
+});
+
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;

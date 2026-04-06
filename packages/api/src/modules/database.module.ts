@@ -9,6 +9,7 @@ import {
   DrizzleTokenBlacklistRepository,
   DrizzleRateLimitRepository,
   DrizzleVerificationTokenRepository,
+  DrizzlePasswordResetTokenRepository,
 } from '@acme/database';
 import {
   DATABASE_CONNECTION,
@@ -19,6 +20,7 @@ import {
   TOKEN_BLACKLIST_REPOSITORY,
   RATE_LIMIT_REPOSITORY,
   VERIFICATION_TOKEN_REPOSITORY,
+  PASSWORD_RESET_TOKEN_REPOSITORY,
 } from './tokens';
 
 function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnection) => unknown) {
@@ -42,6 +44,7 @@ function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnec
     repositoryProvider(TOKEN_BLACKLIST_REPOSITORY, DrizzleTokenBlacklistRepository),
     repositoryProvider(RATE_LIMIT_REPOSITORY, DrizzleRateLimitRepository),
     repositoryProvider(VERIFICATION_TOKEN_REPOSITORY, DrizzleVerificationTokenRepository),
+    repositoryProvider(PASSWORD_RESET_TOKEN_REPOSITORY, DrizzlePasswordResetTokenRepository),
   ],
   exports: [
     DATABASE_CONNECTION,
@@ -52,6 +55,7 @@ function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnec
     TOKEN_BLACKLIST_REPOSITORY,
     RATE_LIMIT_REPOSITORY,
     VERIFICATION_TOKEN_REPOSITORY,
+    PASSWORD_RESET_TOKEN_REPOSITORY,
   ],
 })
 export class DatabaseModule {}
