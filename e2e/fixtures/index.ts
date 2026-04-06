@@ -21,6 +21,8 @@ export const testIds = {
     btnSubmit: 'login-btn-submit',
     alertError: 'login-alert-error',
     linkRegister: 'login-link-register',
+    errorEmail: 'login-error-email',
+    errorPassword: 'login-error-password',
   },
   register: {
     card: 'register-card',
