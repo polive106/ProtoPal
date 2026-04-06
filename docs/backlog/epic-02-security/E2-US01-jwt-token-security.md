@@ -3,13 +3,13 @@
 **User Story**: As a platform operator, I want JWT secrets to be strictly managed and tokens to be revocable so that compromised sessions can be terminated immediately.
 
 **Acceptance Criteria**:
-- [ ] Application refuses to start without an explicit `JWT_SECRET` environment variable in all environments
-- [ ] The hardcoded development fallback secret is removed from `JwtService.ts`
-- [ ] A token blacklist store exists (database table or Redis)
-- [ ] Logout adds the current token to the blacklist
-- [ ] `AuthGuard` rejects blacklisted tokens before payload extraction
-- [ ] Expired blacklist entries are cleaned up automatically
-- [ ] Roles are re-fetched from the database on each request (or tokens are short-lived with refresh rotation)
+- [x] Application refuses to start without an explicit `JWT_SECRET` environment variable in all environments
+- [x] The hardcoded development fallback secret is removed from `JwtService.ts`
+- [x] A token blacklist store exists (database table or Redis)
+- [x] Logout adds the current token to the blacklist
+- [x] `AuthGuard` rejects blacklisted tokens before payload extraction
+- [x] Expired blacklist entries are cleaned up automatically
+- [x] Roles are re-fetched from the database on each request (or tokens are short-lived with refresh rotation)
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
