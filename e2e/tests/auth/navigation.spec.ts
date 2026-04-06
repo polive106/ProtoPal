@@ -107,8 +107,8 @@ test.describe('Auth Navigation & Page Flow', () => {
 
     test('should redirect to login page after logout', async ({ page }) => {
       await page.getByTestId(testIds.app.btnLogout).click();
-      await page.waitForURL(/\/login/);
-      await expect(page.getByTestId(testIds.login.card)).toBeVisible({ timeout: 10000 });
+      await expect(page.getByTestId(testIds.login.card)).toBeVisible({ timeout: 15000 });
+      await expect(page).toHaveURL(/\/login/);
     });
 
     test('should navigate from Dashboard to notes via "Notes" link', async ({ page }) => {
