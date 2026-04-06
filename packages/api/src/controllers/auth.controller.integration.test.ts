@@ -16,6 +16,7 @@ import { AuthController } from './auth.controller';
 import { createTestApp, authCookie, mockUserPayload } from '../testing/test-app';
 import { clearRateLimitStore } from '../common/guards/rate-limit.guard';
 import { TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
+import { AuditLogService } from '../services';
 import type { JwtService } from '../services';
 
 describe('AuthController (integration)', () => {
@@ -32,6 +33,7 @@ describe('AuthController (integration)', () => {
     exists: vi.fn().mockResolvedValue(false),
     deleteExpired: vi.fn().mockResolvedValue(0),
   };
+  const mockAuditLogService = { log: vi.fn() };
 
   beforeAll(async () => {
     const result = await createTestApp({
@@ -43,6 +45,7 @@ describe('AuthController (integration)', () => {
         { provide: VerifyEmail, useValue: mockVerifyEmail },
         { provide: ResendVerification, useValue: mockResendVerification },
         { provide: TOKEN_BLACKLIST_REPOSITORY, useValue: mockTokenBlacklistRepo },
+        { provide: AuditLogService, useValue: mockAuditLogService },
       ],
     });
     app = result.app;

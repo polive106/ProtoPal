@@ -10,14 +10,16 @@ disable-model-invocation: true
    - Fix any TypeScript errors
 2. **Run tests**: `pnpm test`
    - Fix any failing tests
-3. **Review changes**: `git diff --staged`
-4. **Format commit message** using conventional commits:
+3. **Run API E2E tests**: `pnpm test:e2e --project=api`
+   - Fix any failing E2E tests
+4. **Review changes**: `git diff --staged`
+5. **Format commit message** using conventional commits:
    - `feat: add note deletion`
    - `fix: correct login redirect`
    - `refactor: extract auth guard logic`
    - `test: add notes CRUD e2e tests`
    - `docs: update getting started guide`
-5. **Commit**: `git commit -m "type: description"`
+6. **Commit**: `git commit -m "type: description"`
 
 ## Conventional Commit Types
 

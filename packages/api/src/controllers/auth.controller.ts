@@ -26,7 +26,7 @@ import {
   ResendVerificationError,
   type TokenBlacklistRepository,
 } from '@acme/domain';
-import { JwtService, type JwtPayload, type JwtRole } from '../services';
+import { JwtService, type JwtPayload, type JwtRole, AuditLogService, AuditAction } from '../services';
 import { Public, CurrentUser } from '../common/decorators';
 import { ZodValidationPipe } from '../common/decorators';
 import { RateLimit } from '../common/guards';
@@ -51,13 +51,17 @@ export class AuthController {
     @Inject(ResendVerification) private readonly resendVerification: ResendVerification,
     @Inject(JWT_SERVICE) private readonly jwtService: JwtService,
     @Inject(TOKEN_BLACKLIST_REPOSITORY) private readonly tokenBlacklistRepo: TokenBlacklistRepository,
+    @Inject(AuditLogService) private readonly auditLogService: AuditLogService,
   ) {}
 
   @Public()
   @Post('register')
   @RateLimit({ windowMs: 60 * 60 * 1000, max: 3, keyPrefix: 'register' })
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body(new ZodValidationPipe(registerSchema)) dto: RegisterDto) {
+  async register(
+    @Body(new ZodValidationPipe(registerSchema)) dto: RegisterDto,
+    @Req() req: Request,
+  ) {
     try {
       const result = await this.registerUser.execute({
         email: dto.email,
@@ -65,6 +69,15 @@ export class AuthController {
         firstName: dto.firstName,
         lastName: dto.lastName,
       });
+
+      this.auditLogService.log({
+        action: AuditAction.REGISTER,
+        userId: result.user.id,
+        ip: req.ip,
+        outcome: 'success',
+        metadata: { email: dto.email },
+      });
+
       const response: Record<string, unknown> = {
         message: 'Registration successful. Please check your email to verify your account.',
         user: {
@@ -81,6 +94,12 @@ export class AuthController {
       return response;
     } catch (error) {
       if (error instanceof RegisterUserError) {
+        this.auditLogService.log({
+          action: AuditAction.REGISTER_FAILED,
+          ip: req.ip,
+          outcome: 'failure',
+          metadata: { email: dto.email, reason: error.message },
+        });
         throw new BadRequestException(error.message);
       }
       throw error;
@@ -140,6 +159,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async login(
     @Body(new ZodValidationPipe(loginSchema)) dto: LoginDto,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
@@ -170,6 +190,14 @@ export class AuthController {
         path: '/',
       });
 
+      this.auditLogService.log({
+        action: AuditAction.LOGIN,
+        userId: userWithRoles.userId,
+        ip: req.ip,
+        outcome: 'success',
+        metadata: { email: dto.email },
+      });
+
       return {
         message: 'Login successful',
         token,
@@ -184,6 +212,12 @@ export class AuthController {
       };
     } catch (error) {
       if (error instanceof LoginUserError) {
+        this.auditLogService.log({
+          action: AuditAction.LOGIN_FAILED,
+          ip: req.ip,
+          outcome: 'failure',
+          metadata: { email: dto.email, reason: error.message },
+        });
         throw new UnauthorizedException(error.message);
       }
       throw error;
@@ -226,9 +260,12 @@ export class AuthController {
         ? req.headers.authorization.slice(7)
         : undefined);
 
+    let logoutUserId: string | undefined;
+
     if (token) {
       try {
         const payload = await this.jwtService.verifyToken(token);
+        logoutUserId = payload.sub;
         const exp = (payload as JwtPayload & { exp?: number }).exp;
         const expiresAt = exp ? new Date(exp * 1000) : new Date(Date.now() + 24 * 60 * 60 * 1000);
         await this.tokenBlacklistRepo.add(hashToken(token), expiresAt);
@@ -236,6 +273,13 @@ export class AuthController {
         // Token is already invalid/expired — no need to blacklist
       }
     }
+
+    this.auditLogService.log({
+      action: AuditAction.LOGOUT,
+      ...(logoutUserId && { userId: logoutUserId }),
+      ip: req.ip,
+      outcome: 'success',
+    });
 
     res.clearCookie('auth_token', { path: '/' });
     return { message: 'Logged out successfully' };
