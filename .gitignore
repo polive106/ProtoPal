@@ -44,3 +44,4 @@ pnpm-debug.log*
 tmp/
 packages/api/uploads/
 packages/frontend/.tanstack/
+.expo/
