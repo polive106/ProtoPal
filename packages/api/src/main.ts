@@ -7,7 +7,7 @@ import { AppModule } from './app.module';
 import { AuthGuard, RolesGuard, RateLimitGuard } from './common/guards';
 import { HttpExceptionFilter } from './common/filters';
 import { LoggingInterceptor } from './common/interceptors';
-import { JwtService } from './services';
+import { JwtService, AuditLogService } from './services';
 import type { TokenBlacklistRepository } from '@acme/domain';
 import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY } from './modules/tokens';
 
@@ -53,7 +53,18 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.use(cookieParser());
-  app.use(helmet());
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          frameAncestors: ["'none'"],
+        },
+      },
+    }),
+  );
 
   const allowedOrigins = getAllowedOrigins();
   app.enableCors({
@@ -67,9 +78,10 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   const jwtService = app.get<JwtService>(JWT_SERVICE);
   const tokenBlacklistRepo = app.get<TokenBlacklistRepository>(TOKEN_BLACKLIST_REPOSITORY);
+  const auditLogService = app.get(AuditLogService);
   app.useGlobalGuards(
     new AuthGuard(jwtService, reflector, tokenBlacklistRepo),
-    new RolesGuard(reflector),
+    new RolesGuard(reflector, auditLogService),
     new RateLimitGuard(reflector),
   );
 

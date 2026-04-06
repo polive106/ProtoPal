@@ -13,6 +13,7 @@ import {
 } from '@acme/domain';
 import { AuthController } from './auth.controller';
 import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
+import { AuditLogService, AuditAction } from '../services';
 
 const mockRegisterUser = { execute: vi.fn() };
 const mockLoginUser = { execute: vi.fn() };
@@ -21,6 +22,7 @@ const mockVerifyEmail = { execute: vi.fn() };
 const mockResendVerification = { execute: vi.fn() };
 const mockJwtService = { generateToken: vi.fn(), verifyToken: vi.fn() };
 const mockTokenBlacklistRepo = { add: vi.fn(), exists: vi.fn(), deleteExpired: vi.fn() };
+const mockAuditLogService = { log: vi.fn() };
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -38,6 +40,7 @@ describe('AuthController', () => {
         { provide: ResendVerification, useValue: mockResendVerification },
         { provide: JWT_SERVICE, useValue: mockJwtService },
         { provide: TOKEN_BLACKLIST_REPOSITORY, useValue: mockTokenBlacklistRepo },
+        { provide: AuditLogService, useValue: mockAuditLogService },
       ],
     }).compile();
 
@@ -46,12 +49,13 @@ describe('AuthController', () => {
 
   describe('register', () => {
     const dto = { email: 'test@example.com', password: 'Password1!', firstName: 'Test', lastName: 'User' };
+    const mockReq = { ip: '127.0.0.1' } as any;
 
     it('returns 201 with pending user on success', async () => {
       const user = { id: 'u1', email: dto.email, firstName: dto.firstName, lastName: dto.lastName, status: 'pending' };
       mockRegisterUser.execute.mockResolvedValue({ user, verificationToken: 'test-token' });
 
-      const result = await controller.register(dto);
+      const result = await controller.register(dto, mockReq);
 
       expect(result).toEqual(
         expect.objectContaining({
@@ -64,14 +68,42 @@ describe('AuthController', () => {
     it('throws BadRequestException on RegisterUserError', async () => {
       mockRegisterUser.execute.mockRejectedValue(new RegisterUserError('Email taken'));
 
-      await expect(controller.register(dto)).rejects.toThrow(BadRequestException);
+      await expect(controller.register(dto, mockReq)).rejects.toThrow(BadRequestException);
     });
 
     it('re-throws other errors', async () => {
       const err = new Error('unexpected');
       mockRegisterUser.execute.mockRejectedValue(err);
 
-      await expect(controller.register(dto)).rejects.toThrow(err);
+      await expect(controller.register(dto, mockReq)).rejects.toThrow(err);
+    });
+
+    it('logs audit event on successful registration', async () => {
+      const user = { id: 'u1', email: dto.email, firstName: dto.firstName, lastName: dto.lastName, status: 'pending' };
+      mockRegisterUser.execute.mockResolvedValue({ user, verificationToken: 'test-token' });
+
+      await controller.register(dto, mockReq);
+
+      expect(mockAuditLogService.log).toHaveBeenCalledWith({
+        action: AuditAction.REGISTER,
+        userId: 'u1',
+        ip: '127.0.0.1',
+        outcome: 'success',
+        metadata: { email: dto.email },
+      });
+    });
+
+    it('logs audit event on failed registration', async () => {
+      mockRegisterUser.execute.mockRejectedValue(new RegisterUserError('Email taken'));
+
+      await expect(controller.register(dto, mockReq)).rejects.toThrow(BadRequestException);
+
+      expect(mockAuditLogService.log).toHaveBeenCalledWith({
+        action: AuditAction.REGISTER_FAILED,
+        ip: '127.0.0.1',
+        outcome: 'failure',
+        metadata: { email: dto.email, reason: 'Email taken' },
+      });
     });
   });
 
@@ -114,6 +146,7 @@ describe('AuthController', () => {
 
   describe('login', () => {
     const dto = { email: 'test@example.com', password: 'Password1!' };
+    const mockReq = { ip: '10.0.0.1' } as any;
     const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
 
     it('returns 200 with user and sets cookie on success', async () => {
@@ -128,7 +161,7 @@ describe('AuthController', () => {
       mockLoginUser.execute.mockResolvedValue(userWithRoles);
       mockJwtService.generateToken.mockResolvedValue('token');
 
-      const result = await controller.login(dto, mockRes);
+      const result = await controller.login(dto, mockReq, mockRes);
 
       expect(mockRes.cookie).toHaveBeenCalledWith('auth_token', 'token', expect.objectContaining({ httpOnly: true, path: '/' }));
       expect(result).toEqual(
@@ -143,7 +176,52 @@ describe('AuthController', () => {
     it('throws UnauthorizedException on LoginUserError', async () => {
       mockLoginUser.execute.mockRejectedValue(new LoginUserError('Invalid credentials'));
 
-      await expect(controller.login(dto, mockRes)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.login(dto, mockReq, mockRes)).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('logs audit event on successful login', async () => {
+      const userWithRoles = {
+        userId: 'u1',
+        email: dto.email,
+        firstName: 'Test',
+        lastName: 'User',
+        status: 'approved',
+        roles: [{ roleId: 'r1', roleName: 'user' }],
+      };
+      mockLoginUser.execute.mockResolvedValue(userWithRoles);
+      mockJwtService.generateToken.mockResolvedValue('token');
+
+      await controller.login(dto, mockReq, mockRes);
+
+      expect(mockAuditLogService.log).toHaveBeenCalledWith({
+        action: AuditAction.LOGIN,
+        userId: 'u1',
+        ip: '10.0.0.1',
+        outcome: 'success',
+        metadata: { email: dto.email },
+      });
+    });
+
+    it('logs audit event on failed login', async () => {
+      mockLoginUser.execute.mockRejectedValue(new LoginUserError('Invalid credentials'));
+
+      await expect(controller.login(dto, mockReq, mockRes)).rejects.toThrow(UnauthorizedException);
+
+      expect(mockAuditLogService.log).toHaveBeenCalledWith({
+        action: AuditAction.LOGIN_FAILED,
+        ip: '10.0.0.1',
+        outcome: 'failure',
+        metadata: { email: dto.email, reason: 'Invalid credentials' },
+      });
+    });
+
+    it('never includes password in audit log metadata', async () => {
+      mockLoginUser.execute.mockRejectedValue(new LoginUserError('Invalid credentials'));
+
+      await expect(controller.login(dto, mockReq, mockRes)).rejects.toThrow(UnauthorizedException);
+
+      const logCall = mockAuditLogService.log.mock.calls[0]![0];
+      expect(logCall.metadata).not.toHaveProperty('password');
     });
   });
 
@@ -179,7 +257,7 @@ describe('AuthController', () => {
 
   describe('logout', () => {
     it('clears auth_token cookie and returns message', async () => {
-      const mockReq = { cookies: {}, headers: {} } as any;
+      const mockReq = { cookies: {}, headers: {}, ip: '127.0.0.1' } as any;
       const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
 
       const result = await controller.logout(mockReq, mockRes);
@@ -189,9 +267,9 @@ describe('AuthController', () => {
     });
 
     it('blacklists token from cookie on logout', async () => {
-      const mockReq = { cookies: { auth_token: 'my-token' }, headers: {} } as any;
+      const mockReq = { cookies: { auth_token: 'my-token' }, headers: {}, ip: '127.0.0.1' } as any;
       const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
-      mockJwtService.verifyToken.mockResolvedValue({ exp: Math.floor(Date.now() / 1000) + 3600 });
+      mockJwtService.verifyToken.mockResolvedValue({ sub: 'u1', exp: Math.floor(Date.now() / 1000) + 3600 });
       mockTokenBlacklistRepo.add.mockResolvedValue(undefined);
 
       await controller.logout(mockReq, mockRes);
@@ -204,7 +282,7 @@ describe('AuthController', () => {
     });
 
     it('still succeeds when token is invalid', async () => {
-      const mockReq = { cookies: { auth_token: 'bad-token' }, headers: {} } as any;
+      const mockReq = { cookies: { auth_token: 'bad-token' }, headers: {}, ip: '127.0.0.1' } as any;
       const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
       mockJwtService.verifyToken.mockRejectedValue(new Error('invalid'));
 
@@ -212,6 +290,35 @@ describe('AuthController', () => {
 
       expect(mockTokenBlacklistRepo.add).not.toHaveBeenCalled();
       expect(result).toEqual({ message: 'Logged out successfully' });
+    });
+
+    it('logs audit event on logout with token', async () => {
+      const mockReq = { cookies: { auth_token: 'my-token' }, headers: {}, ip: '192.168.1.1' } as any;
+      const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
+      mockJwtService.verifyToken.mockResolvedValue({ sub: 'u1', exp: Math.floor(Date.now() / 1000) + 3600 });
+      mockTokenBlacklistRepo.add.mockResolvedValue(undefined);
+
+      await controller.logout(mockReq, mockRes);
+
+      expect(mockAuditLogService.log).toHaveBeenCalledWith({
+        action: AuditAction.LOGOUT,
+        userId: 'u1',
+        ip: '192.168.1.1',
+        outcome: 'success',
+      });
+    });
+
+    it('logs audit event on logout without token', async () => {
+      const mockReq = { cookies: {}, headers: {}, ip: '192.168.1.1' } as any;
+      const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
+
+      await controller.logout(mockReq, mockRes);
+
+      expect(mockAuditLogService.log).toHaveBeenCalledWith({
+        action: AuditAction.LOGOUT,
+        ip: '192.168.1.1',
+        outcome: 'success',
+      });
     });
   });
 });

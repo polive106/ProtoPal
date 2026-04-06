@@ -59,4 +59,122 @@ describe('LoggingInterceptor', () => {
 
     logSpy.mockRestore();
   });
+
+  it('sanitizes sensitive query params (token)', async () => {
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    const mockContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({ method: 'GET', url: '/auth/verify?token=abc123' }),
+        getResponse: () => ({ statusCode: 200 }),
+      }),
+    } as unknown as ExecutionContext;
+
+    const mockNext: CallHandler = { handle: () => of('result') };
+
+    await new Promise((resolve) => {
+      interceptor.intercept(mockContext, mockNext).subscribe((val) => resolve(val));
+    });
+
+    const logMessage = logSpy.mock.calls[0]![0] as string;
+    expect(logMessage).not.toContain('abc123');
+    expect(logMessage).toContain('[REDACTED]');
+
+    logSpy.mockRestore();
+  });
+
+  it('preserves non-sensitive query params', async () => {
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    const mockContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({ method: 'GET', url: '/users?page=1&limit=10' }),
+        getResponse: () => ({ statusCode: 200 }),
+      }),
+    } as unknown as ExecutionContext;
+
+    const mockNext: CallHandler = { handle: () => of('result') };
+
+    await new Promise((resolve) => {
+      interceptor.intercept(mockContext, mockNext).subscribe((val) => resolve(val));
+    });
+
+    const logMessage = logSpy.mock.calls[0]![0] as string;
+    expect(logMessage).toContain('page=1');
+    expect(logMessage).toContain('limit=10');
+
+    logSpy.mockRestore();
+  });
+
+  it('redacts only sensitive params in mixed query strings', async () => {
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    const mockContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({ method: 'GET', url: '/auth/verify?token=secret&page=1' }),
+        getResponse: () => ({ statusCode: 200 }),
+      }),
+    } as unknown as ExecutionContext;
+
+    const mockNext: CallHandler = { handle: () => of('result') };
+
+    await new Promise((resolve) => {
+      interceptor.intercept(mockContext, mockNext).subscribe((val) => resolve(val));
+    });
+
+    const logMessage = logSpy.mock.calls[0]![0] as string;
+    expect(logMessage).not.toContain('secret');
+    expect(logMessage).toContain('[REDACTED]');
+    expect(logMessage).toContain('page=1');
+
+    logSpy.mockRestore();
+  });
+
+  it.each(['password', 'secret', 'authorization', 'key'])(
+    'redacts sensitive query param "%s"',
+    async (param) => {
+      const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+      const mockContext = {
+        switchToHttp: () => ({
+          getRequest: () => ({ method: 'GET', url: `/test?${param}=sensitivevalue` }),
+          getResponse: () => ({ statusCode: 200 }),
+        }),
+      } as unknown as ExecutionContext;
+
+      const mockNext: CallHandler = { handle: () => of('result') };
+
+      await new Promise((resolve) => {
+        interceptor.intercept(mockContext, mockNext).subscribe((val) => resolve(val));
+      });
+
+      const logMessage = logSpy.mock.calls[0]![0] as string;
+      expect(logMessage).not.toContain('sensitivevalue');
+      expect(logMessage).toContain('[REDACTED]');
+
+      logSpy.mockRestore();
+    },
+  );
+
+  it('leaves URLs without query strings unchanged', async () => {
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    const mockContext = {
+      switchToHttp: () => ({
+        getRequest: () => ({ method: 'GET', url: '/health' }),
+        getResponse: () => ({ statusCode: 200 }),
+      }),
+    } as unknown as ExecutionContext;
+
+    const mockNext: CallHandler = { handle: () => of('result') };
+
+    await new Promise((resolve) => {
+      interceptor.intercept(mockContext, mockNext).subscribe((val) => resolve(val));
+    });
+
+    const logMessage = logSpy.mock.calls[0]![0] as string;
+    expect(logMessage).toMatch(/^GET \/health 200 \d+ms$/);
+
+    logSpy.mockRestore();
+  });
 });

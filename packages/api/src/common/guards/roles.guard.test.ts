@@ -1,8 +1,8 @@
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { RolesGuard } from './roles.guard';
+import { RolesGuard, ADMIN_ROLE } from './roles.guard';
 
 function createContext(user?: any) {
-  const request: any = { user };
+  const request: any = { user, ip: '10.0.0.1' };
   return {
     switchToHttp: () => ({ getRequest: () => request }),
     getHandler: () => () => {},
@@ -13,10 +13,12 @@ function createContext(user?: any) {
 describe('RolesGuard', () => {
   let guard: RolesGuard;
   let mockReflector: { getAllAndOverride: ReturnType<typeof vi.fn> };
+  let mockAuditLogService: { log: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     mockReflector = { getAllAndOverride: vi.fn() };
-    guard = new RolesGuard(mockReflector as any);
+    mockAuditLogService = { log: vi.fn() };
+    guard = new RolesGuard(mockReflector as any, mockAuditLogService as any);
   });
 
   it('passes when no @Roles() metadata', () => {
@@ -59,5 +61,52 @@ describe('RolesGuard', () => {
     const context = createContext({ roles: [{ roleName: 'viewer' }] });
 
     expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it('logs audit event when admin bypasses role check', () => {
+    mockReflector.getAllAndOverride.mockReturnValue(['editor', 'manager']);
+    const context = createContext({ sub: 'u1', roles: [{ roleName: 'admin' }] });
+
+    guard.canActivate(context);
+
+    expect(mockAuditLogService.log).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'ROLE_BYPASS_ADMIN',
+        userId: 'u1',
+        ip: '10.0.0.1',
+        outcome: 'success',
+        metadata: { requiredRoles: ['editor', 'manager'] },
+      }),
+    );
+  });
+
+  it('does not log audit event for normal role match', () => {
+    mockReflector.getAllAndOverride.mockReturnValue(['editor']);
+    const context = createContext({ sub: 'u2', roles: [{ roleName: 'editor' }] });
+
+    guard.canActivate(context);
+
+    expect(mockAuditLogService.log).not.toHaveBeenCalled();
+  });
+
+  it('does not log audit event when no roles required', () => {
+    mockReflector.getAllAndOverride.mockReturnValue(undefined);
+    const context = createContext({ sub: 'u1', roles: [{ roleName: 'admin' }] });
+
+    guard.canActivate(context);
+
+    expect(mockAuditLogService.log).not.toHaveBeenCalled();
+  });
+
+  it('exports ADMIN_ROLE constant as "admin"', () => {
+    expect(ADMIN_ROLE).toBe('admin');
+  });
+
+  it('works without audit log service (optional dependency)', () => {
+    const guardWithoutAudit = new RolesGuard(mockReflector as any);
+    mockReflector.getAllAndOverride.mockReturnValue(['editor']);
+    const context = createContext({ roles: [{ roleName: 'admin' }] });
+
+    expect(guardWithoutAudit.canActivate(context)).toBe(true);
   });
 });
