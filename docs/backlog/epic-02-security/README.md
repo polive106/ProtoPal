@@ -20,3 +20,8 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US10 | Token Exposure Reduction | M | Pending |
 | E2-US11 | Seed Data & Production Safety Guards | S | Pending |
 | E2-US12 | Dependency Security Scanning & Supply Chain Protection | S | Pending |
+| E2-US13 | JWT Claims Hardening (Issuer, Audience & Algorithm Pinning) | S | Pending |
+| E2-US14 | CSRF Protection for Cookie-Based Authentication | M | Pending |
+| E2-US15 | API Route Parameter Validation & ID Format Enforcement | S | Pending |
+| E2-US16 | Database Connection Security & TLS Enforcement | M | Pending |
+| E2-US17 | Token Refresh & Session Lifecycle Management | L | Pending |
