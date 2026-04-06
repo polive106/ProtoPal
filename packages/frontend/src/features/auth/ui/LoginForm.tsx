@@ -30,7 +30,7 @@ export function LoginForm() {
                   data-testid="login-input-email"
                 />
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                  <p className="text-sm text-destructive">{getFieldError(field.state.meta.errors)}</p>
+                  <p className="text-sm text-destructive" data-testid="login-error-email">{getFieldError(field.state.meta.errors)}</p>
                 )}
               </div>
             )}
@@ -49,7 +49,7 @@ export function LoginForm() {
                   data-testid="login-input-password"
                 />
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                  <p className="text-sm text-destructive">{getFieldError(field.state.meta.errors)}</p>
+                  <p className="text-sm text-destructive" data-testid="login-error-password">{getFieldError(field.state.meta.errors)}</p>
                 )}
               </div>
             )}
