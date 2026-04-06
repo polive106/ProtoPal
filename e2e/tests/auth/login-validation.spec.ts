@@ -8,7 +8,8 @@ test.describe('Login Validation', () => {
     });
 
     test('should show email required error when email is blurred empty', async ({ page }) => {
-      await page.getByTestId(testIds.login.inputEmail).click();
+      await page.getByTestId(testIds.login.inputEmail).fill('x');
+      await page.getByTestId(testIds.login.inputEmail).clear();
       await page.getByTestId(testIds.login.inputPassword).click();
       await expect(page.getByTestId(testIds.login.errorEmail)).toBeVisible();
       await expect(page.getByTestId(testIds.login.errorEmail)).toContainText('Email is required');
@@ -22,16 +23,19 @@ test.describe('Login Validation', () => {
     });
 
     test('should show password required error when password is blurred empty', async ({ page }) => {
-      await page.getByTestId(testIds.login.inputPassword).click();
+      await page.getByTestId(testIds.login.inputPassword).fill('x');
+      await page.getByTestId(testIds.login.inputPassword).clear();
       await page.getByTestId(testIds.login.inputEmail).click();
       await expect(page.getByTestId(testIds.login.errorPassword)).toBeVisible();
       await expect(page.getByTestId(testIds.login.errorPassword)).toContainText('Password is required');
     });
 
     test('should clear inline errors when field is corrected and re-blurred', async ({ page }) => {
-      // Trigger both errors
-      await page.getByTestId(testIds.login.inputEmail).click();
-      await page.getByTestId(testIds.login.inputPassword).click();
+      // Trigger both errors by typing then clearing
+      await page.getByTestId(testIds.login.inputEmail).fill('x');
+      await page.getByTestId(testIds.login.inputEmail).clear();
+      await page.getByTestId(testIds.login.inputPassword).fill('x');
+      await page.getByTestId(testIds.login.inputPassword).clear();
       await page.getByTestId(testIds.login.inputEmail).click();
       await expect(page.getByTestId(testIds.login.errorEmail)).toBeVisible();
       await expect(page.getByTestId(testIds.login.errorPassword)).toBeVisible();
