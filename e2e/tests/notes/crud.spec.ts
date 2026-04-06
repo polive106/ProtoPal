@@ -1,34 +1,41 @@
 import { test, expect } from '@playwright/test';
 import { testCredentials, apiUrls, testIds, testData } from '../../fixtures';
+import { apiUrl, registerAndVerify, createNote } from '../../fixtures/api-helpers';
 
 test.describe('Notes CRUD', () => {
   test.describe('Notes API @api', () => {
     test('should list notes for authenticated user', async ({ request }) => {
-      // Login
-      await request.post(`${apiUrls.base}/auth/login`, {
-        data: {
-          email: testCredentials.user.email,
-          password: testCredentials.user.password,
-        },
-      });
+      const cookie = await registerAndVerify(request, {
+        email: `crud-list-${Date.now()}@example.com`,
+        password: 'TestPass1',
+        firstName: 'List',
+        lastName: 'Tester',
+      }).then((r) => r.cookie);
 
-      const response = await request.get(`${apiUrls.base}/notes`);
-      expect(response.ok()).toBeTruthy();
+      // Create notes for this user
+      await createNote(request, cookie, { title: 'Note 1', content: 'Content 1' });
+      await createNote(request, cookie, { title: 'Note 2', content: 'Content 2' });
+
+      const response = await request.get(apiUrl('/notes'), {
+        headers: { Cookie: cookie },
+      });
+      expect(response.status()).toBe(200);
       const data = await response.json();
       expect(data.notes).toBeDefined();
       expect(data.notes.length).toBeGreaterThanOrEqual(2);
     });
 
     test('should create a new note', async ({ request }) => {
-      await request.post(`${apiUrls.base}/auth/login`, {
-        data: {
-          email: testCredentials.user.email,
-          password: testCredentials.user.password,
-        },
+      const { cookie } = await registerAndVerify(request, {
+        email: `crud-create-${Date.now()}@example.com`,
+        password: 'TestPass1',
+        firstName: 'Create',
+        lastName: 'Tester',
       });
 
-      const response = await request.post(`${apiUrls.base}/notes`, {
-        data: { title: 'API Test Note', content: 'Created via API test' },
+      const response = await createNote(request, cookie, {
+        title: 'API Test Note',
+        content: 'Created via API test',
       });
       expect(response.status()).toBe(201);
       const data = await response.json();
@@ -36,41 +43,50 @@ test.describe('Notes CRUD', () => {
     });
 
     test('should update a note', async ({ request }) => {
-      await request.post(`${apiUrls.base}/auth/login`, {
-        data: {
-          email: testCredentials.user.email,
-          password: testCredentials.user.password,
-        },
+      const { cookie } = await registerAndVerify(request, {
+        email: `crud-update-${Date.now()}@example.com`,
+        password: 'TestPass1',
+        firstName: 'Update',
+        lastName: 'Tester',
       });
 
-      const response = await request.patch(`${apiUrls.base}/notes/${testData.notes.note1}`, {
-        data: { title: 'Updated Title' },
+      const createRes = await createNote(request, cookie, {
+        title: 'Original Title',
+        content: 'Will be updated',
       });
-      expect(response.ok()).toBeTruthy();
+      const { note } = await createRes.json();
+
+      const response = await request.patch(apiUrl(`/notes/${note.id}`), {
+        data: { title: 'Updated Title' },
+        headers: { Cookie: cookie },
+      });
+      expect(response.status()).toBe(200);
       const data = await response.json();
       expect(data.note.title).toBe('Updated Title');
     });
 
     test('should delete a note', async ({ request }) => {
-      await request.post(`${apiUrls.base}/auth/login`, {
-        data: {
-          email: testCredentials.user.email,
-          password: testCredentials.user.password,
-        },
+      const { cookie } = await registerAndVerify(request, {
+        email: `crud-delete-${Date.now()}@example.com`,
+        password: 'TestPass1',
+        firstName: 'Delete',
+        lastName: 'Tester',
       });
 
-      // Create a note to delete
-      const createRes = await request.post(`${apiUrls.base}/notes`, {
-        data: { title: 'To Delete', content: 'Will be deleted' },
+      const createRes = await createNote(request, cookie, {
+        title: 'To Delete',
+        content: 'Will be deleted',
       });
       const { note } = await createRes.json();
 
-      const deleteRes = await request.delete(`${apiUrls.base}/notes/${note.id}`);
+      const deleteRes = await request.delete(apiUrl(`/notes/${note.id}`), {
+        headers: { Cookie: cookie },
+      });
       expect(deleteRes.status()).toBe(204);
     });
 
     test('should reject unauthenticated access', async ({ request }) => {
-      const response = await request.get(`${apiUrls.base}/notes`);
+      const response = await request.get(apiUrl('/notes'));
       expect(response.status()).toBe(401);
     });
   });

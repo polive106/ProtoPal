@@ -51,7 +51,7 @@ export class AuthController {
     @Inject(ResendVerification) private readonly resendVerification: ResendVerification,
     @Inject(JWT_SERVICE) private readonly jwtService: JwtService,
     @Inject(TOKEN_BLACKLIST_REPOSITORY) private readonly tokenBlacklistRepo: TokenBlacklistRepository,
-    private readonly auditLogService: AuditLogService,
+    @Inject(AuditLogService) private readonly auditLogService: AuditLogService,
   ) {}
 
   @Public()
