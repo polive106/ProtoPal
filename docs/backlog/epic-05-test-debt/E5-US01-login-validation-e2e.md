@@ -3,13 +3,13 @@
 **User Story**: As a developer, I want comprehensive UI E2E tests for the login form so that client-side validation errors are verified to display correctly to users.
 
 **Acceptance Criteria**:
-- [ ] E2E test verifies "Email is required" inline error appears when email field is blurred empty
-- [ ] E2E test verifies "Invalid email address" inline error appears for malformed email
-- [ ] E2E test verifies "Password is required" inline error appears when password field is blurred empty
-- [ ] E2E test verifies inline errors clear when the field is corrected and re-blurred
-- [ ] E2E test verifies "Signing in..." button text during submission
-- [ ] E2E test verifies error alert dismissal via close button
-- [ ] All new tests use data-testid selectors from the fixtures
+- [x] E2E test verifies "Email is required" inline error appears when email field is blurred empty
+- [x] E2E test verifies "Invalid email address" inline error appears for malformed email
+- [x] E2E test verifies "Password is required" inline error appears when password field is blurred empty
+- [x] E2E test verifies inline errors clear when the field is corrected and re-blurred
+- [x] E2E test verifies "Signing in..." button text during submission
+- [x] E2E test verifies error alert dismissal via close button
+- [x] All new tests use data-testid selectors from the fixtures
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -22,7 +22,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

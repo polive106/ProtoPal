@@ -61,7 +61,7 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 20. E4-US02: Share Note Type and Query Keys via @acme/shared
 21. E4-US03: Reduce RegisterUser Constructor Parameter Sprawl
 
-### Phase 5: Test Debt (Pending)
+### Phase 5: Test Debt (Done)
 22. E5-US01: Login Form Validation & Error Display E2E Tests
 23. E5-US02: Registration Form Validation & Error Display E2E Tests
 24. E5-US03: Note Drawer Validation & Edit Flow E2E Tests
