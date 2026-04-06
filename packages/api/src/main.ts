@@ -8,8 +8,8 @@ import { AuthGuard, RolesGuard, RateLimitGuard } from './common/guards';
 import { HttpExceptionFilter } from './common/filters';
 import { LoggingInterceptor } from './common/interceptors';
 import { JwtService, AuditLogService } from './services';
-import type { TokenBlacklistRepository } from '@acme/domain';
-import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY } from './modules/tokens';
+import type { TokenBlacklistRepository, RateLimitRepository } from '@acme/domain';
+import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY, RATE_LIMIT_REPOSITORY } from './modules/tokens';
 
 export const DEFAULT_ORIGINS = [
   'http://localhost:5173',
@@ -78,11 +78,12 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   const jwtService = app.get<JwtService>(JWT_SERVICE);
   const tokenBlacklistRepo = app.get<TokenBlacklistRepository>(TOKEN_BLACKLIST_REPOSITORY);
+  const rateLimitRepo = app.get<RateLimitRepository>(RATE_LIMIT_REPOSITORY);
   const auditLogService = app.get(AuditLogService);
   app.useGlobalGuards(
     new AuthGuard(jwtService, reflector, tokenBlacklistRepo),
     new RolesGuard(reflector, auditLogService),
-    new RateLimitGuard(reflector),
+    new RateLimitGuard(reflector, rateLimitRepo),
   );
 
   app.useGlobalFilters(new HttpExceptionFilter());

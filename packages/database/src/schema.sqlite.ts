@@ -62,6 +62,16 @@ export const verificationTokens = sqliteTable('verification_tokens', {
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
 });
 
+// === RATE LIMIT ENTRIES ===
+export const rateLimitEntries = sqliteTable('rate_limit_entries', {
+  key: text('key').primaryKey(),
+  count: integer('count').notNull().default(0),
+  windowStart: integer('window_start').notNull(),
+  prevCount: integer('prev_count').notNull().default(0),
+  prevWindowStart: integer('prev_window_start'),
+  expiresAt: integer('expires_at').notNull(),
+});
+
 // === NOTES ===
 export const notes = sqliteTable('notes', {
   id: text('id').primaryKey(),

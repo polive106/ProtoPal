@@ -4,6 +4,7 @@ export const ROLE_REPOSITORY = 'RoleRepository';
 export const USER_ROLE_REPOSITORY = 'UserRoleRepository';
 export const NOTE_REPOSITORY = 'NoteRepository';
 export const TOKEN_BLACKLIST_REPOSITORY = 'TokenBlacklistRepository';
+export const RATE_LIMIT_REPOSITORY = 'RateLimitRepository';
 export const PASSWORD_HASHER = 'PasswordHasher';
 export const JWT_SERVICE = 'JwtService';
 export const VERIFICATION_TOKEN_REPOSITORY = 'VerificationTokenRepository';
