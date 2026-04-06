@@ -76,6 +76,8 @@ export const testIds = {
     inputContent: 'notes-input-content',
     btnSave: 'notes-btn-save',
     btnCancel: 'notes-btn-cancel',
+    loading: 'notes-loading',
+    empty: 'notes-empty',
     alertError: 'notes-alert-error',
     errorTitle: 'notes-error-title',
     errorContent: 'notes-error-content',

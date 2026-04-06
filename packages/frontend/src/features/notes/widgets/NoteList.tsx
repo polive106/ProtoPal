@@ -12,12 +12,13 @@ export function NoteList({ onEdit, onCreate }: NoteListProps) {
   const { data: notes, isLoading, error } = useNotes();
   const deleteNote = useDeleteNote();
 
-  if (isLoading) return <PageSpinner />;
-  if (error) return <ErrorAlert message={error.message} />;
+  if (isLoading) return <PageSpinner data-testid="notes-loading" />;
+  if (error) return <ErrorAlert data-testid="notes-alert-error" message={error.message} />;
 
   if (!notes || notes.length === 0) {
     return (
       <EmptyState
+        data-testid="notes-empty"
         title="No notes yet"
         description="Create your first note to get started."
         action={
