@@ -6,6 +6,7 @@ import type { UserRoleRepository } from '../ports/UserRoleRepository';
 import type { PasswordHasher } from '../ports/PasswordHasher';
 import type { VerificationService } from '../services/VerificationService';
 import type { User } from '../entities/User';
+import { INPUT_LIMITS } from '@acme/shared';
 
 function createMockUser(overrides: Partial<User> = {}): User {
   return {
@@ -202,6 +203,52 @@ describe('RegisterUser', () => {
         lastName: '',
       })
     ).rejects.toThrow('Last name is required');
+  });
+
+  it('should throw if password exceeds 72 characters', async () => {
+    const longPassword = 'A'.repeat(INPUT_LIMITS.PASSWORD_MAX + 1 - 2) + 'a1';
+    await expect(
+      registerUser.execute({
+        email: 'test@example.com',
+        password: longPassword,
+        firstName: 'John',
+        lastName: 'Doe',
+      })
+    ).rejects.toThrow(`Password must be at most ${INPUT_LIMITS.PASSWORD_MAX} characters`);
+  });
+
+  it('should throw if email exceeds 254 characters', async () => {
+    const longEmail = 'a'.repeat(INPUT_LIMITS.EMAIL_MAX) + '@example.com';
+    await expect(
+      registerUser.execute({
+        email: longEmail,
+        password: 'Password1',
+        firstName: 'John',
+        lastName: 'Doe',
+      })
+    ).rejects.toThrow(`Email must be at most ${INPUT_LIMITS.EMAIL_MAX} characters`);
+  });
+
+  it('should throw if first name exceeds 100 characters', async () => {
+    await expect(
+      registerUser.execute({
+        email: 'test@example.com',
+        password: 'Password1',
+        firstName: 'A'.repeat(INPUT_LIMITS.FIRST_NAME_MAX + 1),
+        lastName: 'Doe',
+      })
+    ).rejects.toThrow(`First name must be at most ${INPUT_LIMITS.FIRST_NAME_MAX} characters`);
+  });
+
+  it('should throw if last name exceeds 100 characters', async () => {
+    await expect(
+      registerUser.execute({
+        email: 'test@example.com',
+        password: 'Password1',
+        firstName: 'John',
+        lastName: 'A'.repeat(INPUT_LIMITS.LAST_NAME_MAX + 1),
+      })
+    ).rejects.toThrow(`Last name must be at most ${INPUT_LIMITS.LAST_NAME_MAX} characters`);
   });
 
   it('should normalize email to lowercase', async () => {

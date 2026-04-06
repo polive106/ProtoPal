@@ -189,6 +189,17 @@ test.describe('Auth API @api', () => {
     expect(revokedResponse.status()).toBe(401);
   });
 
+  test('Register with password exceeding 72 chars → 400', async ({ request }) => {
+    const response = await registerUser(request, {
+      email: `auth-long-pw-${Date.now()}@example.com`,
+      password: 'A'.repeat(71) + 'a1',
+      firstName: 'Long',
+      lastName: 'Password',
+    });
+
+    expect(response.status()).toBe(400);
+  });
+
   test('Full flow: register → verify → login → me → logout', async ({ request }) => {
     const email = `auth-flow-${Date.now()}@example.com`;
     const password = 'TestPass1';

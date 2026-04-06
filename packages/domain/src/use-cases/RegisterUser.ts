@@ -4,6 +4,7 @@ import type { UserRoleRepository } from '../ports/UserRoleRepository';
 import type { PasswordHasher } from '../ports/PasswordHasher';
 import type { VerificationService } from '../services/VerificationService';
 import type { User } from '../entities/User';
+import { INPUT_LIMITS } from '@acme/shared';
 
 export interface RegisterUserDTO {
   email: string;
@@ -77,6 +78,9 @@ export class RegisterUser {
     if (!email) {
       throw new RegisterUserError('Email is required');
     }
+    if (email.length > INPUT_LIMITS.EMAIL_MAX) {
+      throw new RegisterUserError(`Email must be at most ${INPUT_LIMITS.EMAIL_MAX} characters`);
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       throw new RegisterUserError('Invalid email format');
@@ -86,6 +90,9 @@ export class RegisterUser {
   private validatePassword(password: string): void {
     if (!password || password.length < 8) {
       throw new RegisterUserError('Password must be at least 8 characters');
+    }
+    if (password.length > INPUT_LIMITS.PASSWORD_MAX) {
+      throw new RegisterUserError(`Password must be at most ${INPUT_LIMITS.PASSWORD_MAX} characters`);
     }
     if (!/[A-Z]/.test(password)) {
       throw new RegisterUserError('Password must contain at least one uppercase letter');
@@ -102,8 +109,14 @@ export class RegisterUser {
     if (!firstName) {
       throw new RegisterUserError('First name is required');
     }
+    if (firstName.length > INPUT_LIMITS.FIRST_NAME_MAX) {
+      throw new RegisterUserError(`First name must be at most ${INPUT_LIMITS.FIRST_NAME_MAX} characters`);
+    }
     if (!lastName) {
       throw new RegisterUserError('Last name is required');
+    }
+    if (lastName.length > INPUT_LIMITS.LAST_NAME_MAX) {
+      throw new RegisterUserError(`Last name must be at most ${INPUT_LIMITS.LAST_NAME_MAX} characters`);
     }
   }
 }

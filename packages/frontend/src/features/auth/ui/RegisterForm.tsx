@@ -28,7 +28,7 @@ export function RegisterForm() {
                     data-testid="register-input-firstName"
                   />
                   {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                    <p className="text-sm text-destructive">{getFieldError(field.state.meta.errors)}</p>
+                    <p className="text-sm text-destructive" data-testid="register-error-firstName">{getFieldError(field.state.meta.errors)}</p>
                   )}
                 </div>
               )}
@@ -45,7 +45,7 @@ export function RegisterForm() {
                     data-testid="register-input-lastName"
                   />
                   {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                    <p className="text-sm text-destructive">{getFieldError(field.state.meta.errors)}</p>
+                    <p className="text-sm text-destructive" data-testid="register-error-lastName">{getFieldError(field.state.meta.errors)}</p>
                   )}
                 </div>
               )}
@@ -64,7 +64,7 @@ export function RegisterForm() {
                   data-testid="register-input-email"
                 />
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                  <p className="text-sm text-destructive">{getFieldError(field.state.meta.errors)}</p>
+                  <p className="text-sm text-destructive" data-testid="register-error-email">{getFieldError(field.state.meta.errors)}</p>
                 )}
               </div>
             )}
@@ -82,7 +82,7 @@ export function RegisterForm() {
                   data-testid="register-input-password"
                 />
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                  <p className="text-sm text-destructive">{getFieldError(field.state.meta.errors)}</p>
+                  <p className="text-sm text-destructive" data-testid="register-error-password">{getFieldError(field.state.meta.errors)}</p>
                 )}
                 <p className="text-xs text-muted-foreground">Min 8 chars, uppercase, lowercase, and number</p>
               </div>

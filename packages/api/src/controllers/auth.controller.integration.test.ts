@@ -12,6 +12,7 @@ import {
   ResendVerification,
   ResendVerificationError,
 } from '@acme/domain';
+import { INPUT_LIMITS } from '@acme/shared';
 import { AuthController } from './auth.controller';
 import { createTestApp, authCookie, mockUserPayload } from '../testing/test-app';
 import { TOKEN_BLACKLIST_REPOSITORY } from '../modules/tokens';
@@ -109,6 +110,50 @@ describe('AuthController (integration)', () => {
       const res = await request(app.getHttpServer())
         .post('/auth/register')
         .send(validBody);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when password exceeds max length', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({
+          ...validBody,
+          password: 'A'.repeat(INPUT_LIMITS.PASSWORD_MAX + 1 - 2) + 'a1',
+        });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when email exceeds max length', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({
+          ...validBody,
+          email: 'a'.repeat(INPUT_LIMITS.EMAIL_MAX) + '@example.com',
+        });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when first name exceeds max length', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({
+          ...validBody,
+          firstName: 'A'.repeat(INPUT_LIMITS.FIRST_NAME_MAX + 1),
+        });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when last name exceeds max length', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send({
+          ...validBody,
+          lastName: 'A'.repeat(INPUT_LIMITS.LAST_NAME_MAX + 1),
+        });
 
       expect(res.status).toBe(400);
     });
