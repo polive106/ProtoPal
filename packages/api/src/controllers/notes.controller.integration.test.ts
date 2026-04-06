@@ -12,6 +12,7 @@ import {
   GetNote,
   GetNoteError,
 } from '@acme/domain';
+import { INPUT_LIMITS } from '@acme/shared';
 import { NotesController } from './notes.controller';
 import { createTestApp, authCookie } from '../testing/test-app';
 import type { JwtService } from '../services';
@@ -109,6 +110,24 @@ describe('NotesController (integration)', () => {
         .post('/notes')
         .set('Cookie', cookie)
         .send(validBody);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when title exceeds max length', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/notes')
+        .set('Cookie', cookie)
+        .send({ title: 'A'.repeat(INPUT_LIMITS.NOTE_TITLE_MAX + 1), content: 'ok' });
+
+      expect(res.status).toBe(400);
+    });
+
+    it('returns 400 when content exceeds max length', async () => {
+      const res = await request(app.getHttpServer())
+        .post('/notes')
+        .set('Cookie', cookie)
+        .send({ title: 'ok', content: 'A'.repeat(INPUT_LIMITS.NOTE_CONTENT_MAX + 1) });
 
       expect(res.status).toBe(400);
     });

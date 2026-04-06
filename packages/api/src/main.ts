@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { NestFactory, Reflector } from '@nestjs/core';
 import type { NestExpressApplication } from '@nestjs/platform-express';
+import express from 'express';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
@@ -52,6 +53,7 @@ async function bootstrap() {
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
+  app.use(express.json({ limit: '1mb' }));
   app.use(cookieParser());
   app.use(
     helmet({

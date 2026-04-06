@@ -3,15 +3,15 @@
 **User Story**: As a platform operator, I want all user inputs to have strict length limits and the server to reject oversized payloads so that the application is protected against denial-of-service via large inputs and silent data truncation.
 
 **Acceptance Criteria**:
-- [ ] Password has a maximum length of 72 characters (bcrypt's internal limit) enforced at the API and domain layers
-- [ ] Note title has a maximum length of 255 characters
-- [ ] Note content has a maximum length of 50,000 characters
-- [ ] First name and last name have a maximum length of 100 characters each
-- [ ] Email has a maximum length of 254 characters (RFC 5321 limit)
-- [ ] Express body-parser has a `limit` of 1MB configured in `main.ts`
-- [ ] Frontend Zod schemas mirror the same max-length constraints
-- [ ] API returns clear validation errors when limits are exceeded
-- [ ] Existing tests still pass with new constraints
+- [x] Password has a maximum length of 72 characters (bcrypt's internal limit) enforced at the API and domain layers
+- [x] Note title has a maximum length of 255 characters
+- [x] Note content has a maximum length of 50,000 characters
+- [x] First name and last name have a maximum length of 100 characters each
+- [x] Email has a maximum length of 254 characters (RFC 5321 limit)
+- [x] Express body-parser has a `limit` of 1MB configured in `main.ts`
+- [x] Frontend Zod schemas mirror the same max-length constraints
+- [x] API returns clear validation errors when limits are exceeded
+- [x] Existing tests still pass with new constraints
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -33,7 +33,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin
