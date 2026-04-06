@@ -114,5 +114,25 @@ test.describe('Notes CRUD', () => {
       await page.getByTestId(testIds.notes.btnSave).click();
       await expect(page.getByTestId(testIds.notes.form)).not.toBeVisible();
     });
+
+    test('should show error when title exceeds 255 chars', async ({ page }) => {
+      await page.getByTestId(testIds.notes.btnCreate).click();
+      await expect(page.getByTestId(testIds.notes.form)).toBeVisible();
+      await page.getByTestId(testIds.notes.inputTitle).fill('A'.repeat(256));
+      // Blur to trigger validation
+      await page.getByTestId(testIds.notes.inputContent).click();
+      await expect(page.getByTestId(testIds.notes.errorTitle)).toBeVisible();
+      await expect(page.getByTestId(testIds.notes.errorTitle)).toContainText('at most 255');
+    });
+
+    test('should show error when content exceeds 50,000 chars', async ({ page }) => {
+      await page.getByTestId(testIds.notes.btnCreate).click();
+      await expect(page.getByTestId(testIds.notes.form)).toBeVisible();
+      await page.getByTestId(testIds.notes.inputContent).fill('A'.repeat(50_001));
+      // Blur to trigger validation
+      await page.getByTestId(testIds.notes.inputTitle).click();
+      await expect(page.getByTestId(testIds.notes.errorContent)).toBeVisible();
+      await expect(page.getByTestId(testIds.notes.errorContent)).toContainText('at most 50');
+    });
   });
 });

@@ -51,6 +51,23 @@ test.describe('Register', () => {
       await expect(page.getByTestId(testIds.register.btnSubmit)).toBeVisible();
     });
 
+    test('should show error when password exceeds 72 chars', async ({ page }) => {
+      await page.goto('/register');
+      await page.getByTestId(testIds.register.inputPassword).fill('A'.repeat(71) + 'a1');
+      // Blur the field to trigger validation
+      await page.getByTestId(testIds.register.inputEmail).click();
+      await expect(page.getByTestId(testIds.register.errorPassword)).toBeVisible();
+      await expect(page.getByTestId(testIds.register.errorPassword)).toContainText('at most 72');
+    });
+
+    test('should show error when first name exceeds 100 chars', async ({ page }) => {
+      await page.goto('/register');
+      await page.getByTestId(testIds.register.inputFirstName).fill('A'.repeat(101));
+      await page.getByTestId(testIds.register.inputLastName).click();
+      await expect(page.getByTestId(testIds.register.errorFirstName)).toBeVisible();
+      await expect(page.getByTestId(testIds.register.errorFirstName)).toContainText('at most 100');
+    });
+
     test('should register and redirect to check-email page', async ({ page }) => {
       await page.goto('/register');
       const email = `ui-test-${Date.now()}@example.com`;
