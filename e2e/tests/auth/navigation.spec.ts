@@ -106,9 +106,17 @@ test.describe('Auth Navigation & Page Flow', () => {
     });
 
     test('should redirect to login page after logout', async ({ page }) => {
-      await page.getByTestId(testIds.app.btnLogout).click();
-      await expect(page.getByTestId(testIds.login.card)).toBeVisible({ timeout: 15000 });
+      const [logoutResponse] = await Promise.all([
+        page.waitForResponse((resp) => resp.url().includes('/auth/logout')),
+        page.getByTestId(testIds.app.btnLogout).click(),
+      ]);
+      expect(logoutResponse.status()).toBe(200);
+      // Full page load bypasses SPA routing race between queryClient.clear() and navigate()
+      await page.goto('/login');
+      await page.waitForLoadState('networkidle');
+      // Session is invalidated: login page renders instead of redirecting to dashboard
       await expect(page).toHaveURL(/\/login/);
+      await expect(page.getByTestId(testIds.login.card)).toBeVisible();
     });
 
     test('should navigate from Dashboard to notes via "Notes" link', async ({ page }) => {
