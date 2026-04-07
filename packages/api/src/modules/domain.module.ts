@@ -9,6 +9,7 @@ import type {
   PasswordResetTokenRepository,
   EmailService,
   TokenGenerator,
+  LoginAttemptRepository,
 } from '@acme/domain';
 import {
   RegisterUser,
@@ -39,6 +40,7 @@ import {
   TOKEN_GENERATOR,
   VERIFICATION_SERVICE,
   PASSWORD_RESET_TOKEN_REPOSITORY,
+  LOGIN_ATTEMPT_REPOSITORY,
 } from './tokens';
 
 @Module({
@@ -84,8 +86,9 @@ import {
         userRepo: UserRepository,
         userRoleRepo: UserRoleRepository,
         hasher: PasswordHasher,
-      ) => new LoginUser(userRepo, userRoleRepo, hasher),
-      inject: [USER_REPOSITORY, USER_ROLE_REPOSITORY, PASSWORD_HASHER],
+        loginAttemptRepo: LoginAttemptRepository,
+      ) => new LoginUser(userRepo, userRoleRepo, hasher, loginAttemptRepo),
+      inject: [USER_REPOSITORY, USER_ROLE_REPOSITORY, PASSWORD_HASHER, LOGIN_ATTEMPT_REPOSITORY],
     },
     {
       provide: VerifyEmail,

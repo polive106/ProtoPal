@@ -6,3 +6,4 @@ export { DrizzleTokenBlacklistRepository } from './DrizzleTokenBlacklistReposito
 export { DrizzleRateLimitRepository } from './DrizzleRateLimitRepository';
 export { DrizzleVerificationTokenRepository } from './DrizzleVerificationTokenRepository';
 export { DrizzlePasswordResetTokenRepository } from './DrizzlePasswordResetTokenRepository';
+export { DrizzleLoginAttemptRepository } from './DrizzleLoginAttemptRepository';

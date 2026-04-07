@@ -12,3 +12,4 @@ export const EMAIL_SERVICE = 'EmailService';
 export const TOKEN_GENERATOR = 'TokenGenerator';
 export const VERIFICATION_SERVICE = 'VerificationService';
 export const PASSWORD_RESET_TOKEN_REPOSITORY = 'PasswordResetTokenRepository';
+export const LOGIN_ATTEMPT_REPOSITORY = 'LoginAttemptRepository';

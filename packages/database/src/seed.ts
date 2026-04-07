@@ -132,6 +132,17 @@ async function seed() {
         expires_at INTEGER NOT NULL
       )
     `);
+    db.run(sql`
+      CREATE TABLE IF NOT EXISTS login_attempts (
+        id TEXT PRIMARY KEY,
+        email TEXT NOT NULL UNIQUE,
+        attempts INTEGER NOT NULL DEFAULT 0,
+        lockout_count INTEGER NOT NULL DEFAULT 0,
+        locked_until INTEGER,
+        last_attempt_at INTEGER NOT NULL,
+        created_at INTEGER NOT NULL
+      )
+    `);
   }
 
   const now = Date.now();

@@ -8,12 +8,15 @@ export * from './entities/UserRole';
 export * from './entities/Note';
 export * from './entities/VerificationToken';
 export * from './entities/PasswordResetToken';
+export * from './entities/LoginAttempt';
 
 // Repository Ports
 export * from './ports/UserRepository';
 export * from './ports/RoleRepository';
 export * from './ports/UserRoleRepository';
 export * from './ports/NoteRepository';
+
+export * from './ports/LoginAttemptRepository';
 
 // Service Ports
 export * from './ports/PasswordHasher';
