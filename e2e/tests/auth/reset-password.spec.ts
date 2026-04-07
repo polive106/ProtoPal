@@ -39,7 +39,6 @@ test.describe('Reset Password Page @ui', () => {
     const oldPassword = 'OldPass123';
     const newPassword = 'NewPass456';
 
-    // Register and verify via API
     await registerAndVerify(request, {
       email,
       password: oldPassword,
@@ -47,31 +46,24 @@ test.describe('Reset Password Page @ui', () => {
       lastName: 'Reset',
     });
 
-    // Request password reset via API to get token
     const forgotRes = await forgotPassword(request, email);
     const { resetToken } = await forgotRes.json();
 
-    // Visit reset password page with the token
     await page.goto(`/reset-password?token=${resetToken}`);
     await expect(page.getByTestId(testIds.resetPassword.card)).toBeVisible();
 
-    // Submit new password
     await page.getByTestId(testIds.resetPassword.inputPassword).fill(newPassword);
     await page.getByTestId(testIds.resetPassword.btnSubmit).click();
 
-    // Should show success
     await expect(page.getByTestId(testIds.resetPassword.success)).toBeVisible();
 
-    // Click sign in link
     await page.getByTestId(testIds.resetPassword.linkLogin).click();
     await expect(page).toHaveURL(/\/login/);
 
-    // Login with new password
     await page.getByTestId(testIds.login.inputEmail).fill(email);
     await page.getByTestId(testIds.login.inputPassword).fill(newPassword);
     await page.getByTestId(testIds.login.btnSubmit).click();
 
-    // Should be redirected to dashboard
     await expect(page).toHaveURL(/\/dashboard/, { timeout: 10000 });
   });
 });

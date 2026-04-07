@@ -158,7 +158,7 @@ describe('RegisterUser', () => {
         firstName: 'John',
         lastName: 'Doe',
       })
-    ).rejects.toThrow('Password must contain at least one uppercase letter');
+    ).rejects.toThrow('Password must contain an uppercase letter');
   });
 
   it('should throw if password has no lowercase', async () => {
@@ -169,7 +169,7 @@ describe('RegisterUser', () => {
         firstName: 'John',
         lastName: 'Doe',
       })
-    ).rejects.toThrow('Password must contain at least one lowercase letter');
+    ).rejects.toThrow('Password must contain a lowercase letter');
   });
 
   it('should throw if password has no number', async () => {
@@ -180,7 +180,7 @@ describe('RegisterUser', () => {
         firstName: 'John',
         lastName: 'Doe',
       })
-    ).rejects.toThrow('Password must contain at least one number');
+    ).rejects.toThrow('Password must contain a number');
   });
 
   it('should throw if first name is empty', async () => {

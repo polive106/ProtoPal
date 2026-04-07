@@ -3,6 +3,7 @@ import type { UserRepository } from '../ports/UserRepository';
 import type { PasswordHasher } from '../ports/PasswordHasher';
 import type { TokenGenerator } from '../ports/TokenGenerator';
 import type { User } from '../entities/User';
+import { validatePassword, PasswordValidationError } from '../validation/password';
 
 export interface ResetPasswordDTO {
   token: string;
@@ -30,10 +31,15 @@ export class ResetPassword {
       throw new ResetPasswordError('Reset token is required');
     }
 
-    const password = dto.password || '';
-    this.validatePassword(password);
+    try {
+      validatePassword(dto.password || '');
+    } catch (error) {
+      if (error instanceof PasswordValidationError) {
+        throw new ResetPasswordError(error.message);
+      }
+      throw error;
+    }
 
-    // Find token
     const tokenHash = this.tokenGenerator.hash(rawToken);
     const resetToken = await this.passwordResetTokenRepository.findByTokenHash(tokenHash);
 
@@ -49,32 +55,14 @@ export class ResetPassword {
       throw new ResetPasswordError('Reset token has already been used');
     }
 
-    // Update password
-    const passwordHash = await this.passwordHasher.hash(password);
+    const passwordHash = await this.passwordHasher.hash(dto.password);
     const user = await this.userRepository.update(resetToken.userId, { passwordHash });
 
-    // Mark token as used and invalidate remaining tokens
-    await this.passwordResetTokenRepository.markUsed(resetToken.id);
-    await this.passwordResetTokenRepository.invalidateByUserId(resetToken.userId);
+    await Promise.all([
+      this.passwordResetTokenRepository.markUsed(resetToken.id),
+      this.passwordResetTokenRepository.invalidateByUserId(resetToken.userId),
+    ]);
 
     return user;
-  }
-
-  private validatePassword(password: string): void {
-    if (password.length < 8) {
-      throw new ResetPasswordError('Password must be at least 8 characters');
-    }
-    if (password.length > 72) {
-      throw new ResetPasswordError('Password must be at most 72 characters');
-    }
-    if (!/[A-Z]/.test(password)) {
-      throw new ResetPasswordError('Password must contain an uppercase letter');
-    }
-    if (!/[a-z]/.test(password)) {
-      throw new ResetPasswordError('Password must contain a lowercase letter');
-    }
-    if (!/[0-9]/.test(password)) {
-      throw new ResetPasswordError('Password must contain a number');
-    }
   }
 }

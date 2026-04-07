@@ -24,6 +24,9 @@ export * from './ports/PasswordResetTokenRepository';
 export * from './ports/EmailService';
 export * from './ports/TokenGenerator';
 
+// Validation
+export * from './validation/password';
+
 // Domain Services
 export * from './services/VerificationService';
 

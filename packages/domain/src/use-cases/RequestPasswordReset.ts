@@ -35,14 +35,11 @@ export class RequestPasswordReset {
 
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      // Return null silently to prevent user enumeration
       return null;
     }
 
-    // Invalidate any existing reset tokens
     await this.passwordResetTokenRepository.invalidateByUserId(user.id);
 
-    // Generate and store new token
     const rawToken = this.tokenGenerator.generate();
     const tokenHash = this.tokenGenerator.hash(rawToken);
 

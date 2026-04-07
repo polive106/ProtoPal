@@ -46,23 +46,19 @@ test.describe('Password Reset API @api', () => {
       lastName: 'Reset',
     });
 
-    // Request reset
     const forgotRes = await forgotPassword(request, email);
     const { resetToken } = await forgotRes.json();
 
-    // Reset password
     const resetRes = await resetPassword(request, { token: resetToken, password: newPassword });
     expect(resetRes.status()).toBe(200);
     const resetBody = await resetRes.json();
     expect(resetBody.message).toContain('reset successfully');
 
-    // Login with new password should succeed
     const loginRes = await request.post(apiUrl('/auth/login'), {
       data: { email, password: newPassword },
     });
     expect(loginRes.status()).toBe(200);
 
-    // Login with old password should fail
     const oldLoginRes = await request.post(apiUrl('/auth/login'), {
       data: { email, password: oldPassword },
     });
@@ -91,10 +87,8 @@ test.describe('Password Reset API @api', () => {
     const forgotRes = await forgotPassword(request, email);
     const { resetToken } = await forgotRes.json();
 
-    // Use the token
     await resetPassword(request, { token: resetToken, password: 'NewPass123' });
 
-    // Try to use it again
     const secondRes = await resetPassword(request, { token: resetToken, password: 'AnotherPass1' });
     expect(secondRes.status()).toBe(400);
   });
@@ -112,15 +106,12 @@ test.describe('Password Reset API @api', () => {
     const forgotRes = await forgotPassword(request, email);
     const { resetToken } = await forgotRes.json();
 
-    // Too short
     const res1 = await resetPassword(request, { token: resetToken, password: 'Ab1' });
     expect(res1.status()).toBe(400);
 
-    // No uppercase
     const res2 = await resetPassword(request, { token: resetToken, password: 'lowercase1' });
     expect(res2.status()).toBe(400);
 
-    // No number
     const res3 = await resetPassword(request, { token: resetToken, password: 'NoNumbers!' });
     expect(res3.status()).toBe(400);
   });

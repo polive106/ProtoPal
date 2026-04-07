@@ -261,6 +261,12 @@ export class AuthController {
       return response;
     } catch (error) {
       if (error instanceof RequestPasswordResetError) {
+        this.auditLogService.log({
+          action: AuditAction.PASSWORD_RESET_FAILED,
+          ip: req.ip,
+          outcome: 'failure',
+          metadata: { reason: error.message },
+        });
         throw new BadRequestException(error.message);
       }
       throw error;
