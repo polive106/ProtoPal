@@ -28,7 +28,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
     const data = await response.json().catch(() => ({}));
     throw new ApiError(
       response.status,
-      data.error || data.message || `Request failed with status ${response.status}`,
+      data.message || data.error || `Request failed with status ${response.status}`,
       data.details,
     );
   }
