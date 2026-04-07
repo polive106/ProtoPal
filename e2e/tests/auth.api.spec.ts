@@ -3,7 +3,7 @@ import { apiUrl, registerUser, loginAs, verifyEmail, resendVerification, registe
 import { testCredentials } from '../fixtures';
 
 test.describe('Auth API @api', () => {
-  test('Register new user → 201 with pending status', async ({ request }) => {
+  test('Register new user → 200 with generic message', async ({ request }) => {
     const email = `auth-test-${Date.now()}@example.com`;
     const response = await registerUser(request, {
       email,
@@ -12,15 +12,13 @@ test.describe('Auth API @api', () => {
       lastName: 'Tester',
     });
 
-    expect(response.status()).toBe(201);
+    expect(response.status()).toBe(200);
     const body = await response.json();
-    expect(body.user.email).toBe(email);
-    expect(body.user.status).toBe('pending');
     expect(body.message).toContain('check your email');
     expect(body.verificationToken).toBeTruthy();
   });
 
-  test('Register duplicate email → 400', async ({ request }) => {
+  test('Register duplicate email → 200 with same generic message (no enumeration)', async ({ request }) => {
     const email = `auth-dup-${Date.now()}@example.com`;
     const userData = {
       email,
@@ -32,10 +30,13 @@ test.describe('Auth API @api', () => {
     await registerUser(request, userData);
     const response = await registerUser(request, userData);
 
-    expect(response.status()).toBe(400);
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body.message).toContain('check your email');
+    expect(body.verificationToken).toBeUndefined();
   });
 
-  test('Login with pending account → 401 "Please verify your email"', async ({ request }) => {
+  test('Login with pending account → 401 generic error (no enumeration)', async ({ request }) => {
     const email = `auth-pending-${Date.now()}@example.com`;
     await registerUser(request, {
       email,
@@ -50,7 +51,17 @@ test.describe('Auth API @api', () => {
 
     expect(response.status()).toBe(401);
     const body = await response.json();
-    expect(body.message).toContain('Please verify your email');
+    expect(body.message).toContain('Invalid email or password');
+  });
+
+  test('Login with non-existent email → same 401 as wrong password (no enumeration)', async ({ request }) => {
+    const response = await request.post(apiUrl('/auth/login'), {
+      data: { email: `nonexistent-${Date.now()}@example.com`, password: 'TestPass1' },
+    });
+
+    expect(response.status()).toBe(401);
+    const body = await response.json();
+    expect(body.message).toContain('Invalid email or password');
   });
 
   test('Verify email with valid token → account approved', async ({ request }) => {
@@ -128,10 +139,21 @@ test.describe('Auth API @api', () => {
     expect(newVerify.status()).toBe(200);
   });
 
-  test('Resend verification for non-pending account → 400', async ({ request }) => {
-    // Use already-approved seeded user
+  test('Resend verification for non-pending account → 200 same message (no enumeration)', async ({ request }) => {
+    // Use already-approved seeded user — should return same 200 as pending account
     const response = await resendVerification(request, testCredentials.user.email);
-    expect(response.status()).toBe(400);
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body.message).toContain('If a pending account exists');
+    expect(body.verificationToken).toBeUndefined();
+  });
+
+  test('Resend verification for non-existent email → 200 same message (no enumeration)', async ({ request }) => {
+    const response = await resendVerification(request, `nonexistent-${Date.now()}@example.com`);
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body.message).toContain('If a pending account exists');
+    expect(body.verificationToken).toBeUndefined();
   });
 
   test('Login with valid credentials (seeded user) → 200 + cookie', async ({ request }) => {
@@ -211,9 +233,9 @@ test.describe('Auth API @api', () => {
       firstName: 'Flow',
       lastName: 'Tester',
     });
-    expect(regResponse.status()).toBe(201);
+    expect(regResponse.status()).toBe(200);
     const regBody = await regResponse.json();
-    expect(regBody.user.status).toBe('pending');
+    expect(regBody.message).toContain('check your email');
 
     // Verify email
     const verifyResponse = await verifyEmail(request, regBody.verificationToken);

@@ -68,7 +68,7 @@ export class AuthController {
   @Public()
   @Post('register')
   @RateLimit({ windowMs: 60 * 60 * 1000, max: 3, keyPrefix: 'register' })
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.OK)
   async register(
     @Body(new ZodValidationPipe(registerSchema)) dto: RegisterDto,
     @Req() req: Request,
@@ -81,6 +81,19 @@ export class AuthController {
         lastName: dto.lastName,
       });
 
+      // Return identical response whether email exists or not (prevent enumeration)
+      const genericMessage = 'Registration successful. Please check your email to verify your account.';
+
+      if (!result) {
+        this.auditLogService.log({
+          action: AuditAction.REGISTER_FAILED,
+          ip: req.ip,
+          outcome: 'failure',
+          metadata: { email: dto.email, reason: 'duplicate_email' },
+        });
+        return { message: genericMessage };
+      }
+
       this.auditLogService.log({
         action: AuditAction.REGISTER,
         userId: result.user.id,
@@ -90,14 +103,7 @@ export class AuthController {
       });
 
       const response: Record<string, unknown> = {
-        message: 'Registration successful. Please check your email to verify your account.',
-        user: {
-          id: result.user.id,
-          email: result.user.email,
-          firstName: result.user.firstName,
-          lastName: result.user.lastName,
-          status: result.user.status,
-        },
+        message: genericMessage,
       };
       if (process.env.NODE_ENV !== 'production') {
         response.verificationToken = result.verificationToken;
@@ -149,8 +155,16 @@ export class AuthController {
   ) {
     try {
       const result = await this.resendVerification.execute({ email: dto.email });
+
+      // Return identical response whether email exists/pending or not (prevent enumeration)
+      const genericMessage = 'If a pending account exists for this email, a verification email has been sent.';
+
+      if (!result) {
+        return { message: genericMessage };
+      }
+
       const response: Record<string, unknown> = {
-        message: 'Verification email sent. Please check your inbox.',
+        message: genericMessage,
       };
       if (process.env.NODE_ENV !== 'production') {
         response.verificationToken = result.verificationToken;

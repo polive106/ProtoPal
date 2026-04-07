@@ -110,19 +110,19 @@ describe('LoginUser', () => {
     await expect(loginUser.execute({ email: 'test@example.com', password: 'wrong' })).rejects.toThrow('Invalid email or password');
   });
 
-  it('should throw if account is deactivated', async () => {
+  it('should throw generic error if account is deactivated (prevent enumeration)', async () => {
     vi.mocked(userRepo.findByEmail).mockResolvedValue(createMockUser({ isActive: false }));
-    await expect(loginUser.execute({ email: 'test@example.com', password: 'pass' })).rejects.toThrow('deactivated');
+    await expect(loginUser.execute({ email: 'test@example.com', password: 'pass' })).rejects.toThrow('Invalid email or password');
   });
 
-  it('should throw if account is pending', async () => {
+  it('should throw generic error if account is pending (prevent enumeration)', async () => {
     vi.mocked(userRepo.findByEmail).mockResolvedValue(createMockUser({ status: 'pending' }));
-    await expect(loginUser.execute({ email: 'test@example.com', password: 'pass' })).rejects.toThrow('Please verify your email');
+    await expect(loginUser.execute({ email: 'test@example.com', password: 'pass' })).rejects.toThrow('Invalid email or password');
   });
 
-  it('should throw if account is rejected', async () => {
+  it('should throw generic error if account is rejected (prevent enumeration)', async () => {
     vi.mocked(userRepo.findByEmail).mockResolvedValue(createMockUser({ status: 'rejected' }));
-    await expect(loginUser.execute({ email: 'test@example.com', password: 'pass' })).rejects.toThrow('rejected');
+    await expect(loginUser.execute({ email: 'test@example.com', password: 'pass' })).rejects.toThrow('Invalid email or password');
   });
 
   // === Account Lockout Tests ===
@@ -276,12 +276,17 @@ describe('LoginUser', () => {
     expect(durationMs).toBeLessThan(86_410_000);
   });
 
-  it('should not record failed attempt when user not found', async () => {
+  it('should record failed attempt when user not found (prevent enumeration via lockout behavior)', async () => {
     vi.mocked(userRepo.findByEmail).mockResolvedValue(null);
 
     await expect(loginUser.execute({ email: 'test@example.com', password: 'pass' })).rejects.toThrow('Invalid email or password');
 
-    // Should NOT track attempts for non-existent users (prevents user enumeration)
-    expect(loginAttemptRepo.upsertFailedAttempt).not.toHaveBeenCalled();
+    // MUST track attempts for non-existent users so lockout behavior is identical
+    expect(loginAttemptRepo.upsertFailedAttempt).toHaveBeenCalledWith(
+      'test@example.com',
+      1,
+      0,
+      null,
+    );
   });
 });

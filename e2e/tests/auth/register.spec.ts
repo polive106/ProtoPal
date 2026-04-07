@@ -14,22 +14,12 @@ test.describe('Register', () => {
           lastName: 'User',
         },
       });
-      expect(response.status()).toBe(201);
+      expect(response.status()).toBe(200);
       const data = await response.json();
-      expect(data.user.email).toBe(uniqueEmail);
+      expect(data.message).toContain('check your email');
     });
 
-    test('should reject duplicate email', async ({ request }) => {
-      // First registration
-      await request.post(`${apiUrls.base}/auth/register`, {
-        data: {
-          email: `dup-${Date.now()}@example.com`,
-          password: 'TestPass1',
-          firstName: 'Test',
-          lastName: 'User',
-        },
-      });
-
+    test('should return same response for duplicate email (no enumeration)', async ({ request }) => {
       // Duplicate (using same email as seed user)
       const response = await request.post(`${apiUrls.base}/auth/register`, {
         data: {
@@ -39,7 +29,10 @@ test.describe('Register', () => {
           lastName: 'User',
         },
       });
-      expect(response.ok()).toBeFalsy();
+      expect(response.ok()).toBeTruthy();
+      const data = await response.json();
+      expect(data.message).toContain('check your email');
+      expect(data.verificationToken).toBeUndefined();
     });
   });
 
@@ -76,6 +69,17 @@ test.describe('Register', () => {
       await page.getByTestId(testIds.register.inputEmail).fill(email);
       await page.getByTestId(testIds.register.inputPassword).fill('TestPass1');
       await page.getByTestId(testIds.register.btnSubmit).click();
+      await expect(page.getByTestId(testIds.checkEmail.card)).toBeVisible({ timeout: 10000 });
+    });
+
+    test('should redirect to check-email for duplicate email (no enumeration)', async ({ page }) => {
+      await page.goto('/register');
+      await page.getByTestId(testIds.register.inputFirstName).fill('Dup');
+      await page.getByTestId(testIds.register.inputLastName).fill('User');
+      await page.getByTestId(testIds.register.inputEmail).fill('user@example.com');
+      await page.getByTestId(testIds.register.inputPassword).fill('TestPass1');
+      await page.getByTestId(testIds.register.btnSubmit).click();
+      // Same redirect as fresh registration — no error alert
       await expect(page.getByTestId(testIds.checkEmail.card)).toBeVisible({ timeout: 10000 });
     });
   });

@@ -35,7 +35,7 @@ export class RegisterUser {
     private readonly verificationService: VerificationService,
   ) {}
 
-  async execute(dto: RegisterUserDTO): Promise<RegisterUserResult> {
+  async execute(dto: RegisterUserDTO): Promise<RegisterUserResult | null> {
     const normalizedEmail = dto.email?.toLowerCase().trim() || '';
     const firstName = dto.firstName?.trim() || '';
     const lastName = dto.lastName?.trim() || '';
@@ -46,7 +46,7 @@ export class RegisterUser {
 
     const existingUser = await this.userRepository.findByEmail(normalizedEmail);
     if (existingUser) {
-      throw new RegisterUserError('Email already registered');
+      return null;
     }
 
     const passwordHash = await this.passwordHasher.hash(dto.password);
