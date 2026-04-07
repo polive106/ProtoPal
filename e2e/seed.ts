@@ -87,6 +87,24 @@ export async function seedTestDatabase() {
       verified_at INTEGER,
       created_at INTEGER NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      id TEXT PRIMARY KEY,
+      user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      token_hash TEXT NOT NULL UNIQUE,
+      expires_at INTEGER NOT NULL,
+      used_at INTEGER,
+      created_at INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS rate_limit_entries (
+      key TEXT PRIMARY KEY,
+      count INTEGER NOT NULL DEFAULT 0,
+      window_start INTEGER NOT NULL,
+      prev_count INTEGER NOT NULL DEFAULT 0,
+      prev_window_start INTEGER,
+      expires_at INTEGER NOT NULL
+    );
   `);
 
   const now = Date.now();

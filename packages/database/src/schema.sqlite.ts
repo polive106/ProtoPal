@@ -62,6 +62,18 @@ export const verificationTokens = sqliteTable('verification_tokens', {
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
 });
 
+// === PASSWORD RESET TOKENS ===
+export const passwordResetTokens = sqliteTable('password_reset_tokens', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+  usedAt: integer('used_at', { mode: 'timestamp_ms' }),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+});
+
 // === RATE LIMIT ENTRIES ===
 export const rateLimitEntries = sqliteTable('rate_limit_entries', {
   key: text('key').primaryKey(),

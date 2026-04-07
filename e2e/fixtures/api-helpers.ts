@@ -53,6 +53,20 @@ export async function resendVerification(
   return request.post(apiUrl('/auth/resend-verification'), { data: { email } });
 }
 
+export async function forgotPassword(
+  request: APIRequestContext,
+  email: string,
+) {
+  return request.post(apiUrl('/auth/forgot-password'), { data: { email } });
+}
+
+export async function resetPassword(
+  request: APIRequestContext,
+  data: { token: string; password: string },
+) {
+  return request.post(apiUrl('/auth/reset-password'), { data });
+}
+
 export async function createNote(
   request: APIRequestContext,
   cookie: string,

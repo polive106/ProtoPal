@@ -11,3 +11,4 @@ export const VERIFICATION_TOKEN_REPOSITORY = 'VerificationTokenRepository';
 export const EMAIL_SERVICE = 'EmailService';
 export const TOKEN_GENERATOR = 'TokenGenerator';
 export const VERIFICATION_SERVICE = 'VerificationService';
+export const PASSWORD_RESET_TOKEN_REPOSITORY = 'PasswordResetTokenRepository';

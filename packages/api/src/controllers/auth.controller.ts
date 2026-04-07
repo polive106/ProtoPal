@@ -24,6 +24,10 @@ import {
   VerifyEmailError,
   ResendVerification,
   ResendVerificationError,
+  RequestPasswordReset,
+  RequestPasswordResetError,
+  ResetPassword,
+  ResetPasswordError,
   type TokenBlacklistRepository,
 } from '@acme/domain';
 import { JwtService, type JwtPayload, type JwtRole, AuditLogService, AuditAction } from '../services';
@@ -36,9 +40,13 @@ import {
   registerSchema,
   loginSchema,
   resendVerificationSchema,
+  forgotPasswordSchema,
+  resetPasswordSchema,
   type RegisterDto,
   type LoginDto,
   type ResendVerificationDto,
+  type ForgotPasswordDto,
+  type ResetPasswordDto,
 } from './dto/auth.dto';
 
 @Controller('auth')
@@ -49,6 +57,8 @@ export class AuthController {
     @Inject(GetUserRoles) private readonly getUserRoles: GetUserRoles,
     @Inject(VerifyEmail) private readonly verifyEmail: VerifyEmail,
     @Inject(ResendVerification) private readonly resendVerification: ResendVerification,
+    @Inject(RequestPasswordReset) private readonly requestPasswordReset: RequestPasswordReset,
+    @Inject(ResetPassword) private readonly resetPasswordUseCase: ResetPassword,
     @Inject(JWT_SERVICE) private readonly jwtService: JwtService,
     @Inject(TOKEN_BLACKLIST_REPOSITORY) private readonly tokenBlacklistRepo: TokenBlacklistRepository,
     @Inject(AuditLogService) private readonly auditLogService: AuditLogService,
@@ -219,6 +229,82 @@ export class AuthController {
           metadata: { email: dto.email, reason: error.message },
         });
         throw new UnauthorizedException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  @Public()
+  @Post('forgot-password')
+  @RateLimit({ windowMs: 60 * 60 * 1000, max: 3, keyPrefix: 'forgot-password' })
+  @HttpCode(HttpStatus.OK)
+  async forgotPassword(
+    @Body(new ZodValidationPipe(forgotPasswordSchema)) dto: ForgotPasswordDto,
+    @Req() req: Request,
+  ) {
+    try {
+      const result = await this.requestPasswordReset.execute({ email: dto.email });
+
+      this.auditLogService.log({
+        action: AuditAction.PASSWORD_RESET_REQUESTED,
+        ip: req.ip,
+        outcome: 'success',
+        metadata: { email: dto.email },
+      });
+
+      const response: Record<string, unknown> = {
+        message: 'If an account with that email exists, a password reset link has been sent.',
+      };
+      if (process.env.NODE_ENV !== 'production' && result) {
+        response.resetToken = result.resetToken;
+      }
+      return response;
+    } catch (error) {
+      if (error instanceof RequestPasswordResetError) {
+        this.auditLogService.log({
+          action: AuditAction.PASSWORD_RESET_FAILED,
+          ip: req.ip,
+          outcome: 'failure',
+          metadata: { reason: error.message },
+        });
+        throw new BadRequestException(error.message);
+      }
+      throw error;
+    }
+  }
+
+  @Public()
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  async resetPassword(
+    @Body(new ZodValidationPipe(resetPasswordSchema)) dto: ResetPasswordDto,
+    @Req() req: Request,
+  ) {
+    try {
+      const user = await this.resetPasswordUseCase.execute({
+        token: dto.token,
+        password: dto.password,
+      });
+
+      this.auditLogService.log({
+        action: AuditAction.PASSWORD_RESET_COMPLETED,
+        userId: user.id,
+        ip: req.ip,
+        outcome: 'success',
+      });
+
+      return {
+        message: 'Password has been reset successfully. You can now log in with your new password.',
+      };
+    } catch (error) {
+      if (error instanceof ResetPasswordError) {
+        this.auditLogService.log({
+          action: AuditAction.PASSWORD_RESET_FAILED,
+          ip: req.ip,
+          outcome: 'failure',
+          metadata: { reason: error.message },
+        });
+        throw new BadRequestException(error.message);
       }
       throw error;
     }

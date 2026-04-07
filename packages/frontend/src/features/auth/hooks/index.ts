@@ -5,3 +5,5 @@ export { useLoginForm } from './useLoginForm';
 export { useRegistrationForm } from './useRegistrationForm';
 export { useVerifyEmail } from './useVerifyEmail';
 export { useResendVerification } from './useResendVerification';
+export { useForgotPasswordForm } from './useForgotPasswordForm';
+export { useResetPasswordForm } from './useResetPasswordForm';

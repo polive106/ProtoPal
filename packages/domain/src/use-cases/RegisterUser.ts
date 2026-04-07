@@ -5,6 +5,7 @@ import type { PasswordHasher } from '../ports/PasswordHasher';
 import type { VerificationService } from '../services/VerificationService';
 import type { User } from '../entities/User';
 import { INPUT_LIMITS } from '@acme/shared';
+import { validatePassword, PasswordValidationError } from '../validation/password';
 
 export interface RegisterUserDTO {
   email: string;
@@ -88,20 +89,13 @@ export class RegisterUser {
   }
 
   private validatePassword(password: string): void {
-    if (!password || password.length < 8) {
-      throw new RegisterUserError('Password must be at least 8 characters');
-    }
-    if (password.length > INPUT_LIMITS.PASSWORD_MAX) {
-      throw new RegisterUserError(`Password must be at most ${INPUT_LIMITS.PASSWORD_MAX} characters`);
-    }
-    if (!/[A-Z]/.test(password)) {
-      throw new RegisterUserError('Password must contain at least one uppercase letter');
-    }
-    if (!/[a-z]/.test(password)) {
-      throw new RegisterUserError('Password must contain at least one lowercase letter');
-    }
-    if (!/[0-9]/.test(password)) {
-      throw new RegisterUserError('Password must contain at least one number');
+    try {
+      validatePassword(password);
+    } catch (error) {
+      if (error instanceof PasswordValidationError) {
+        throw new RegisterUserError(error.message);
+      }
+      throw error;
     }
   }
 

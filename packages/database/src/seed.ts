@@ -112,6 +112,16 @@ async function seed() {
       )
     `);
     db.run(sql`
+      CREATE TABLE IF NOT EXISTS password_reset_tokens (
+        id TEXT PRIMARY KEY,
+        user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        token_hash TEXT NOT NULL UNIQUE,
+        expires_at INTEGER NOT NULL,
+        used_at INTEGER,
+        created_at INTEGER NOT NULL
+      )
+    `);
+    db.run(sql`
       CREATE TABLE IF NOT EXISTS rate_limit_entries (
         key TEXT PRIMARY KEY,
         count INTEGER NOT NULL DEFAULT 0,

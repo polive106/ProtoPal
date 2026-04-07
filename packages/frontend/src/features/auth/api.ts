@@ -27,6 +27,15 @@ export interface ResendVerificationResponse {
   verificationToken?: string;
 }
 
+export interface ForgotPasswordResponse {
+  message: string;
+  resetToken?: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}
+
 export const authApi = {
   login: (data: LoginRequest) => api.post<{ user: AuthUser }>('/auth/login', data),
   register: (data: RegisterRequest) => api.post<RegisterResponse>('/auth/register', data),
@@ -35,4 +44,8 @@ export const authApi = {
   verifyEmail: (token: string) => api.get<VerifyEmailResponse>(`/auth/verify?token=${encodeURIComponent(token)}`),
   resendVerification: (email: string) =>
     api.post<ResendVerificationResponse>('/auth/resend-verification', { email }),
+  forgotPassword: (email: string) =>
+    api.post<ForgotPasswordResponse>('/auth/forgot-password', { email }),
+  resetPassword: (data: { token: string; password: string }) =>
+    api.post<ResetPasswordResponse>('/auth/reset-password', data),
 };

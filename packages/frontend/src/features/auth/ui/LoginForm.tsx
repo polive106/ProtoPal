@@ -59,12 +59,17 @@ export function LoginForm() {
           <Button type="submit" className="w-full" disabled={isPending} data-testid="login-btn-submit">
             {isPending ? 'Signing in...' : 'Sign In'}
           </Button>
-          <p className="text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <a href="/register" className="text-primary hover:underline" data-testid="login-link-register">
-              Sign up
+          <div className="flex flex-col items-center gap-2">
+            <a href="/forgot-password" className="text-sm text-primary hover:underline" data-testid="login-link-forgot-password">
+              Forgot password?
             </a>
-          </p>
+            <p className="text-sm text-muted-foreground">
+              Don't have an account?{' '}
+              <a href="/register" className="text-primary hover:underline" data-testid="login-link-register">
+                Sign up
+              </a>
+            </p>
+          </div>
         </CardFooter>
       </form>
     </Card>
