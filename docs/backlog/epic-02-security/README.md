@@ -16,7 +16,7 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US06 | Password Reset Flow | L | Done |
 | E2-US07 | Security Headers & Audit Logging | S | Done |
 | E2-US08 | Input Validation Hardening & Payload Size Limits | S | Done |
-| E2-US09 | User Enumeration Prevention | M | Pending |
+| E2-US09 | User Enumeration Prevention | M | Done |
 | E2-US10 | Token Exposure Reduction | M | Pending |
 | E2-US11 | Seed Data & Production Safety Guards | S | Pending |
 | E2-US12 | Dependency Security Scanning & Supply Chain Protection | S | Pending |

@@ -3,13 +3,13 @@
 **User Story**: As a platform operator, I want the application to return generic responses for auth-related operations so that attackers cannot determine which email addresses have registered accounts.
 
 **Acceptance Criteria**:
-- [ ] `POST /auth/register` returns the same success message and HTTP 201 whether the email is new or already registered
-- [ ] `POST /auth/resend-verification` returns the same success message whether the email exists or not
-- [ ] `POST /auth/forgot-password` (when implemented in E2-US06) returns the same message for all emails
-- [ ] Registration with a duplicate email still silently succeeds from the caller's perspective (no user/token created internally)
-- [ ] Timing side-channels are mitigated by maintaining consistent response times (hash a dummy password when user doesn't exist)
-- [ ] Existing E2E tests are updated to account for generic responses
-- [ ] Error logs still record the actual outcome for debugging (not exposed to client)
+- [x] `POST /auth/register` returns the same success message and HTTP 201 whether the email is new or already registered
+- [x] `POST /auth/resend-verification` returns the same success message whether the email exists or not
+- [x] `POST /auth/forgot-password` (when implemented in E2-US06) returns the same message for all emails
+- [x] Registration with a duplicate email still silently succeeds from the caller's perspective (no user/token created internally)
+- [x] Timing side-channels are mitigated by maintaining consistent response times (hash a dummy password when user doesn't exist)
+- [x] Existing E2E tests are updated to account for generic responses
+- [x] Error logs still record the actual outcome for debugging (not exposed to client)
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -27,7 +27,7 @@
 
 **Complexity**: M
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin
