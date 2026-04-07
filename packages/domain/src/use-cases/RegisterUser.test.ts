@@ -120,6 +120,20 @@ describe('RegisterUser', () => {
     expect(userRepo.create).not.toHaveBeenCalled();
   });
 
+  it('should hash password even for duplicate email (timing side-channel mitigation)', async () => {
+    vi.mocked(userRepo.findByEmail).mockResolvedValue(createMockUser());
+
+    await registerUser.execute({
+      email: 'test@example.com',
+      password: 'Password1',
+      firstName: 'John',
+      lastName: 'Doe',
+    });
+
+    expect(hasher.hash).toHaveBeenCalledWith('Password1');
+    expect(userRepo.create).not.toHaveBeenCalled();
+  });
+
   it('should throw if email is empty', async () => {
     await expect(
       registerUser.execute({

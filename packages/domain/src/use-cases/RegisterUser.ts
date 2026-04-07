@@ -46,6 +46,8 @@ export class RegisterUser {
 
     const existingUser = await this.userRepository.findByEmail(normalizedEmail);
     if (existingUser) {
+      // Hash password even for duplicates to prevent timing side-channel
+      await this.passwordHasher.hash(dto.password);
       return null;
     }
 
