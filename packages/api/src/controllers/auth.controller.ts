@@ -19,6 +19,7 @@ import {
   RegisterUserError,
   LoginUser,
   LoginUserError,
+  AccountLockedError,
   GetUserRoles,
   VerifyEmail,
   VerifyEmailError,
@@ -222,6 +223,21 @@ export class AuthController {
         },
       };
     } catch (error) {
+      if (error instanceof AccountLockedError) {
+        this.auditLogService.log({
+          action: AuditAction.LOGIN_FAILED,
+          ip: req.ip,
+          outcome: 'failure',
+          metadata: { email: dto.email, reason: 'account_locked' },
+        });
+        res.setHeader('Retry-After', String(error.retryAfterSeconds));
+        res.status(HttpStatus.TOO_MANY_REQUESTS).json({
+          statusCode: HttpStatus.TOO_MANY_REQUESTS,
+          message: error.message,
+          retryAfter: error.retryAfterSeconds,
+        });
+        return;
+      }
       if (error instanceof LoginUserError) {
         this.auditLogService.log({
           action: AuditAction.LOGIN_FAILED,

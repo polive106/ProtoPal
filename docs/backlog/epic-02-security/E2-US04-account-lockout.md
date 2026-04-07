@@ -3,12 +3,12 @@
 **User Story**: As a platform operator, I want accounts to lock after repeated failed login attempts so that brute-force attacks are mitigated even from distributed IPs.
 
 **Acceptance Criteria**:
-- [ ] Failed login attempts are tracked per email in the database
-- [ ] Account is locked after 5 consecutive failed attempts
-- [ ] Lockout duration uses exponential backoff (5min, 15min, 1hr, 4hr, 24hr)
-- [ ] Successful login resets the failure counter
-- [ ] Locked accounts receive a clear error message with retry-after time
-- [ ] Admin can unlock accounts manually
+- [x] Failed login attempts are tracked per email in the database
+- [x] Account is locked after 5 consecutive failed attempts
+- [x] Lockout duration uses exponential backoff (5min, 15min, 1hr, 4hr, 24hr)
+- [x] Successful login resets the failure counter
+- [x] Locked accounts receive a clear error message with retry-after time
+- [x] Admin can unlock accounts manually
 - [ ] Lockout state is visible on the admin dashboard (future)
 
 **Technical Tasks**:
@@ -28,7 +28,7 @@
 
 **Complexity**: M
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

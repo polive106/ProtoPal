@@ -85,6 +85,17 @@ export const rateLimitEntries = sqliteTable('rate_limit_entries', {
   expiresAt: integer('expires_at').notNull(),
 });
 
+// === LOGIN ATTEMPTS ===
+export const loginAttempts = sqliteTable('login_attempts', {
+  id: text('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  attempts: integer('attempts').notNull().default(0),
+  lockoutCount: integer('lockout_count').notNull().default(0),
+  lockedUntil: integer('locked_until', { mode: 'timestamp_ms' }),
+  lastAttemptAt: integer('last_attempt_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
+});
+
 // === NOTES ===
 export const notes = sqliteTable('notes', {
   id: text('id').primaryKey(),

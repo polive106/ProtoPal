@@ -8,6 +8,7 @@
 | Startup env validation (fail-fast on missing JWT_SECRET) | Done | E2-US03 |
 | NODE_ENV warning on startup | Done | E2-US03 |
 | Rate limiting cannot be disabled in production | Done | E2-US03 |
+| Account lockout after 5 failed login attempts (exponential backoff) | Done | E2-US04 |
 
 ## Admin
 
@@ -16,7 +17,7 @@
 | Login | Done | E1-US02 |
 | View dashboard | Done | E1-US02 |
 | Manage notes | Done | E1-US03 |
-| Unlock locked accounts | Pending | E2-US04 |
+| Unlock locked accounts | Done | E2-US04 |
 | View audit logs | Pending | E2-US07 |
 
 ## User

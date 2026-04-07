@@ -6,6 +6,7 @@ import {
   RegisterUserError,
   LoginUser,
   LoginUserError,
+  AccountLockedError,
   GetUserRoles,
   VerifyEmail,
   VerifyEmailError,
@@ -213,6 +214,21 @@ describe('AuthController (integration)', () => {
         .send({});
 
       expect(res.status).toBe(400);
+    });
+
+    it('returns 429 with Retry-After header when account is locked', async () => {
+      mockLoginUser.execute.mockRejectedValue(
+        new AccountLockedError(300),
+      );
+
+      const res = await request(app.getHttpServer())
+        .post('/auth/login')
+        .send(validBody);
+
+      expect(res.status).toBe(429);
+      expect(res.headers['retry-after']).toBe('300');
+      expect(res.body.message).toContain('Account is temporarily locked');
+      expect(res.body.retryAfter).toBe(300);
     });
   });
 
