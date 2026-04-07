@@ -15,7 +15,7 @@ disable-model-invocation: true
    - Write minimum implementation
    - Verify test passes
    - Refactor if needed
-6. **Add E2E tests** — use `/add-e2e-tests` skill
+6. **Add E2E tests** — use `/add-e2e-tests` skill. Must include **both** API tests (`@api` tag) and UI browser tests (`@ui` tag)
 7. **Verify everything passes**:
    ```bash
    pnpm lint
@@ -60,7 +60,8 @@ packages/mobile/maestro/flows/notes/
 - [ ] All acceptance criteria checked
 - [ ] Unit tests pass (`pnpm test`)
 - [ ] Lint passes (`pnpm lint`)
-- [ ] E2E tests pass (`pnpm test:e2e`)
+- [ ] E2E API tests pass (`@api` tagged tests)
+- [ ] E2E UI tests pass (`@ui` tagged tests)
 - [ ] Story status updated to "Done"
 - [ ] Epic README status column updated to "Done"
 - [ ] USER_FEATURES.md updated

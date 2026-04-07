@@ -72,31 +72,36 @@ export class LoginUser {
       }
     }
 
+    const currentAttempts = attempt?.attempts ?? 0;
+    const currentLockoutCount = attempt?.lockoutCount ?? 0;
+
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
+      await this.recordFailedAttempt(email, currentAttempts, currentLockoutCount);
       throw new LoginUserError('Invalid email or password');
     }
 
     if (!user.passwordHash) {
+      await this.recordFailedAttempt(email, currentAttempts, currentLockoutCount);
       throw new LoginUserError('Invalid email or password');
     }
 
     const isPasswordValid = await this.passwordHasher.verify(password, user.passwordHash);
     if (!isPasswordValid) {
-      await this.recordFailedAttempt(email, attempt?.attempts ?? 0, attempt?.lockoutCount ?? 0);
+      await this.recordFailedAttempt(email, currentAttempts, currentLockoutCount);
       throw new LoginUserError('Invalid email or password');
     }
 
     if (!user.isActive) {
-      throw new LoginUserError('Your account has been deactivated');
+      throw new LoginUserError('Invalid email or password');
     }
 
     if (user.status === 'pending') {
-      throw new LoginUserError('Please verify your email');
+      throw new LoginUserError('Invalid email or password');
     }
 
     if (user.status === 'rejected') {
-      throw new LoginUserError('Your account has been rejected');
+      throw new LoginUserError('Invalid email or password');
     }
 
     // Reset failed attempts on successful login

@@ -22,7 +22,7 @@ export class ResendVerification {
     private readonly verificationService: VerificationService,
   ) {}
 
-  async execute(dto: ResendVerificationDTO): Promise<ResendVerificationResult> {
+  async execute(dto: ResendVerificationDTO): Promise<ResendVerificationResult | null> {
     const email = dto.email?.trim().toLowerCase() || '';
     if (!email) {
       throw new ResendVerificationError('Email is required');
@@ -30,7 +30,7 @@ export class ResendVerification {
 
     const user = await this.userRepository.findByEmail(email);
     if (!user || user.status !== 'pending') {
-      throw new ResendVerificationError('No pending account found for this email');
+      return null;
     }
 
     await this.verificationService.invalidateUserTokens(user.id);

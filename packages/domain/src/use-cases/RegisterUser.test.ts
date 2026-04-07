@@ -81,8 +81,9 @@ describe('RegisterUser', () => {
       lastName: 'Doe',
     });
 
-    expect(result.user).toBeDefined();
-    expect(result.user.email).toBe('test@example.com');
+    expect(result).not.toBeNull();
+    expect(result!.user).toBeDefined();
+    expect(result!.user.email).toBe('test@example.com');
     expect(hasher.hash).toHaveBeenCalledWith('Password1');
     expect(userRepo.create).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'pending' }),
@@ -102,20 +103,21 @@ describe('RegisterUser', () => {
       'user-1',
       'test@example.com',
     );
-    expect(result.verificationToken).toBe('raw-token-123');
+    expect(result!.verificationToken).toBe('raw-token-123');
   });
 
-  it('should throw if email is already registered', async () => {
+  it('should return null if email is already registered (prevent enumeration)', async () => {
     vi.mocked(userRepo.findByEmail).mockResolvedValue(createMockUser());
 
-    await expect(
-      registerUser.execute({
-        email: 'test@example.com',
-        password: 'Password1',
-        firstName: 'John',
-        lastName: 'Doe',
-      })
-    ).rejects.toThrow(RegisterUserError);
+    const result = await registerUser.execute({
+      email: 'test@example.com',
+      password: 'Password1',
+      firstName: 'John',
+      lastName: 'Doe',
+    });
+
+    expect(result).toBeNull();
+    expect(userRepo.create).not.toHaveBeenCalled();
   });
 
   it('should throw if email is empty', async () => {

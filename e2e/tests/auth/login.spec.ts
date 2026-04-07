@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { testCredentials, apiUrls, testIds } from '../../fixtures';
+import { registerUser } from '../../fixtures/api-helpers';
 
 test.describe('Login', () => {
   test.describe('Login API @api', () => {
@@ -66,6 +67,23 @@ test.describe('Login', () => {
       await page.getByTestId(testIds.login.inputPassword).fill('wrongpassword');
       await page.getByTestId(testIds.login.btnSubmit).click();
       await expect(page.getByTestId(testIds.login.alertError)).toBeVisible();
+    });
+
+    test('should show generic error for pending account (no enumeration)', async ({ page, request }) => {
+      const email = `ui-pending-${Date.now()}@example.com`;
+      await registerUser(request, {
+        email,
+        password: 'TestPass1',
+        firstName: 'Pending',
+        lastName: 'User',
+      });
+
+      await page.goto('/login');
+      await page.getByTestId(testIds.login.inputEmail).fill(email);
+      await page.getByTestId(testIds.login.inputPassword).fill('TestPass1');
+      await page.getByTestId(testIds.login.btnSubmit).click();
+      await expect(page.getByTestId(testIds.login.alertError)).toBeVisible();
+      await expect(page.getByTestId(testIds.login.alertError)).toContainText('Invalid email or password');
     });
   });
 });

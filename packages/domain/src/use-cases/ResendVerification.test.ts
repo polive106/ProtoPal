@@ -56,21 +56,25 @@ describe('ResendVerification', () => {
       'user-1',
       'test@example.com',
     );
-    expect(result.verificationToken).toBe('new-raw-token');
+    expect(result!.verificationToken).toBe('new-raw-token');
   });
 
-  it('should throw if email is not found', async () => {
+  it('should return null if email is not found (prevent enumeration)', async () => {
     vi.mocked(userRepo.findByEmail).mockResolvedValue(null);
 
-    await expect(resendVerification.execute({ email: 'unknown@example.com' }))
-      .rejects.toThrow('No pending account found for this email');
+    const result = await resendVerification.execute({ email: 'unknown@example.com' });
+
+    expect(result).toBeNull();
+    expect(verificationService.invalidateUserTokens).not.toHaveBeenCalled();
   });
 
-  it('should throw if user is already approved', async () => {
+  it('should return null if user is already approved (prevent enumeration)', async () => {
     vi.mocked(userRepo.findByEmail).mockResolvedValue(createMockUser({ status: 'approved' }));
 
-    await expect(resendVerification.execute({ email: 'test@example.com' }))
-      .rejects.toThrow('No pending account found for this email');
+    const result = await resendVerification.execute({ email: 'test@example.com' });
+
+    expect(result).toBeNull();
+    expect(verificationService.invalidateUserTokens).not.toHaveBeenCalled();
   });
 
   it('should throw if email is empty', async () => {

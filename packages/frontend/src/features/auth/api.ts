@@ -13,7 +13,6 @@ interface UserSummary {
 
 export interface RegisterResponse {
   message: string;
-  user: UserSummary;
   verificationToken?: string;
 }
 

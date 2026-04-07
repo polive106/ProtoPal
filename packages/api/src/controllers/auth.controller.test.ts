@@ -57,7 +57,7 @@ describe('AuthController', () => {
     const dto = { email: 'test@example.com', password: 'Password1!', firstName: 'Test', lastName: 'User' };
     const mockReq = { ip: '127.0.0.1' } as any;
 
-    it('returns 201 with pending user on success', async () => {
+    it('returns 200 with generic message on success', async () => {
       const user = { id: 'u1', email: dto.email, firstName: dto.firstName, lastName: dto.lastName, status: 'pending' };
       mockRegisterUser.execute.mockResolvedValue({ user, verificationToken: 'test-token' });
 
@@ -66,7 +66,18 @@ describe('AuthController', () => {
       expect(result).toEqual(
         expect.objectContaining({
           message: expect.stringContaining('Please check your email'),
-          user: expect.objectContaining({ id: 'u1', status: 'pending' }),
+        }),
+      );
+    });
+
+    it('returns 200 with same generic message for duplicate email (prevent enumeration)', async () => {
+      mockRegisterUser.execute.mockResolvedValue(null);
+
+      const result = await controller.register(dto, mockReq);
+
+      expect(result).toEqual(
+        expect.objectContaining({
+          message: expect.stringContaining('Please check your email'),
         }),
       );
     });
@@ -99,16 +110,16 @@ describe('AuthController', () => {
       });
     });
 
-    it('logs audit event on failed registration', async () => {
-      mockRegisterUser.execute.mockRejectedValue(new RegisterUserError('Email taken'));
+    it('logs audit event on duplicate email registration', async () => {
+      mockRegisterUser.execute.mockResolvedValue(null);
 
-      await expect(controller.register(dto, mockReq)).rejects.toThrow(BadRequestException);
+      await controller.register(dto, mockReq);
 
       expect(mockAuditLogService.log).toHaveBeenCalledWith({
         action: AuditAction.REGISTER_FAILED,
         ip: '127.0.0.1',
         outcome: 'failure',
-        metadata: { email: dto.email, reason: 'Email taken' },
+        metadata: { email: dto.email, reason: 'duplicate_email' },
       });
     });
   });
@@ -132,20 +143,28 @@ describe('AuthController', () => {
   });
 
   describe('resendVerificationEmail', () => {
-    it('returns success message', async () => {
+    it('returns generic message on success (prevent enumeration)', async () => {
       mockResendVerification.execute.mockResolvedValue({ verificationToken: 'new-token' });
 
       const result = await controller.resendVerificationEmail({ email: 'test@example.com' });
 
-      expect(result.message).toContain('Verification email sent');
+      expect(result.message).toContain('If a pending account exists');
+    });
+
+    it('returns same generic message when no pending account found (prevent enumeration)', async () => {
+      mockResendVerification.execute.mockResolvedValue(null);
+
+      const result = await controller.resendVerificationEmail({ email: 'test@example.com' });
+
+      expect(result.message).toContain('If a pending account exists');
     });
 
     it('throws BadRequestException on ResendVerificationError', async () => {
       mockResendVerification.execute.mockRejectedValue(
-        new ResendVerificationError('No pending account found'),
+        new ResendVerificationError('Email is required'),
       );
 
-      await expect(controller.resendVerificationEmail({ email: 'test@example.com' }))
+      await expect(controller.resendVerificationEmail({ email: '' }))
         .rejects.toThrow(BadRequestException);
     });
   });

@@ -97,10 +97,21 @@ describe('AuthController (integration)', () => {
         .post('/auth/register')
         .send(validBody);
 
-      expect(res.status).toBe(201);
+      expect(res.status).toBe(200);
       expect(res.body.message).toContain('Please check your email');
-      expect(res.body.user.status).toBe('pending');
       expect(res.body.verificationToken).toBe('test-token-123');
+    });
+
+    it('returns 200 with same message for duplicate email (prevent enumeration)', async () => {
+      mockRegisterUser.execute.mockResolvedValue(null);
+
+      const res = await request(app.getHttpServer())
+        .post('/auth/register')
+        .send(validBody);
+
+      expect(res.status).toBe(200);
+      expect(res.body.message).toContain('Please check your email');
+      expect(res.body.verificationToken).toBeUndefined();
     });
 
     it('returns 400 on validation error', async () => {
@@ -111,9 +122,9 @@ describe('AuthController (integration)', () => {
       expect(res.status).toBe(400);
     });
 
-    it('returns 400 on domain error', async () => {
+    it('returns 400 on domain error (validation errors still propagate)', async () => {
       mockRegisterUser.execute.mockRejectedValue(
-        new RegisterUserError('Email already exists'),
+        new RegisterUserError('Email is required'),
       );
 
       const res = await request(app.getHttpServer())

@@ -120,14 +120,15 @@ test.describe('Register Validation', () => {
       await expect(page.getByTestId(testIds.register.btnSubmit)).toBeDisabled();
     });
 
-    test('should show server error alert for duplicate email', async ({ page }) => {
+    test('should redirect to check-email for duplicate email (no enumeration)', async ({ page }) => {
       await page.getByTestId(testIds.register.inputFirstName).fill('Test');
       await page.getByTestId(testIds.register.inputLastName).fill('User');
       await page.getByTestId(testIds.register.inputEmail).fill('user@example.com');
       await page.getByTestId(testIds.register.inputPassword).fill('TestPass1');
       await page.getByTestId(testIds.register.btnSubmit).click();
 
-      await expect(page.getByTestId(testIds.register.alertError)).toBeVisible({ timeout: 10000 });
+      // Should redirect to check-email page, not show an error
+      await expect(page.getByTestId(testIds.checkEmail.card)).toBeVisible({ timeout: 10000 });
     });
   });
 });
