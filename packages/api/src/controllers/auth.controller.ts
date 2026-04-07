@@ -189,6 +189,7 @@ export class AuthController {
         firstName: userWithRoles.firstName,
         lastName: userWithRoles.lastName,
         status: userWithRoles.status,
+        tokenVersion: userWithRoles.tokenVersion,
         roles: jwtRoles,
       });
 

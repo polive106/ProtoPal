@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import type { Request } from 'express';
-import type { TokenBlacklistRepository } from '@acme/domain';
+import type { TokenBlacklistRepository, UserRepository } from '@acme/domain';
 import { JwtService } from '../../services/JwtService';
 import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { hashToken } from '../utils/hash-token';
@@ -12,6 +12,7 @@ export class AuthGuard implements CanActivate {
     private readonly jwtService: JwtService,
     private readonly reflector: Reflector,
     private readonly tokenBlacklistRepo?: TokenBlacklistRepository,
+    private readonly userRepository?: UserRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -39,9 +40,18 @@ export class AuthGuard implements CanActivate {
 
     try {
       const payload = await this.jwtService.verifyToken(token);
+
+      if (this.userRepository && payload.tokenVersion !== undefined) {
+        const user = await this.userRepository.findById(payload.sub);
+        if (!user || user.tokenVersion !== payload.tokenVersion) {
+          throw new UnauthorizedException('Token has been revoked');
+        }
+      }
+
       request.user = payload;
       return true;
-    } catch {
+    } catch (error) {
+      if (error instanceof UnauthorizedException) throw error;
       throw new UnauthorizedException('Invalid or expired token');
     }
   }

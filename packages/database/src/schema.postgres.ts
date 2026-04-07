@@ -1,4 +1,4 @@
-import { pgTable, text, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, boolean, timestamp, integer } from 'drizzle-orm/pg-core';
 
 // === USERS ===
 export const users = pgTable('users', {
@@ -13,6 +13,7 @@ export const users = pgTable('users', {
   })
     .notNull()
     .default('pending'),
+  tokenVersion: integer('token_version').notNull().default(0),
   lastLoginAt: timestamp('last_login_at'),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at').notNull(),

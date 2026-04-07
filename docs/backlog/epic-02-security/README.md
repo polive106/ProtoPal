@@ -13,7 +13,7 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US03 | CORS & Environment Hardening | S | Done |
 | E2-US04 | Account Lockout & Brute Force Protection | M | Pending |
 | E2-US05 | Persistent Rate Limiting | M | Done |
-| E2-US06 | Password Reset Flow | L | Pending |
+| E2-US06 | Password Reset Flow | L | Done |
 | E2-US07 | Security Headers & Audit Logging | S | Done |
 | E2-US08 | Input Validation Hardening & Payload Size Limits | S | Done |
 | E2-US09 | User Enumeration Prevention | M | Pending |

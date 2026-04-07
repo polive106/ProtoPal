@@ -3,15 +3,15 @@
 **User Story**: As a user, I want to reset my password via email so that I can recover access to my account if I forget my credentials.
 
 **Acceptance Criteria**:
-- [ ] `POST /auth/forgot-password` accepts an email and sends a reset link
-- [ ] Reset tokens are hashed before storage (not stored in plaintext)
-- [ ] Reset tokens expire after 1 hour
-- [ ] `POST /auth/reset-password` accepts token + new password and updates the account
-- [ ] Used/expired tokens are rejected
-- [ ] Requesting a reset for a non-existent email returns 200 (no user enumeration)
-- [ ] All existing sessions are invalidated after password reset
-- [ ] Frontend has forgot-password and reset-password pages
-- [ ] Rate limiting on forgot-password (3 requests/hour per email)
+- [x] `POST /auth/forgot-password` accepts an email and sends a reset link
+- [x] Reset tokens are hashed before storage (not stored in plaintext)
+- [x] Reset tokens expire after 1 hour
+- [x] `POST /auth/reset-password` accepts token + new password and updates the account
+- [x] Used/expired tokens are rejected
+- [x] Requesting a reset for a non-existent email returns 200 (no user enumeration)
+- [x] All existing sessions are invalidated after password reset
+- [x] Frontend has forgot-password and reset-password pages
+- [x] Rate limiting on forgot-password (3 requests/hour per email)
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -35,7 +35,7 @@
 
 **Complexity**: L
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

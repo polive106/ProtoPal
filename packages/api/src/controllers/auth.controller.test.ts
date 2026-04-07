@@ -162,6 +162,7 @@ describe('AuthController', () => {
         firstName: 'Test',
         lastName: 'User',
         status: 'approved',
+        tokenVersion: 0,
         roles: [{ roleId: 'r1', roleName: 'user' }],
       };
       mockLoginUser.execute.mockResolvedValue(userWithRoles);
@@ -192,6 +193,7 @@ describe('AuthController', () => {
         firstName: 'Test',
         lastName: 'User',
         status: 'approved',
+        tokenVersion: 0,
         roles: [{ roleId: 'r1', roleName: 'user' }],
       };
       mockLoginUser.execute.mockResolvedValue(userWithRoles);
@@ -232,7 +234,7 @@ describe('AuthController', () => {
   });
 
   describe('getMe', () => {
-    const authUser = { sub: 'u1', email: 'test@example.com', firstName: 'Test', lastName: 'User', status: 'approved', roles: [] };
+    const authUser = { sub: 'u1', email: 'test@example.com', firstName: 'Test', lastName: 'User', status: 'approved', tokenVersion: 0, roles: [] };
 
     it('returns user with roles', async () => {
       mockGetUserRoles.execute.mockResolvedValue({
