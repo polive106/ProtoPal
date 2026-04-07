@@ -41,8 +41,8 @@ test.describe('Rate Limit API @api @rate-limit', () => {
       },
     });
 
-    expect(response.status()).toBe(201);
+    expect(response.status()).toBe(200);
     const body = await response.json();
-    expect(body.user.email).toBe(email);
+    expect(body.message).toContain('check your email');
   });
 });
