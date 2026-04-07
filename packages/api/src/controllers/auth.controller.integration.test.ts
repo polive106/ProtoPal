@@ -177,6 +177,7 @@ describe('AuthController (integration)', () => {
         firstName: 'Test',
         lastName: 'User',
         status: 'approved',
+        tokenVersion: 0,
         roles: [{ roleId: 'role-1', roleName: 'user' }],
       });
 

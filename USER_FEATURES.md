@@ -30,8 +30,8 @@
 | Edit notes | Done | E1-US03 |
 | Delete notes | Done | E1-US03 |
 | View notes | Done | E1-US03 |
-| Email verification | Pending | E2-US02 |
-| Password reset | Pending | E2-US06 |
+| Email verification | Done | E2-US02 |
+| Password reset | Done | E2-US06 |
 | Mobile: Login | Done | E3-US02 |
 | Mobile: Register | Done | E3-US02 |
 | Mobile: View notes | Done | E3-US03 |

@@ -13,6 +13,7 @@ function createMockUser(overrides: Partial<User> = {}): User {
     lastName: 'Doe',
     isActive: true,
     status: 'pending',
+    tokenVersion: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,

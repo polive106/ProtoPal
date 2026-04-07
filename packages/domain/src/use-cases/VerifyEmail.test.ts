@@ -41,6 +41,7 @@ describe('VerifyEmail', () => {
         lastName: 'Doe',
         isActive: true,
         status: 'approved',
+        tokenVersion: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
       }),

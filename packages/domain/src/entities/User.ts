@@ -8,6 +8,7 @@ export interface User {
   lastName: string;
   isActive: boolean;
   status: UserStatus;
+  tokenVersion: number;
   lastLoginAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -29,5 +30,6 @@ export interface UpdateUserDTO {
   lastName?: string;
   isActive?: boolean;
   status?: UserStatus;
+  tokenVersion?: number;
   lastLoginAt?: Date | null;
 }

@@ -20,6 +20,7 @@ export class DrizzleUserRepository implements UserRepository {
       lastName: dto.lastName,
       isActive: dto.isActive ?? true,
       status: dto.status ?? 'pending' as const,
+      tokenVersion: 0,
       lastLoginAt: null,
       createdAt: now,
       updatedAt: now,
@@ -56,6 +57,7 @@ export class DrizzleUserRepository implements UserRepository {
     if (data.lastName !== undefined) updateData.lastName = data.lastName;
     if (data.isActive !== undefined) updateData.isActive = data.isActive;
     if (data.status !== undefined) updateData.status = data.status;
+    if (data.tokenVersion !== undefined) updateData.tokenVersion = data.tokenVersion;
     if (data.lastLoginAt !== undefined) updateData.lastLoginAt = data.lastLoginAt;
 
     this.db.update(users).set(updateData).where(eq(users.id, id)).run();
@@ -77,6 +79,7 @@ export class DrizzleUserRepository implements UserRepository {
       lastName: row.lastName,
       isActive: row.isActive,
       status: row.status,
+      tokenVersion: row.tokenVersion ?? 0,
       lastLoginAt: row.lastLoginAt ?? undefined,
       createdAt: row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt),
       updatedAt: row.updatedAt instanceof Date ? row.updatedAt : new Date(row.updatedAt),

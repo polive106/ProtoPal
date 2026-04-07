@@ -36,7 +36,17 @@ describe('ResetPassword', () => {
     };
     userRepo = {
       create: vi.fn(),
-      findById: vi.fn(),
+      findById: vi.fn().mockResolvedValue({
+        id: 'user-1',
+        email: 'test@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        isActive: true,
+        status: 'approved',
+        tokenVersion: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }),
       findByEmail: vi.fn(),
       findAll: vi.fn(),
       findByStatus: vi.fn(),
@@ -47,6 +57,7 @@ describe('ResetPassword', () => {
         lastName: 'Doe',
         isActive: true,
         status: 'approved',
+        tokenVersion: 1,
         createdAt: new Date(),
         updatedAt: new Date(),
       }),
@@ -70,7 +81,7 @@ describe('ResetPassword', () => {
     expect(tokenGenerator.hash).toHaveBeenCalledWith('raw-token');
     expect(resetTokenRepo.findByTokenHash).toHaveBeenCalledWith('hashed-token');
     expect(passwordHasher.hash).toHaveBeenCalledWith(validPassword);
-    expect(userRepo.update).toHaveBeenCalledWith('user-1', { passwordHash: 'new-hashed-password' });
+    expect(userRepo.update).toHaveBeenCalledWith('user-1', { passwordHash: 'new-hashed-password', tokenVersion: 1 });
     expect(resetTokenRepo.markUsed).toHaveBeenCalledWith('rt-1');
     expect(resetTokenRepo.invalidateByUserId).toHaveBeenCalledWith('user-1');
     expect(result.email).toBe('test@example.com');
@@ -130,5 +141,26 @@ describe('ResetPassword', () => {
     const longPassword = 'A1' + 'a'.repeat(71);
     await expect(resetPassword.execute({ token: 'raw-token', password: longPassword }))
       .rejects.toThrow('Password must be at most 72 characters');
+  });
+
+  it('should increment tokenVersion to invalidate existing sessions', async () => {
+    vi.mocked(userRepo.findById).mockResolvedValue({
+      id: 'user-1',
+      email: 'test@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      isActive: true,
+      status: 'approved',
+      tokenVersion: 3,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    await resetPassword.execute({ token: 'raw-token', password: validPassword });
+
+    expect(userRepo.update).toHaveBeenCalledWith('user-1', {
+      passwordHash: 'new-hashed-password',
+      tokenVersion: 4,
+    });
   });
 });

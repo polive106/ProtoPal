@@ -25,6 +25,7 @@ const user = {
   firstName: 'Test',
   lastName: 'User',
   status: 'approved',
+  tokenVersion: 0,
   roles: [],
 };
 

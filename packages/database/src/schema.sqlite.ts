@@ -13,6 +13,7 @@ export const users = sqliteTable('users', {
   })
     .notNull()
     .default('pending'),
+  tokenVersion: integer('token_version').notNull().default(0),
   lastLoginAt: integer('last_login_at', { mode: 'timestamp_ms' }),
   createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
   updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),

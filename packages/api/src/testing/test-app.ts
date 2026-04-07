@@ -6,7 +6,7 @@ import { AuthGuard, RolesGuard, RateLimitGuard } from '../common/guards';
 import { HttpExceptionFilter } from '../common/filters';
 import { LoggingInterceptor } from '../common/interceptors';
 import { JwtService, type JwtPayload } from '../services';
-import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY, RATE_LIMIT_REPOSITORY } from '../modules/tokens';
+import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY, RATE_LIMIT_REPOSITORY, USER_REPOSITORY } from '../modules/tokens';
 
 export const mockUserPayload: JwtPayload = {
   sub: 'user-test-id',
@@ -14,6 +14,7 @@ export const mockUserPayload: JwtPayload = {
   firstName: 'Test',
   lastName: 'User',
   status: 'approved',
+  tokenVersion: 0,
   roles: [{ roleId: 'role-1', roleName: 'user' }],
 };
 
@@ -53,9 +54,16 @@ export async function createTestApp({
     // RATE_LIMIT_REPOSITORY not provided in this test module
   }
 
+  let userRepository;
+  try {
+    userRepository = moduleRef.get(USER_REPOSITORY);
+  } catch {
+    // USER_REPOSITORY not provided in this test module
+  }
+
   app.use(cookieParser());
   app.useGlobalGuards(
-    new AuthGuard(jwtService, reflector, tokenBlacklistRepo),
+    new AuthGuard(jwtService, reflector, tokenBlacklistRepo, userRepository),
     new RolesGuard(reflector),
     new RateLimitGuard(reflector, rateLimitRepo),
   );

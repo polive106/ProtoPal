@@ -55,8 +55,16 @@ export class ResetPassword {
       throw new ResetPasswordError('Reset token has already been used');
     }
 
+    const existingUser = await this.userRepository.findById(resetToken.userId);
+    if (!existingUser) {
+      throw new ResetPasswordError('User not found');
+    }
+
     const passwordHash = await this.passwordHasher.hash(dto.password);
-    const user = await this.userRepository.update(resetToken.userId, { passwordHash });
+    const user = await this.userRepository.update(resetToken.userId, {
+      passwordHash,
+      tokenVersion: existingUser.tokenVersion + 1,
+    });
 
     await Promise.all([
       this.passwordResetTokenRepository.markUsed(resetToken.id),

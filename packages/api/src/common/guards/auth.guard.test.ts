@@ -147,4 +147,55 @@ describe('AuthGuard', () => {
       expect(mockJwtService.verifyToken).toHaveBeenCalledWith('valid-token');
     });
   });
+
+  describe('with token version validation', () => {
+    let guardWithUserRepo: AuthGuard;
+    let mockUserRepo: { findById: ReturnType<typeof vi.fn> };
+
+    beforeEach(() => {
+      mockUserRepo = { findById: vi.fn() };
+      guardWithUserRepo = new AuthGuard(
+        mockJwtService as any,
+        mockReflector as any,
+        undefined,
+        mockUserRepo as any,
+      );
+    });
+
+    it('rejects token with stale tokenVersion', async () => {
+      mockReflector.getAllAndOverride.mockReturnValue(false);
+      const payload = { sub: 'user-1', email: 'test@test.com', tokenVersion: 0 };
+      mockJwtService.verifyToken.mockResolvedValue(payload);
+      mockUserRepo.findById.mockResolvedValue({ id: 'user-1', tokenVersion: 1 });
+      const context = createContext({ auth_token: 'stale-token' });
+
+      await expect(guardWithUserRepo.canActivate(context)).rejects.toThrow(
+        'Token has been revoked',
+      );
+    });
+
+    it('accepts token with current tokenVersion', async () => {
+      mockReflector.getAllAndOverride.mockReturnValue(false);
+      const payload = { sub: 'user-1', email: 'test@test.com', tokenVersion: 2 };
+      mockJwtService.verifyToken.mockResolvedValue(payload);
+      mockUserRepo.findById.mockResolvedValue({ id: 'user-1', tokenVersion: 2 });
+      const context = createContext({ auth_token: 'valid-token' });
+
+      const result = await guardWithUserRepo.canActivate(context);
+
+      expect(result).toBe(true);
+    });
+
+    it('rejects token when user is not found', async () => {
+      mockReflector.getAllAndOverride.mockReturnValue(false);
+      const payload = { sub: 'deleted-user', email: 'test@test.com', tokenVersion: 0 };
+      mockJwtService.verifyToken.mockResolvedValue(payload);
+      mockUserRepo.findById.mockResolvedValue(null);
+      const context = createContext({ auth_token: 'orphan-token' });
+
+      await expect(guardWithUserRepo.canActivate(context)).rejects.toThrow(
+        'Token has been revoked',
+      );
+    });
+  });
 });

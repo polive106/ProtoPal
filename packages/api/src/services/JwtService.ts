@@ -11,6 +11,7 @@ export interface JwtPayload {
   firstName: string;
   lastName: string;
   status: string;
+  tokenVersion: number;
   roles: JwtRole[];
 }
 

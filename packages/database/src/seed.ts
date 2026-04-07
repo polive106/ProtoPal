@@ -58,6 +58,7 @@ async function seed() {
         last_name TEXT NOT NULL,
         is_active INTEGER NOT NULL DEFAULT 1,
         status TEXT NOT NULL DEFAULT 'pending',
+        token_version INTEGER NOT NULL DEFAULT 0,
         last_login_at INTEGER,
         created_at INTEGER NOT NULL,
         updated_at INTEGER NOT NULL

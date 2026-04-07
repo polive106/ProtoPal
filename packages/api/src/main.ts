@@ -9,8 +9,8 @@ import { AuthGuard, RolesGuard, RateLimitGuard } from './common/guards';
 import { HttpExceptionFilter } from './common/filters';
 import { LoggingInterceptor } from './common/interceptors';
 import { JwtService, AuditLogService } from './services';
-import type { TokenBlacklistRepository, RateLimitRepository } from '@acme/domain';
-import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY, RATE_LIMIT_REPOSITORY } from './modules/tokens';
+import type { TokenBlacklistRepository, RateLimitRepository, UserRepository } from '@acme/domain';
+import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY, RATE_LIMIT_REPOSITORY, USER_REPOSITORY } from './modules/tokens';
 
 export const DEFAULT_ORIGINS = [
   'http://localhost:5173',
@@ -81,9 +81,10 @@ async function bootstrap() {
   const jwtService = app.get<JwtService>(JWT_SERVICE);
   const tokenBlacklistRepo = app.get<TokenBlacklistRepository>(TOKEN_BLACKLIST_REPOSITORY);
   const rateLimitRepo = app.get<RateLimitRepository>(RATE_LIMIT_REPOSITORY);
+  const userRepository = app.get<UserRepository>(USER_REPOSITORY);
   const auditLogService = app.get(AuditLogService);
   app.useGlobalGuards(
-    new AuthGuard(jwtService, reflector, tokenBlacklistRepo),
+    new AuthGuard(jwtService, reflector, tokenBlacklistRepo, userRepository),
     new RolesGuard(reflector, auditLogService),
     new RateLimitGuard(reflector, rateLimitRepo),
   );

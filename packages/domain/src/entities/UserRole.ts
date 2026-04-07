@@ -19,6 +19,7 @@ export interface UserWithRoles {
   lastName: string;
   isActive: boolean;
   status: string;
+  tokenVersion: number;
   roles: Array<{
     roleId: string;
     roleName: string;

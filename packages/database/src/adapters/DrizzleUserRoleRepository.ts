@@ -49,6 +49,7 @@ export class DrizzleUserRoleRepository implements UserRoleRepository {
       lastName: user.lastName,
       isActive: user.isActive,
       status: user.status,
+      tokenVersion: user.tokenVersion ?? 0,
       roles: userRoleRows.map((r) => ({
         roleId: r.roleId,
         roleName: r.roleName,
