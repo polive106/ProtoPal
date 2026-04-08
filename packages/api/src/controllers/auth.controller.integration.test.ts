@@ -99,7 +99,7 @@ describe('AuthController (integration)', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.message).toContain('Please check your email');
-      expect(res.body.verificationToken).toBe('test-token-123');
+      expect(res.body.verificationToken).toBeUndefined();
     });
 
     it('returns 200 with same message for duplicate email (prevent enumeration)', async () => {

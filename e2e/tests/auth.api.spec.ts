@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { apiUrl, registerUser, loginAs, verifyEmail, resendVerification, registerAndVerify } from '../fixtures/api-helpers';
+import { apiUrl, registerUser, loginAs, verifyEmail, resendVerification, registerAndVerify, getVerificationToken } from '../fixtures/api-helpers';
 import { testCredentials } from '../fixtures';
 
 test.describe('Auth API @api', () => {
-  test('Register new user → 200 with generic message', async ({ request }) => {
+  test('Register new user → 200 with generic message (no token in body)', async ({ request }) => {
     const email = `auth-test-${Date.now()}@example.com`;
     const response = await registerUser(request, {
       email,
@@ -15,7 +15,7 @@ test.describe('Auth API @api', () => {
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body.message).toContain('check your email');
-    expect(body.verificationToken).toBeTruthy();
+    expect(body.verificationToken).toBeUndefined();
   });
 
   test('Register duplicate email → 200 with same generic message (no enumeration)', async ({ request }) => {
@@ -64,16 +64,15 @@ test.describe('Auth API @api', () => {
     expect(body.message).toContain('Invalid email or password');
   });
 
-  test('Verify email with valid token → account approved', async ({ request }) => {
+  test('Verify email with valid token via POST → account approved', async ({ request }) => {
     const email = `auth-verify-${Date.now()}@example.com`;
-    const regResponse = await registerUser(request, {
+    await registerUser(request, {
       email,
       password: 'TestPass1',
       firstName: 'Verify',
       lastName: 'User',
     });
-    const regBody = await regResponse.json();
-    const token = regBody.verificationToken;
+    const token = await getVerificationToken(request, email);
 
     const verifyResponse = await verifyEmail(request, token);
     expect(verifyResponse.status()).toBe(200);
@@ -93,14 +92,13 @@ test.describe('Auth API @api', () => {
 
   test('Verify already verified token → 400', async ({ request }) => {
     const email = `auth-double-${Date.now()}@example.com`;
-    const regResponse = await registerUser(request, {
+    await registerUser(request, {
       email,
       password: 'TestPass1',
       firstName: 'Double',
       lastName: 'User',
     });
-    const regBody = await regResponse.json();
-    const token = regBody.verificationToken;
+    const token = await getVerificationToken(request, email);
 
     // First verification succeeds
     const first = await verifyEmail(request, token);
@@ -113,20 +111,22 @@ test.describe('Auth API @api', () => {
 
   test('Resend verification → new token works, old invalidated', async ({ request }) => {
     const email = `auth-resend-${Date.now()}@example.com`;
-    const regResponse = await registerUser(request, {
+    await registerUser(request, {
       email,
       password: 'TestPass1',
       firstName: 'Resend',
       lastName: 'User',
     });
-    const regBody = await regResponse.json();
-    const oldToken = regBody.verificationToken;
+    const oldToken = await getVerificationToken(request, email);
 
     // Resend
     const resendResponse = await resendVerification(request, email);
     expect(resendResponse.status()).toBe(200);
     const resendBody = await resendResponse.json();
-    const newToken = resendBody.verificationToken;
+    expect(resendBody.verificationToken).toBeUndefined();
+
+    // Get new token from dev mailbox
+    const newToken = await getVerificationToken(request, email);
     expect(newToken).toBeTruthy();
     expect(newToken).not.toBe(oldToken);
 
@@ -145,7 +145,6 @@ test.describe('Auth API @api', () => {
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body.message).toContain('If a pending account exists');
-    expect(body.verificationToken).toBeUndefined();
   });
 
   test('Resend verification for non-existent email → 200 same message (no enumeration)', async ({ request }) => {
@@ -153,10 +152,9 @@ test.describe('Auth API @api', () => {
     expect(response.status()).toBe(200);
     const body = await response.json();
     expect(body.message).toContain('If a pending account exists');
-    expect(body.verificationToken).toBeUndefined();
   });
 
-  test('Login with valid credentials (seeded user) → 200 + cookie', async ({ request }) => {
+  test('Web login → 200 + cookie, no token in body', async ({ request }) => {
     const response = await request.post(apiUrl('/auth/login'), {
       data: testCredentials.user,
     });
@@ -164,6 +162,23 @@ test.describe('Auth API @api', () => {
     expect(response.status()).toBe(200);
     const cookies = response.headers()['set-cookie'] || '';
     expect(cookies).toContain('auth_token');
+    const body = await response.json();
+    expect(body.token).toBeUndefined();
+    expect(body.user).toBeDefined();
+  });
+
+  test('Mobile login → 200 + token in body, no cookie', async ({ request }) => {
+    const response = await request.post(apiUrl('/auth/login'), {
+      data: testCredentials.user,
+      headers: { 'X-Client-Type': 'mobile' },
+    });
+
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body.token).toBeTruthy();
+    expect(body.user).toBeDefined();
+    const cookies = response.headers()['set-cookie'] || '';
+    expect(cookies).not.toContain('auth_token');
   });
 
   test('Login with wrong password → 401', async ({ request }) => {
@@ -222,7 +237,7 @@ test.describe('Auth API @api', () => {
     expect(response.status()).toBe(400);
   });
 
-  test('Full flow: register → verify → login → me → logout', async ({ request }) => {
+  test('Full flow: register → verify (POST) → login → me → logout', async ({ request }) => {
     const email = `auth-flow-${Date.now()}@example.com`;
     const password = 'TestPass1';
 
@@ -236,9 +251,14 @@ test.describe('Auth API @api', () => {
     expect(regResponse.status()).toBe(200);
     const regBody = await regResponse.json();
     expect(regBody.message).toContain('check your email');
+    expect(regBody.verificationToken).toBeUndefined();
 
-    // Verify email
-    const verifyResponse = await verifyEmail(request, regBody.verificationToken);
+    // Get verification token from dev mailbox
+    const token = await getVerificationToken(request, email);
+    expect(token).toBeTruthy();
+
+    // Verify email via POST
+    const verifyResponse = await verifyEmail(request, token);
     expect(verifyResponse.status()).toBe(200);
 
     // Login (now approved)
@@ -258,5 +278,11 @@ test.describe('Auth API @api', () => {
       headers: { Cookie: cookie },
     });
     expect(logoutResponse.ok()).toBeTruthy();
+  });
+
+  test('GET /auth/verify returns 404 (POST only)', async ({ request }) => {
+    const response = await request.get(apiUrl('/auth/verify?token=some-token'));
+    // NestJS returns 404 for unregistered GET routes
+    expect(response.status()).toBe(404);
   });
 });

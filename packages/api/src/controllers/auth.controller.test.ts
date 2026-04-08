@@ -57,17 +57,16 @@ describe('AuthController', () => {
     const dto = { email: 'test@example.com', password: 'Password1!', firstName: 'Test', lastName: 'User' };
     const mockReq = { ip: '127.0.0.1' } as any;
 
-    it('returns 200 with generic message on success', async () => {
+    it('returns 200 with generic message, no token in response', async () => {
       const user = { id: 'u1', email: dto.email, firstName: dto.firstName, lastName: dto.lastName, status: 'pending' };
       mockRegisterUser.execute.mockResolvedValue({ user, verificationToken: 'test-token' });
 
       const result = await controller.register(dto, mockReq);
 
-      expect(result).toEqual(
-        expect.objectContaining({
-          message: expect.stringContaining('Please check your email'),
-        }),
-      );
+      expect(result).toEqual({
+        message: expect.stringContaining('Please check your email'),
+      });
+      expect(result).not.toHaveProperty('verificationToken');
     });
 
     it('returns 200 with same generic message for duplicate email (prevent enumeration)', async () => {
@@ -125,11 +124,11 @@ describe('AuthController', () => {
   });
 
   describe('verify', () => {
-    it('returns success when token is valid', async () => {
+    it('returns success when token is valid (POST body)', async () => {
       const user = { id: 'u1', email: 'test@example.com', firstName: 'Test', lastName: 'User', status: 'approved' };
       mockVerifyEmail.execute.mockResolvedValue(user);
 
-      const result = await controller.verify('valid-token');
+      const result = await controller.verify({ token: 'valid-token' });
 
       expect(result.message).toContain('Email verified successfully');
       expect(result.user.status).toBe('approved');
@@ -138,17 +137,18 @@ describe('AuthController', () => {
     it('throws BadRequestException on VerifyEmailError', async () => {
       mockVerifyEmail.execute.mockRejectedValue(new VerifyEmailError('Invalid or expired'));
 
-      await expect(controller.verify('bad-token')).rejects.toThrow(BadRequestException);
+      await expect(controller.verify({ token: 'bad-token' })).rejects.toThrow(BadRequestException);
     });
   });
 
   describe('resendVerificationEmail', () => {
-    it('returns generic message on success (prevent enumeration)', async () => {
+    it('returns generic message on success, no token in response (prevent enumeration)', async () => {
       mockResendVerification.execute.mockResolvedValue({ verificationToken: 'new-token' });
 
       const result = await controller.resendVerificationEmail({ email: 'test@example.com' });
 
       expect(result.message).toContain('If a pending account exists');
+      expect(result).not.toHaveProperty('verificationToken');
     });
 
     it('returns same generic message when no pending account found (prevent enumeration)', async () => {
@@ -171,25 +171,44 @@ describe('AuthController', () => {
 
   describe('login', () => {
     const dto = { email: 'test@example.com', password: 'Password1!' };
-    const mockReq = { ip: '10.0.0.1' } as any;
+    const mockWebReq = { ip: '10.0.0.1', headers: {} } as any;
+    const mockMobileReq = { ip: '10.0.0.1', headers: { 'x-client-type': 'mobile' } } as any;
     const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
 
-    it('returns 200 with user and sets cookie on success', async () => {
-      const userWithRoles = {
-        userId: 'u1',
-        email: dto.email,
-        firstName: 'Test',
-        lastName: 'User',
-        status: 'approved',
-        tokenVersion: 0,
-        roles: [{ roleId: 'r1', roleName: 'user' }],
-      };
+    const userWithRoles = {
+      userId: 'u1',
+      email: dto.email,
+      firstName: 'Test',
+      lastName: 'User',
+      status: 'approved',
+      tokenVersion: 0,
+      roles: [{ roleId: 'r1', roleName: 'user' }],
+    };
+
+    it('web client: sets cookie, no token in response body', async () => {
       mockLoginUser.execute.mockResolvedValue(userWithRoles);
       mockJwtService.generateToken.mockResolvedValue('token');
 
-      const result = await controller.login(dto, mockReq, mockRes);
+      const result = await controller.login(dto, mockWebReq, mockRes);
 
-      expect(mockRes.cookie).toHaveBeenCalledWith('auth_token', 'token', expect.objectContaining({ httpOnly: true, path: '/' }));
+      expect(mockRes.cookie).toHaveBeenCalledWith('auth_token', 'token', expect.objectContaining({ httpOnly: true, sameSite: 'strict', path: '/' }));
+      expect(result).toEqual(
+        expect.objectContaining({
+          message: 'Login successful',
+          user: expect.objectContaining({ id: 'u1', email: dto.email }),
+        }),
+      );
+      expect(result).not.toHaveProperty('token');
+    });
+
+    it('mobile client: returns token in body, no cookie', async () => {
+      mockLoginUser.execute.mockResolvedValue(userWithRoles);
+      mockJwtService.generateToken.mockResolvedValue('token');
+      const freshRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
+
+      const result = await controller.login(dto, mockMobileReq, freshRes);
+
+      expect(freshRes.cookie).not.toHaveBeenCalled();
       expect(result).toEqual(
         expect.objectContaining({
           message: 'Login successful',
@@ -202,23 +221,14 @@ describe('AuthController', () => {
     it('throws UnauthorizedException on LoginUserError', async () => {
       mockLoginUser.execute.mockRejectedValue(new LoginUserError('Invalid credentials'));
 
-      await expect(controller.login(dto, mockReq, mockRes)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.login(dto, mockWebReq, mockRes)).rejects.toThrow(UnauthorizedException);
     });
 
     it('logs audit event on successful login', async () => {
-      const userWithRoles = {
-        userId: 'u1',
-        email: dto.email,
-        firstName: 'Test',
-        lastName: 'User',
-        status: 'approved',
-        tokenVersion: 0,
-        roles: [{ roleId: 'r1', roleName: 'user' }],
-      };
       mockLoginUser.execute.mockResolvedValue(userWithRoles);
       mockJwtService.generateToken.mockResolvedValue('token');
 
-      await controller.login(dto, mockReq, mockRes);
+      await controller.login(dto, mockWebReq, mockRes);
 
       expect(mockAuditLogService.log).toHaveBeenCalledWith({
         action: AuditAction.LOGIN,
@@ -232,7 +242,7 @@ describe('AuthController', () => {
     it('logs audit event on failed login', async () => {
       mockLoginUser.execute.mockRejectedValue(new LoginUserError('Invalid credentials'));
 
-      await expect(controller.login(dto, mockReq, mockRes)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.login(dto, mockWebReq, mockRes)).rejects.toThrow(UnauthorizedException);
 
       expect(mockAuditLogService.log).toHaveBeenCalledWith({
         action: AuditAction.LOGIN_FAILED,
@@ -245,7 +255,7 @@ describe('AuthController', () => {
     it('never includes password in audit log metadata', async () => {
       mockLoginUser.execute.mockRejectedValue(new LoginUserError('Invalid credentials'));
 
-      await expect(controller.login(dto, mockReq, mockRes)).rejects.toThrow(UnauthorizedException);
+      await expect(controller.login(dto, mockWebReq, mockRes)).rejects.toThrow(UnauthorizedException);
 
       const logCall = mockAuditLogService.log.mock.calls[0]![0];
       expect(logCall.metadata).not.toHaveProperty('password');

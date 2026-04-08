@@ -25,15 +25,23 @@ export async function loginAs(
   return match ? `auth_token=${match[1]}` : '';
 }
 
+export async function getVerificationToken(
+  request: APIRequestContext,
+  email: string,
+): Promise<string> {
+  const response = await request.get(apiUrl(`/dev/mailbox/verification-token?email=${encodeURIComponent(email)}`));
+  const body = await response.json();
+  return body.token;
+}
+
 export async function registerAndVerify(
   request: APIRequestContext,
   userData: { email: string; password: string; firstName: string; lastName: string },
 ): Promise<{ cookie: string }> {
-  const regResponse = await registerUser(request, userData);
-  const regBody = await regResponse.json();
-  const token = regBody.verificationToken;
+  await registerUser(request, userData);
+  const token = await getVerificationToken(request, userData.email);
   if (token) {
-    await request.get(apiUrl(`/auth/verify?token=${token}`));
+    await verifyEmail(request, token);
   }
   const cookie = await loginAs(request, { email: userData.email, password: userData.password });
   return { cookie };
@@ -43,7 +51,7 @@ export async function verifyEmail(
   request: APIRequestContext,
   token: string,
 ) {
-  return request.get(apiUrl(`/auth/verify?token=${token}`));
+  return request.post(apiUrl('/auth/verify'), { data: { token } });
 }
 
 export async function resendVerification(

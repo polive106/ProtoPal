@@ -3,14 +3,14 @@
 **User Story**: As a security-conscious developer, I want authentication tokens to have minimal exposure so that the risk of token theft via XSS, browser history, referrer headers, or server logs is reduced.
 
 **Acceptance Criteria**:
-- [ ] `POST /auth/login` no longer returns the JWT in the response body for web clients (cookie-only)
-- [ ] Mobile clients (identified by `Authorization` header presence or a request header like `X-Client-Type: mobile`) still receive the token in the response body
-- [ ] Email verification uses `POST /auth/verify` with the token in the request body instead of `GET /auth/verify?token=`
-- [ ] Frontend verification page reads the token from the URL (email link) but submits it via POST body
-- [ ] Verification tokens are no longer logged in server access logs (no query param exposure)
-- [ ] Resend-verification dev-mode response no longer includes `verificationToken` in JSON (use server log instead)
-- [ ] Cookie `SameSite` attribute is set to `strict` (upgraded from `lax`) for web clients
-- [ ] Existing auth E2E tests updated for new verify endpoint
+- [x] `POST /auth/login` no longer returns the JWT in the response body for web clients (cookie-only)
+- [x] Mobile clients (identified by `Authorization` header presence or a request header like `X-Client-Type: mobile`) still receive the token in the response body
+- [x] Email verification uses `POST /auth/verify` with the token in the request body instead of `GET /auth/verify?token=`
+- [x] Frontend verification page reads the token from the URL (email link) but submits it via POST body
+- [x] Verification tokens are no longer logged in server access logs (no query param exposure)
+- [x] Resend-verification dev-mode response no longer includes `verificationToken` in JSON (use server log instead)
+- [x] Cookie `SameSite` attribute is set to `strict` (upgraded from `lax`) for web clients
+- [x] Existing auth E2E tests updated for new verify endpoint
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -30,7 +30,7 @@
 
 **Complexity**: M
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin
