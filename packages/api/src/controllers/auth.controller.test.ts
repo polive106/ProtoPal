@@ -122,23 +122,52 @@ describe('AuthController', () => {
         metadata: { email: dto.email, reason: 'duplicate_email' },
       });
     });
+
+    it('includes verificationToken in response only when NODE_ENV=test', async () => {
+      const user = { id: 'u1', email: dto.email, firstName: dto.firstName, lastName: dto.lastName, status: 'pending' };
+      mockRegisterUser.execute.mockResolvedValue({ user, verificationToken: 'test-token' });
+
+      const originalEnv = process.env.NODE_ENV;
+      try {
+        process.env.NODE_ENV = 'test';
+        const result = await controller.register(dto, mockReq);
+        expect(result).toHaveProperty('verificationToken', 'test-token');
+      } finally {
+        process.env.NODE_ENV = originalEnv;
+      }
+    });
+
+    it('does not include verificationToken in response when NODE_ENV=development', async () => {
+      const user = { id: 'u1', email: dto.email, firstName: dto.firstName, lastName: dto.lastName, status: 'pending' };
+      mockRegisterUser.execute.mockResolvedValue({ user, verificationToken: 'test-token' });
+
+      const originalEnv = process.env.NODE_ENV;
+      try {
+        process.env.NODE_ENV = 'development';
+        const result = await controller.register(dto, mockReq);
+        expect(result).not.toHaveProperty('verificationToken');
+      } finally {
+        process.env.NODE_ENV = originalEnv;
+      }
+    });
   });
 
   describe('verify', () => {
-    it('returns success when token is valid', async () => {
+    it('returns success when token is valid (POST with body)', async () => {
       const user = { id: 'u1', email: 'test@example.com', firstName: 'Test', lastName: 'User', status: 'approved' };
       mockVerifyEmail.execute.mockResolvedValue(user);
 
-      const result = await controller.verify('valid-token');
+      const result = await controller.verify({ token: 'valid-token' });
 
       expect(result.message).toContain('Email verified successfully');
       expect(result.user.status).toBe('approved');
+      expect(mockVerifyEmail.execute).toHaveBeenCalledWith({ token: 'valid-token' });
     });
 
     it('throws BadRequestException on VerifyEmailError', async () => {
       mockVerifyEmail.execute.mockRejectedValue(new VerifyEmailError('Invalid or expired'));
 
-      await expect(controller.verify('bad-token')).rejects.toThrow(BadRequestException);
+      await expect(controller.verify({ token: 'bad-token' })).rejects.toThrow(BadRequestException);
     });
   });
 
@@ -171,25 +200,47 @@ describe('AuthController', () => {
 
   describe('login', () => {
     const dto = { email: 'test@example.com', password: 'Password1!' };
-    const mockReq = { ip: '10.0.0.1' } as any;
+    const mockReq = { ip: '10.0.0.1', headers: {} } as any;
     const mockRes = { cookie: vi.fn(), clearCookie: vi.fn() } as any;
 
-    it('returns 200 with user and sets cookie on success', async () => {
-      const userWithRoles = {
-        userId: 'u1',
-        email: dto.email,
-        firstName: 'Test',
-        lastName: 'User',
-        status: 'approved',
-        tokenVersion: 0,
-        roles: [{ roleId: 'r1', roleName: 'user' }],
-      };
+    const userWithRoles = {
+      userId: 'u1',
+      email: dto.email,
+      firstName: 'Test',
+      lastName: 'User',
+      status: 'approved',
+      tokenVersion: 0,
+      roles: [{ roleId: 'r1', roleName: 'user' }],
+    };
+
+    it('web client: sets cookie with sameSite strict and omits token from response', async () => {
       mockLoginUser.execute.mockResolvedValue(userWithRoles);
       mockJwtService.generateToken.mockResolvedValue('token');
 
       const result = await controller.login(dto, mockReq, mockRes);
 
-      expect(mockRes.cookie).toHaveBeenCalledWith('auth_token', 'token', expect.objectContaining({ httpOnly: true, path: '/' }));
+      expect(mockRes.cookie).toHaveBeenCalledWith('auth_token', 'token', expect.objectContaining({
+        httpOnly: true,
+        sameSite: 'strict',
+        path: '/',
+      }));
+      expect(result).toEqual(
+        expect.objectContaining({
+          message: 'Login successful',
+          user: expect.objectContaining({ id: 'u1', email: dto.email }),
+        }),
+      );
+      expect(result).not.toHaveProperty('token');
+    });
+
+    it('mobile client: returns token in body and does not set cookie', async () => {
+      const mobileReq = { ip: '10.0.0.1', headers: { 'x-client-type': 'mobile' } } as any;
+      mockLoginUser.execute.mockResolvedValue(userWithRoles);
+      mockJwtService.generateToken.mockResolvedValue('token');
+
+      const result = await controller.login(dto, mobileReq, mockRes);
+
+      expect(mockRes.cookie).not.toHaveBeenCalled();
       expect(result).toEqual(
         expect.objectContaining({
           message: 'Login successful',
@@ -206,15 +257,6 @@ describe('AuthController', () => {
     });
 
     it('logs audit event on successful login', async () => {
-      const userWithRoles = {
-        userId: 'u1',
-        email: dto.email,
-        firstName: 'Test',
-        lastName: 'User',
-        status: 'approved',
-        tokenVersion: 0,
-        roles: [{ roleId: 'r1', roleName: 'user' }],
-      };
       mockLoginUser.execute.mockResolvedValue(userWithRoles);
       mockJwtService.generateToken.mockResolvedValue('token');
 

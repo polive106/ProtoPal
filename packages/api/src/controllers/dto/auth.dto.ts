@@ -36,8 +36,13 @@ export const resetPasswordSchema = z.object({
   password: strongPasswordField,
 });
 
+export const verifySchema = z.object({
+  token: z.string().min(1),
+});
+
 export type LoginDto = z.infer<typeof loginSchema>;
 export type RegisterDto = z.infer<typeof registerSchema>;
 export type ResendVerificationDto = z.infer<typeof resendVerificationSchema>;
 export type ForgotPasswordDto = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordDto = z.infer<typeof resetPasswordSchema>;
+export type VerifyDto = z.infer<typeof verifySchema>;

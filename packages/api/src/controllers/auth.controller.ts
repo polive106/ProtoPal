@@ -3,7 +3,6 @@ import {
   Post,
   Get,
   Body,
-  Query,
   Req,
   Res,
   Inject,
@@ -43,11 +42,13 @@ import {
   resendVerificationSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
+  verifySchema,
   type RegisterDto,
   type LoginDto,
   type ResendVerificationDto,
   type ForgotPasswordDto,
   type ResetPasswordDto,
+  type VerifyDto,
 } from './dto/auth.dto';
 
 @Controller('auth')
@@ -105,8 +106,10 @@ export class AuthController {
       const response: Record<string, unknown> = {
         message: genericMessage,
       };
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV === 'test') {
         response.verificationToken = result.verificationToken;
+      } else if (process.env.NODE_ENV === 'development') {
+        console.log('[DEV] Verification token:', result.verificationToken);
       }
       return response;
     } catch (error) {
@@ -124,10 +127,11 @@ export class AuthController {
   }
 
   @Public()
-  @Get('verify')
-  async verify(@Query('token') token: string) {
+  @Post('verify')
+  @HttpCode(HttpStatus.OK)
+  async verify(@Body(new ZodValidationPipe(verifySchema)) dto: VerifyDto) {
     try {
-      const user = await this.verifyEmail.execute({ token: token || '' });
+      const user = await this.verifyEmail.execute({ token: dto.token });
       return {
         message: 'Email verified successfully. You can now log in.',
         user: {
@@ -166,8 +170,10 @@ export class AuthController {
       const response: Record<string, unknown> = {
         message: genericMessage,
       };
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV === 'test') {
         response.verificationToken = result.verificationToken;
+      } else if (process.env.NODE_ENV === 'development') {
+        console.log('[DEV] Verification token:', result.verificationToken);
       }
       return response;
     } catch (error) {
@@ -208,13 +214,17 @@ export class AuthController {
         roles: jwtRoles,
       });
 
-      res.cookie('auth_token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 1000,
-        path: '/',
-      });
+      const isMobileClient = req.headers['x-client-type'] === 'mobile';
+
+      if (!isMobileClient) {
+        res.cookie('auth_token', token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 60 * 60 * 24 * 1000,
+          path: '/',
+        });
+      }
 
       this.auditLogService.log({
         action: AuditAction.LOGIN,
@@ -224,9 +234,8 @@ export class AuthController {
         metadata: { email: dto.email },
       });
 
-      return {
+      const response: Record<string, unknown> = {
         message: 'Login successful',
-        token,
         user: {
           id: userWithRoles.userId,
           email: userWithRoles.email,
@@ -236,6 +245,12 @@ export class AuthController {
           roles: jwtRoles,
         },
       };
+
+      if (isMobileClient) {
+        response.token = token;
+      }
+
+      return response;
     } catch (error) {
       if (error instanceof AccountLockedError) {
         this.auditLogService.log({
