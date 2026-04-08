@@ -13,7 +13,6 @@ interface UserSummary {
 
 export interface RegisterResponse {
   message: string;
-  verificationToken?: string;
 }
 
 export interface VerifyEmailResponse {
@@ -23,7 +22,6 @@ export interface VerifyEmailResponse {
 
 export interface ResendVerificationResponse {
   message: string;
-  verificationToken?: string;
 }
 
 export interface ForgotPasswordResponse {
@@ -40,7 +38,7 @@ export const authApi = {
   register: (data: RegisterRequest) => api.post<RegisterResponse>('/auth/register', data),
   logout: () => api.post('/auth/logout'),
   getCurrentUser: () => api.get<{ user: AuthUser }>('/auth/me'),
-  verifyEmail: (token: string) => api.get<VerifyEmailResponse>(`/auth/verify?token=${encodeURIComponent(token)}`),
+  verifyEmail: (token: string) => api.post<VerifyEmailResponse>('/auth/verify', { token }),
   resendVerification: (email: string) =>
     api.post<ResendVerificationResponse>('/auth/resend-verification', { email }),
   forgotPassword: (email: string) =>
