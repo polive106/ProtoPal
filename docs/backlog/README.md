@@ -50,24 +50,31 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 13. E2-US10: Token Exposure Reduction
 14. E2-US11: Seed Data & Production Safety Guards
 15. E2-US12: Dependency Security Scanning & Supply Chain Protection
+16. E2-US13: Critical Dependency Vulnerability Remediation
+17. E2-US14: Login Timing Attack Mitigation
+18. E2-US15: Persistent Audit Log Storage & Data Access Logging
+19. E2-US16: Security Notification Emails
+20. E2-US17: API Pagination & Resource Exhaustion Prevention
+21. E2-US18: CI/CD Security Hardening
+22. E2-US19: Transport & Cookie Security Hardening
 
 ### Phase 3: Mobile App (Done)
-16. E3-US01: Mobile Project Shell & Design System
-17. E3-US02: Mobile Auth
-18. E3-US03: Mobile Notes CRUD & Agent Tooling
-19. E3-US04: Maestro E2E Tests in CI
+23. E3-US01: Mobile Project Shell & Design System
+24. E3-US02: Mobile Auth
+25. E3-US03: Mobile Notes CRUD & Agent Tooling
+26. E3-US04: Maestro E2E Tests in CI
 
 ### Phase 4: Tech Debt (Done)
-20. E4-US01: Share Validation Schemas via @acme/shared
-21. E4-US02: Share Note Type and Query Keys via @acme/shared
-22. E4-US03: Reduce RegisterUser Constructor Parameter Sprawl
+27. E4-US01: Share Validation Schemas via @acme/shared
+28. E4-US02: Share Note Type and Query Keys via @acme/shared
+29. E4-US03: Reduce RegisterUser Constructor Parameter Sprawl
 
 ### Phase 5: Test Debt (Done)
-23. E5-US01: Login Form Validation & Error Display E2E Tests
-24. E5-US02: Registration Form Validation & Error Display E2E Tests
-25. E5-US03: Note Drawer Validation & Edit Flow E2E Tests
-26. E5-US04: Auth Navigation & Page Flow E2E Tests
-27. E5-US05: Notes List States, Dashboard & Layout E2E Tests
+30. E5-US01: Login Form Validation & Error Display E2E Tests
+31. E5-US02: Registration Form Validation & Error Display E2E Tests
+32. E5-US03: Note Drawer Validation & Edit Flow E2E Tests
+33. E5-US04: Auth Navigation & Page Flow E2E Tests
+34. E5-US05: Notes List States, Dashboard & Layout E2E Tests
 
 ## Status Conventions
 
