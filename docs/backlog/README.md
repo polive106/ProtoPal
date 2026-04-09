@@ -50,6 +50,12 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 13. E2-US10: Token Exposure Reduction
 14. E2-US11: Seed Data & Production Safety Guards
 15. E2-US12: Dependency Security Scanning & Supply Chain Protection
+16. E2-US13: Critical Dependency Vulnerability Remediation
+17. E2-US14: Command Injection Fix in Email Preview Service
+18. E2-US15: Login Timing Attack Mitigation
+19. E2-US16: Security Headers Hardening (Helmet Configuration)
+20. E2-US17: Admin Endpoint Input Validation & Audit Trail
+21. E2-US18: Structured Logging & Console Cleanup for Production Readiness
 
 ### Phase 3: Mobile App (Done)
 16. E3-US01: Mobile Project Shell & Design System
