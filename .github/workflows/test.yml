@@ -18,5 +18,24 @@ jobs:
           node-version: 20
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile
+      - name: Scan for plaintext passwords in non-test source files
+        run: |
+          if grep -rn --include='*.ts' --include='*.js' --include='*.tsx' --include='*.jsx' \
+            -e 'Admin123!' -e 'User1234!' \
+            --exclude-dir=e2e --exclude-dir=node_modules \
+            --exclude='*.test.*' --exclude='*.spec.*' --exclude='seed.ts' \
+            packages/ ; then
+            echo "::error::Plaintext passwords found in non-test source files"
+            exit 1
+          fi
+          echo "No plaintext passwords found in non-test source files"
+      - name: Verify lock file integrity
+        run: |
+          git diff --exit-code pnpm-lock.yaml || {
+            echo "::error::pnpm-lock.yaml was modified by install — lock file may be out of sync"
+            exit 1
+          }
+      - name: Security audit
+        run: pnpm audit --audit-level=high
       - run: pnpm lint
       - run: pnpm test

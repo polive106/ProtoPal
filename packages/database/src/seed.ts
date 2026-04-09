@@ -16,7 +16,7 @@ const BCRYPT_ROUNDS = 12;
 const NO_RESET = process.argv.includes('--no-reset');
 const IS_POSTGRES = isPostgresUrl(process.env.DATABASE_URL);
 
-export const TEST_CREDENTIALS = {
+const TEST_CREDENTIALS = {
   admin: { email: 'admin@example.com', password: 'Admin123!' },
   user: { email: 'user@example.com', password: 'User1234!' },
 };
@@ -29,6 +29,11 @@ const IDS = {
 };
 
 async function seed() {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('ERROR: Seed script cannot run in production');
+    process.exit(1);
+  }
+
   console.log('Seeding database...');
 
   let db: DatabaseConnection;
@@ -167,8 +172,8 @@ async function seed() {
   await execSQL(db, sql`INSERT OR REPLACE INTO notes (id, title, content, user_id, created_at, updated_at) VALUES (${IDS.notes.note3}, 'Admin Notes', 'System configuration and maintenance schedule.', ${IDS.users.admin}, ${now}, ${now})`);
 
   console.log('Database seeded successfully!');
-  console.log(`  Admin: ${TEST_CREDENTIALS.admin.email} / ${TEST_CREDENTIALS.admin.password}`);
-  console.log(`  User: ${TEST_CREDENTIALS.user.email} / ${TEST_CREDENTIALS.user.password}`);
+  console.log(`  Admin: ${TEST_CREDENTIALS.admin.email}`);
+  console.log(`  User: ${TEST_CREDENTIALS.user.email}`);
 }
 
 seed().catch((err) => {

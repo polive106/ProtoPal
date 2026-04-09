@@ -17,7 +17,7 @@
     "@acme/domain": "workspace:*",
     "@acme/shared": "workspace:*",
     "@nestjs/common": "^11.1.13",
-    "@nestjs/core": "^11.1.13",
+    "@nestjs/core": "^11.1.18",
     "@nestjs/platform-express": "^11.1.13",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",

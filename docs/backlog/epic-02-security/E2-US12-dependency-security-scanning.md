@@ -3,13 +3,13 @@
 **User Story**: As a platform operator, I want automated dependency vulnerability scanning in CI so that known security vulnerabilities in third-party packages are detected before they reach production.
 
 **Acceptance Criteria**:
-- [ ] `pnpm audit` runs as a CI step on every push and PR
-- [ ] CI fails if any `critical` or `high` severity vulnerabilities are found
-- [ ] A weekly scheduled workflow runs full audit and opens an issue if new vulnerabilities are found
-- [ ] `package-lock.yaml` / `pnpm-lock.yaml` is committed and validated (no floating versions in lock file)
-- [ ] `.npmrc` enforces `strict-peer-dependencies=true` to prevent dependency confusion
-- [ ] GitHub Dependabot or Renovate is configured for automated dependency update PRs
-- [ ] Lock file integrity is verified in CI (no unexpected changes)
+- [x] `pnpm audit` runs as a CI step on every push and PR
+- [x] CI fails if any `critical` or `high` severity vulnerabilities are found
+- [x] A weekly scheduled workflow runs full audit and opens an issue if new vulnerabilities are found
+- [x] `package-lock.yaml` / `pnpm-lock.yaml` is committed and validated (no floating versions in lock file)
+- [x] `.npmrc` enforces `strict-peer-dependencies=true` to prevent dependency confusion
+- [x] GitHub Dependabot or Renovate is configured for automated dependency update PRs
+- [x] Lock file integrity is verified in CI (no unexpected changes)
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -25,7 +25,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin
