@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    "outDir": "./dist",
+    "resolveJsonModule": true
+  },
+  "include": ["src", "locales"]
+}

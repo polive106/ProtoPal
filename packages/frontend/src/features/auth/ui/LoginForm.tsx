@@ -1,16 +1,18 @@
 import React from 'react';
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, ErrorAlert } from '@acme/design-system';
+import { useTranslation } from '@acme/i18n';
 import { useLoginForm } from '../hooks';
 import { handleFormSubmit, getFieldError } from '@/lib/formUtils';
 
 export function LoginForm() {
+  const { t } = useTranslation('auth');
   const { form, serverError, setServerError, isPending } = useLoginForm();
 
   return (
     <Card className="w-full max-w-md" data-testid="login-card">
       <CardHeader>
-        <CardTitle>Sign In</CardTitle>
-        <CardDescription>Enter your credentials to access your account</CardDescription>
+        <CardTitle>{t('login.title')}</CardTitle>
+        <CardDescription>{t('login.description')}</CardDescription>
       </CardHeader>
       <form onSubmit={handleFormSubmit(() => form.handleSubmit())} noValidate>
         <CardContent className="space-y-4">
@@ -19,14 +21,14 @@ export function LoginForm() {
           <form.Field name="email">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('login.emailLabel')}</Label>
                 <Input
                   id="email"
                   type="email"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
-                  placeholder="you@example.com"
+                  placeholder={t('login.placeholder.email')}
                   data-testid="login-input-email"
                 />
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
@@ -39,7 +41,7 @@ export function LoginForm() {
           <form.Field name="password">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('login.passwordLabel')}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -57,16 +59,16 @@ export function LoginForm() {
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <Button type="submit" className="w-full" disabled={isPending} data-testid="login-btn-submit">
-            {isPending ? 'Signing in...' : 'Sign In'}
+            {isPending ? t('login.submitting') : t('login.submit')}
           </Button>
           <div className="flex flex-col items-center gap-2">
             <a href="/forgot-password" className="text-sm text-primary hover:underline" data-testid="login-link-forgot-password">
-              Forgot password?
+              {t('login.forgotPassword')}
             </a>
             <p className="text-sm text-muted-foreground">
-              Don't have an account?{' '}
+              {t('login.noAccount')}{' '}
               <a href="/register" className="text-primary hover:underline" data-testid="login-link-register">
-                Sign up
+                {t('login.signUp')}
               </a>
             </p>
           </div>

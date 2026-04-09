@@ -9,6 +9,7 @@ import {
   CardFooter,
   ErrorAlert,
 } from '@acme/design-system';
+import { useTranslation } from '@acme/i18n';
 import { useResendVerification } from '../hooks';
 
 interface CheckEmailPageProps {
@@ -16,32 +17,32 @@ interface CheckEmailPageProps {
 }
 
 export function CheckEmailPage({ email }: CheckEmailPageProps) {
+  const { t } = useTranslation('auth');
   const resendMutation = useResendVerification();
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <Card className="w-full max-w-md" data-testid="check-email-card">
         <CardHeader>
-          <CardTitle>Check Your Email</CardTitle>
+          <CardTitle>{t('checkEmail.title')}</CardTitle>
           <CardDescription>
-            We sent a verification link to <strong>{email}</strong>
+            {t('checkEmail.description', { email })}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {resendMutation.isError && (
             <ErrorAlert
               data-testid="check-email-alert-error"
-              message={resendMutation.error?.message || 'Failed to resend email'}
+              message={resendMutation.error?.message || t('checkEmail.resendError')}
               onDismiss={() => resendMutation.reset()}
             />
           )}
           <p className="text-sm text-muted-foreground" data-testid="check-email-text-message">
-            Click the link in the email to verify your account. If you don't see
-            the email, check your spam folder or request a new one.
+            {t('checkEmail.message')}
           </p>
           {resendMutation.isSuccess && (
             <p className="text-sm text-green-600" data-testid="check-email-text-resent">
-              Verification email resent successfully.
+              {t('checkEmail.resent')}
             </p>
           )}
         </CardContent>
@@ -54,16 +55,16 @@ export function CheckEmailPage({ email }: CheckEmailPageProps) {
             onClick={() => resendMutation.mutate(email)}
             data-testid="check-email-btn-resend"
           >
-            {resendMutation.isPending ? 'Sending...' : 'Resend Verification Email'}
+            {resendMutation.isPending ? t('checkEmail.resending') : t('checkEmail.resend')}
           </Button>
           <p className="text-sm text-muted-foreground">
-            Already verified?{' '}
+            {t('checkEmail.alreadyVerified')}{' '}
             <a
               href="/login"
               className="text-primary hover:underline"
               data-testid="check-email-link-login"
             >
-              Sign in
+              {t('checkEmail.signIn')}
             </a>
           </p>
         </CardFooter>

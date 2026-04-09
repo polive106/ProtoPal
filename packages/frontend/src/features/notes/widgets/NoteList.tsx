@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, PageSpinner, EmptyState, ErrorAlert } from '@acme/design-system';
+import { useTranslation } from '@acme/i18n';
 import { useNotes, useDeleteNote } from '../hooks';
 import { NoteCard } from './NoteCard';
 
@@ -9,6 +10,7 @@ interface NoteListProps {
 }
 
 export function NoteList({ onEdit, onCreate }: NoteListProps) {
+  const { t } = useTranslation('notes');
   const { data: notes, isLoading, error } = useNotes();
   const deleteNote = useDeleteNote();
 
@@ -19,11 +21,11 @@ export function NoteList({ onEdit, onCreate }: NoteListProps) {
     return (
       <EmptyState
         data-testid="notes-empty"
-        title="No notes yet"
-        description="Create your first note to get started."
+        title={t('empty.title')}
+        description={t('empty.description')}
         action={
           <Button onClick={onCreate} data-testid="notes-btn-create-empty">
-            Create Note
+            {t('empty.createButton')}
           </Button>
         }
       />

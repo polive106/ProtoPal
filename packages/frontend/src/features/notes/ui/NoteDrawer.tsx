@@ -11,6 +11,7 @@ import {
   FrostedPanel,
   ErrorAlert,
 } from '@acme/design-system';
+import { useTranslation } from '@acme/i18n';
 import { useNoteDrawerForm } from '../hooks';
 import { handleFormSubmit, getFieldError } from '@/lib/formUtils';
 
@@ -22,15 +23,16 @@ interface NoteDrawerProps {
 }
 
 export function NoteDrawer(props: NoteDrawerProps) {
+  const { t } = useTranslation('notes');
   const { form, serverError, setServerError, isLoading, isEdit, handleCancel } = useNoteDrawerForm(props);
 
   return (
     <Sheet open={props.open} onOpenChange={props.onOpenChange}>
       <SheetContent side="right" className="overflow-y-auto" data-testid="notes-form">
         <SheetHeader>
-          <SheetTitle>{isEdit ? 'Edit Note' : 'New Note'}</SheetTitle>
+          <SheetTitle>{isEdit ? t('drawer.editTitle') : t('drawer.newTitle')}</SheetTitle>
           <SheetDescription>
-            {isEdit ? 'Update the note details below.' : 'Fill in the details to create a new note.'}
+            {isEdit ? t('drawer.editDescription') : t('drawer.newDescription')}
           </SheetDescription>
         </SheetHeader>
         <form onSubmit={handleFormSubmit(() => form.handleSubmit())} noValidate className="space-y-5 mt-6">
@@ -38,7 +40,7 @@ export function NoteDrawer(props: NoteDrawerProps) {
             <form.Field name="title">
               {(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
+                  <Label htmlFor="title">{t('drawer.titleLabel')}</Label>
                   <Input
                     id="title"
                     value={field.state.value}
@@ -55,7 +57,7 @@ export function NoteDrawer(props: NoteDrawerProps) {
             <form.Field name="content">
               {(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor="content">Content</Label>
+                  <Label htmlFor="content">{t('drawer.contentLabel')}</Label>
                   <textarea
                     id="content"
                     value={field.state.value}
@@ -75,10 +77,10 @@ export function NoteDrawer(props: NoteDrawerProps) {
           {serverError && <ErrorAlert message={serverError} onDismiss={() => setServerError(null)} data-testid="notes-alert-error" />}
           <div className="flex gap-2 justify-end">
             <Button type="button" variant="outline" onClick={handleCancel} data-testid="notes-btn-cancel">
-              Cancel
+              {t('drawer.cancel')}
             </Button>
             <Button type="submit" disabled={isLoading} data-testid="notes-btn-save">
-              {isLoading ? 'Saving...' : isEdit ? 'Update' : 'Create'}
+              {isLoading ? t('drawer.save.saving') : isEdit ? t('drawer.save.update') : t('drawer.save.create')}
             </Button>
           </div>
         </form>

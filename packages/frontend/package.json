@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@acme/design-system": "workspace:*",
+    "@acme/i18n": "workspace:^",
     "@acme/shared": "workspace:*",
     "@tanstack/react-form": "^1.12.1",
     "@tanstack/react-query": "^5.80.8",

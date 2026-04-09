@@ -1,28 +1,30 @@
 import React from 'react';
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, ErrorAlert } from '@acme/design-system';
+import { useTranslation } from '@acme/i18n';
 import { useForgotPasswordForm } from '../hooks';
 import { handleFormSubmit, getFieldError } from '@/lib/formUtils';
 
 export function ForgotPasswordPage() {
+  const { t } = useTranslation('auth');
   const { form, serverError, setServerError, isLoading, isSubmitted } = useForgotPasswordForm();
 
   if (isSubmitted) {
     return (
       <Card className="w-full max-w-md" data-testid="forgot-password-card">
         <CardHeader>
-          <CardTitle>Check Your Email</CardTitle>
+          <CardTitle>{t('forgotPassword.successTitle')}</CardTitle>
           <CardDescription>
-            If an account with that email exists, we've sent a password reset link.
+            {t('forgotPassword.successDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground" data-testid="forgot-password-success">
-            The link will expire in 1 hour. Check your spam folder if you don't see it.
+            {t('forgotPassword.successMessage')}
           </p>
         </CardContent>
         <CardFooter>
           <a href="/login" className="text-sm text-primary hover:underline" data-testid="forgot-password-link-login">
-            Back to Sign In
+            {t('forgotPassword.backToSignIn')}
           </a>
         </CardFooter>
       </Card>
@@ -32,8 +34,8 @@ export function ForgotPasswordPage() {
   return (
     <Card className="w-full max-w-md" data-testid="forgot-password-card">
       <CardHeader>
-        <CardTitle>Forgot Password</CardTitle>
-        <CardDescription>Enter your email and we'll send you a reset link</CardDescription>
+        <CardTitle>{t('forgotPassword.title')}</CardTitle>
+        <CardDescription>{t('forgotPassword.description')}</CardDescription>
       </CardHeader>
       <form onSubmit={handleFormSubmit(() => form.handleSubmit())} noValidate>
         <CardContent className="space-y-4">
@@ -42,14 +44,14 @@ export function ForgotPasswordPage() {
           <form.Field name="email">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor="forgot-email">Email</Label>
+                <Label htmlFor="forgot-email">{t('forgotPassword.emailLabel')}</Label>
                 <Input
                   id="forgot-email"
                   type="email"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
-                  placeholder="you@example.com"
+                  placeholder={t('forgotPassword.placeholder.email')}
                   data-testid="forgot-password-input-email"
                 />
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
@@ -61,12 +63,12 @@ export function ForgotPasswordPage() {
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <Button type="submit" className="w-full" disabled={isLoading} data-testid="forgot-password-btn-submit">
-            {isLoading ? 'Sending...' : 'Send Reset Link'}
+            {isLoading ? t('forgotPassword.submitting') : t('forgotPassword.submit')}
           </Button>
           <p className="text-sm text-muted-foreground">
-            Remember your password?{' '}
+            {t('forgotPassword.rememberPassword')}{' '}
             <a href="/login" className="text-primary hover:underline" data-testid="forgot-password-link-login">
-              Sign in
+              {t('forgotPassword.signIn')}
             </a>
           </p>
         </CardFooter>

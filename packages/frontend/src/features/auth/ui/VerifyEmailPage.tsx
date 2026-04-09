@@ -7,6 +7,7 @@ import {
   CardContent,
   CardFooter,
 } from '@acme/design-system';
+import { useTranslation } from '@acme/i18n';
 import { useVerifyEmail } from '../hooks';
 
 interface VerifyEmailPageProps {
@@ -14,6 +15,7 @@ interface VerifyEmailPageProps {
 }
 
 export function VerifyEmailPage({ token }: VerifyEmailPageProps) {
+  const { t } = useTranslation('auth');
   const { data, isLoading, isError, error } = useVerifyEmail(token);
 
   return (
@@ -22,36 +24,36 @@ export function VerifyEmailPage({ token }: VerifyEmailPageProps) {
         {isLoading ? (
           <CardContent className="py-8 text-center">
             <p className="text-muted-foreground" data-testid="verify-text-loading">
-              Verifying your email...
+              {t('verify.loading')}
             </p>
           </CardContent>
         ) : isError ? (
           <>
             <CardHeader>
-              <CardTitle>Verification Failed</CardTitle>
+              <CardTitle>{t('verify.failedTitle')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p
                 className="text-sm text-destructive"
                 data-testid="verify-alert-error"
               >
-                {error?.message || 'Invalid or expired verification link.'}
+                {error?.message || t('verify.failedMessage')}
               </p>
             </CardContent>
             <CardFooter className="flex flex-col gap-4">
               <Button asChild className="w-full">
                 <a href="/register" data-testid="verify-link-register">
-                  Register Again
+                  {t('verify.registerAgain')}
                 </a>
               </Button>
               <p className="text-sm text-muted-foreground">
-                Already have an account?{' '}
+                {t('verify.hasAccount')}{' '}
                 <a
                   href="/login"
                   className="text-primary hover:underline"
                   data-testid="verify-link-login"
                 >
-                  Sign in
+                  {t('verify.signIn')}
                 </a>
               </p>
             </CardFooter>
@@ -59,20 +61,20 @@ export function VerifyEmailPage({ token }: VerifyEmailPageProps) {
         ) : (
           <>
             <CardHeader>
-              <CardTitle>Email Verified</CardTitle>
+              <CardTitle>{t('verify.successTitle')}</CardTitle>
             </CardHeader>
             <CardContent>
               <p
                 className="text-sm text-muted-foreground"
                 data-testid="verify-alert-success"
               >
-                {data?.message || 'Your email has been verified. You can now sign in.'}
+                {data?.message || t('verify.successMessage')}
               </p>
             </CardContent>
             <CardFooter>
               <Button asChild className="w-full">
                 <a href="/login" data-testid="verify-link-login">
-                  Sign In
+                  {t('verify.signInButton')}
                 </a>
               </Button>
             </CardFooter>

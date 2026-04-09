@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from './providers/AuthProvider';
 import { ToastProvider } from './providers/ToastProvider';
 import { queryClient } from './lib/queryClient';
 import { routeTree } from './routeTree.gen';
+import '@acme/i18n';
 import './styles/index.css';
 
 const router = createRouter({
