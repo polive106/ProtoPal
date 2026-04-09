@@ -1,0 +1,57 @@
+name: Weekly Security Audit
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Every Monday at 9am UTC
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.4.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Run security audit
+        id: audit
+        run: |
+          set +e
+          pnpm audit --audit-level=moderate 2>&1 | tee audit-output.txt
+          echo "exit_code=$?" >> "$GITHUB_OUTPUT"
+        continue-on-error: true
+      - name: Create issue if vulnerabilities found
+        if: steps.audit.outputs.exit_code != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('audit-output.txt', 'utf8');
+            const date = new Date().toISOString().split('T')[0];
+            const title = `Security Audit: Vulnerabilities found (${date})`;
+
+            // Check for existing open issue with same title prefix
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'security',
+            });
+            const existing = issues.find(i => i.title.startsWith('Security Audit: Vulnerabilities found'));
+            if (existing) {
+              console.log(`Existing issue #${existing.number} found — skipping creation`);
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body: `## Weekly Security Audit Results\n\nVulnerabilities were detected by \`pnpm audit\`:\n\n\`\`\`\n${output.slice(0, 60000)}\n\`\`\`\n\nPlease review and update affected dependencies.`,
+              labels: ['security', 'dependencies'],
+            });
