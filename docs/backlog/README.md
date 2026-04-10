@@ -80,6 +80,16 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 35. E6-US08: i18n CI Guardrails
 36. E6-US09: Backend Error Keys & Frontend Error Mapping
 
+### Phase 7: MongoDB Database Adapter (Pending)
+37. E7-US01: Restructure @acme/database Package
+38. E7-US02: MongoDB Connection Factory
+39. E7-US03: Core Mongo Adapters
+40. E7-US04: Auth Mongo Adapters
+41. E7-US05: MongoDB Setup Script
+42. E7-US06: DI Wiring for Database Selection
+43. E7-US07: Mongo Adapter Unit Tests
+44. E7-US08: MongoDB Documentation
+
 ## Status Conventions
 
 - **Pending**: Not started
