@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, Stack } from 'expo-router';
 import { PageSpinner, ErrorAlert } from '@acme/design-system-mobile';
 import { useNote } from '@/features/notes/hooks';
 import { NoteForm } from '@/features/notes/ui/NoteForm';
@@ -11,7 +11,12 @@ export default function NoteFormScreen() {
     return <EditNoteForm noteId={noteId} />;
   }
 
-  return <NoteForm />;
+  return (
+    <>
+      <Stack.Screen options={{ title: 'New Note' }} />
+      <NoteForm />
+    </>
+  );
 }
 
 function EditNoteForm({ noteId }: { noteId: string }) {
@@ -21,5 +26,10 @@ function EditNoteForm({ noteId }: { noteId: string }) {
   if (error) return <ErrorAlert testID="notes-alert-error" message={error.message} />;
   if (!note) return <ErrorAlert testID="notes-alert-error" message="Note not found" />;
 
-  return <NoteForm note={{ id: note.id, title: note.title, content: note.content }} />;
+  return (
+    <>
+      <Stack.Screen options={{ title: 'Edit Note' }} />
+      <NoteForm note={{ id: note.id, title: note.title, content: note.content }} />
+    </>
+  );
 }

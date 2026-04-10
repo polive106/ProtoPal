@@ -22,7 +22,7 @@ export function NoteForm({ note }: NoteFormProps) {
   const { form, serverError, setServerError, isPending, isEdit } = useNoteForm(note);
 
   return (
-    <ScrollView className="flex-1 px-4 pt-4" testID="notes-form">
+    <ScrollView className="flex-1 px-5 pt-4" testID="notes-form">
       <Card>
         <CardHeader>
           <CardTitle>{isEdit ? 'Edit Note' : 'New Note'}</CardTitle>
@@ -64,10 +64,12 @@ export function NoteForm({ note }: NoteFormProps) {
                   onChangeText={(text) => field.handleChange(text)}
                   onBlur={() => field.handleBlur()}
                   placeholder="Write your note..."
+                  placeholderTextColor="#a8a29e"
                   multiline
                   numberOfLines={8}
                   textAlignVertical="top"
-                  className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+                  className="rounded-xl border border-warmBorder px-4 py-3 text-base text-ink"
+                  style={{ fontFamily: 'Karla_400Regular', minHeight: 160 }}
                 />
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
                   <Text className="text-sm text-red-500">{getFieldError(field.state.meta.errors)}</Text>
@@ -81,9 +83,10 @@ export function NoteForm({ note }: NoteFormProps) {
             testID="notes-btn-save"
             className="flex-1"
             disabled={isPending}
+            loading={isPending}
             onPress={() => form.handleSubmit()}
           >
-            {isPending ? 'Saving...' : isEdit ? 'Update' : 'Create'}
+            {isEdit ? 'Update' : 'Create'}
           </Button>
         </CardFooter>
       </Card>

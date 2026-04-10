@@ -17,7 +17,7 @@ export function NoteCard({ id, title, content, updatedAt, onEdit, onDelete }: No
   return (
     <Card data-testid={`notes-card-${id}`}>
       <CardHeader>
-        <CardTitle className="text-lg" data-testid={`notes-title-${id}`}>{title}</CardTitle>
+        <CardTitle className="text-lg font-heading" data-testid={`notes-title-${id}`}>{title}</CardTitle>
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground line-clamp-3" data-testid={`notes-content-${id}`}>{content}</p>

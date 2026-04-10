@@ -9,7 +9,8 @@ export interface LabelProps extends TextProps {
 export function Label({ className, ...props }: LabelProps) {
   return (
     <Text
-      className={cn('text-sm font-medium text-gray-900', className)}
+      className={cn('text-sm text-ink', className)}
+      style={{ fontFamily: 'Karla_500Medium' }}
       {...props}
     />
   );

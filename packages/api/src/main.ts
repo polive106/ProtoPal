@@ -15,6 +15,7 @@ import { JWT_SERVICE, TOKEN_BLACKLIST_REPOSITORY, RATE_LIMIT_REPOSITORY, USER_RE
 export const DEFAULT_ORIGINS = [
   'http://localhost:5173',
   'http://localhost:3000',
+  'http://localhost:8081',
 ];
 
 export function getAllowedOrigins(): string[] {

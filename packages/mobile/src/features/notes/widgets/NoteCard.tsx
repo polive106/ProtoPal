@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, Text } from 'react-native';
+import { Pressable, View, Text } from 'react-native';
 import {
   Card,
   CardHeader,
@@ -18,18 +18,31 @@ interface NoteCardProps {
 
 export function NoteCard({ id, title, content, updatedAt, onPress }: NoteCardProps) {
   return (
-    <Pressable testID={`notes-card-${id}`} onPress={() => onPress(id)}>
+    <Pressable
+      testID={`notes-card-${id}`}
+      onPress={() => onPress(id)}
+    >
       <Card>
         <CardHeader>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>
-          <Text className="text-sm text-gray-500" numberOfLines={3}>{content}</Text>
+          <Text
+            className="text-sm text-ink-muted"
+            numberOfLines={2}
+            style={{ fontFamily: 'Karla_400Regular' }}
+          >
+            {content}
+          </Text>
         </CardContent>
-        <CardFooter>
-          <Text className="text-xs text-gray-400">
+        <CardFooter className="justify-between">
+          <Text
+            className="text-xs text-ink-light"
+            style={{ fontFamily: 'Karla_400Regular' }}
+          >
             {new Date(updatedAt).toLocaleDateString()}
           </Text>
+          <Text className="text-sm text-ink-light">→</Text>
         </CardFooter>
       </Card>
     </Pressable>

@@ -7,7 +7,7 @@ const FrostedPanel = React.forwardRef<HTMLDivElement, FrostedPanelProps>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn('bg-white/60 backdrop-blur-md rounded-xl border border-white/20 shadow-lg', className)}
+      className={cn('bg-background/60 backdrop-blur-md rounded-xl border border-border shadow-lg', className)}
       {...props}
     />
   )

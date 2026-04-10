@@ -5,6 +5,9 @@ export default defineConfig({
   test: {
     globals: true,
     exclude: ['dist/**', 'node_modules/**'],
+    env: {
+      NODE_ENV: 'test',
+    },
   },
   plugins: [
     swc.vite({
