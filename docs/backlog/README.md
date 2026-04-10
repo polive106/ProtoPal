@@ -80,6 +80,17 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 35. E6-US08: i18n CI Guardrails
 36. E6-US09: Backend Error Keys & Frontend Error Mapping
 
+### Phase 7: Security Audit Remediation (Pending)
+37. E7-US01: Rate Limit Token Verification Endpoints
+38. E7-US02: Notes API Pagination & Query Limits
+39. E7-US03: Admin Endpoint Input Validation
+40. E7-US04: Response DTO Sanitization
+41. E7-US05: CI/CD Workflow Security Hardening
+42. E7-US06: Security Headers Expansion & HSTS
+43. E7-US07: Proxy Trust & Rate Limit IP Validation
+44. E7-US08: Structured Audit Logging
+45. E7-US09: Mobile Refresh Token Strategy
+
 ## Status Conventions
 
 - **Pending**: Not started
