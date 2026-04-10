@@ -1,8 +1,8 @@
 import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { LoginAttemptRepository, LoginAttempt } from '@acme/domain';
-import type { DatabaseConnection } from '../connection';
-import { loginAttempts } from '../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { loginAttempts } from '../../schema';
 
 export class DrizzleLoginAttemptRepository implements LoginAttemptRepository {
   constructor(private readonly db: DatabaseConnection) {}

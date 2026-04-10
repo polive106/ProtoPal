@@ -2,8 +2,8 @@ import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { UserRoleRepository, UserWithRoles } from '@acme/domain';
 import type { UserRole, CreateUserRoleDTO } from '@acme/domain';
-import type { DatabaseConnection } from '../connection';
-import { userRoles, users, roles } from '../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { userRoles, users, roles } from '../../schema';
 
 export class DrizzleUserRoleRepository implements UserRoleRepository {
   constructor(private readonly db: DatabaseConnection) {}

@@ -5,8 +5,8 @@ import type {
   CreatePasswordResetTokenDTO,
   PasswordResetToken,
 } from '@acme/domain';
-import type { DatabaseConnection } from '../connection';
-import { passwordResetTokens } from '../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { passwordResetTokens } from '../../schema';
 
 export class DrizzlePasswordResetTokenRepository implements PasswordResetTokenRepository {
   constructor(private readonly db: DatabaseConnection) {}

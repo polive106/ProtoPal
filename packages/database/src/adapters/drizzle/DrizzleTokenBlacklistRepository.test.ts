@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { sql } from 'drizzle-orm';
-import { createTestConnection, type DatabaseConnection } from '../connection';
+import { createTestConnection, type DatabaseConnection } from '../../connections/sql';
 import { DrizzleTokenBlacklistRepository } from './DrizzleTokenBlacklistRepository';
 
 describe('DrizzleTokenBlacklistRepository', () => {

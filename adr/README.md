@@ -11,3 +11,4 @@ We use [MADR](https://adr.github.io/madr/) format for architecture decisions.
 | [0003](./0003-lightweight-hexagonal-architecture.md) | Lightweight Hexagonal Architecture | Accepted |
 | [0004](./0004-shared-design-system.md) | Shared Design System | Accepted |
 | [0005](./0005-e2e-test-architecture.md) | E2E Test Architecture | Accepted |
+| [0006](./0006-mongodb-database-adapter.md) | MongoDB Database Adapter | Accepted |
