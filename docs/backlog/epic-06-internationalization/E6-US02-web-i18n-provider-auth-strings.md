@@ -3,13 +3,13 @@
 **User Story**: As a user of the web app, I want login and registration screens to display translated text so that I can use the app in my preferred language.
 
 **Acceptance Criteria**:
-- [ ] i18next provider is wired into the frontend app root
-- [ ] `@acme/i18n` is added as a frontend dependency
-- [ ] LoginForm uses `t()` for all user-facing strings (labels, buttons, card title/description, loading states)
-- [ ] RegisterForm uses `t()` for all user-facing strings
-- [ ] No hardcoded English strings remain in auth feature components
-- [ ] Existing E2E tests pass without modification (data-testid selectors are unaffected)
-- [ ] Auth namespace English keys match all extracted strings
+- [x] i18next provider is wired into the frontend app root
+- [x] `@acme/i18n` is added as a frontend dependency
+- [x] LoginForm uses `t()` for all user-facing strings (labels, buttons, card title/description, loading states)
+- [x] RegisterForm uses `t()` for all user-facing strings
+- [x] No hardcoded English strings remain in auth feature components
+- [x] Existing E2E tests pass without modification (data-testid selectors are unaffected)
+- [x] Auth namespace English keys match all extracted strings
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -25,7 +25,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

@@ -3,14 +3,14 @@
 **User Story**: As a user of the web app, I want notes, navigation, and layout text to be translated so that the entire app experience is in my preferred language.
 
 **Acceptance Criteria**:
-- [ ] NoteDrawer (create/edit) uses `t()` for all user-facing strings
-- [ ] NoteCard and NoteList widgets use `t()` for all user-facing strings
-- [ ] EmptyState text is translated via `t()`
-- [ ] Navigation/layout components (header, sidebar, page titles) use `t()`
-- [ ] Dashboard page text uses `t()`
-- [ ] No hardcoded English strings remain in notes or layout components
-- [ ] Notes and common namespace English keys are complete
-- [ ] Existing E2E tests pass without modification
+- [x] NoteDrawer (create/edit) uses `t()` for all user-facing strings
+- [x] NoteCard and NoteList widgets use `t()` for all user-facing strings
+- [x] EmptyState text is translated via `t()`
+- [x] Navigation/layout components (header, sidebar, page titles) use `t()`
+- [x] Dashboard page text uses `t()`
+- [x] No hardcoded English strings remain in notes or layout components
+- [x] Notes and common namespace English keys are complete
+- [x] Existing E2E tests pass without modification
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -27,7 +27,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

@@ -37,7 +37,7 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 2. E1-US02: Auth System
 3. E1-US03: Notes CRUD
 
-### Phase 2: Security Hardening (In Progress)
+### Phase 2: Security Hardening (Done)
 4. E2-US01: JWT Secret & Token Revocation
 5. E2-US02: Registration Flow & Email Verification
 6. E2-US03: CORS & Environment Hardening
@@ -69,7 +69,7 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 26. E5-US04: Auth Navigation & Page Flow E2E Tests
 27. E5-US05: Notes List States, Dashboard & Layout E2E Tests
 
-### Phase 6: Internationalization (Pending)
+### Phase 6: Internationalization (In Progress)
 28. E6-US01: i18n Foundation — @acme/i18n Package
 29. E6-US02: Web i18n Provider & Auth Strings
 30. E6-US03: Web Notes & Layout Strings
