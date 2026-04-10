@@ -6,7 +6,8 @@ import { vi } from 'vitest';
 vi.mock('@acme/i18n', () => {
   // Inline the English locale data for the mock
   const commonEn = {
-    appName: 'Acme',
+    appName: 'ProtoPal',
+    tagline: 'Your notes, your way',
     loading: 'Loading...',
     error: 'Something went wrong',
     save: 'Save',
@@ -32,6 +33,7 @@ vi.mock('@acme/i18n', () => {
       placeholder: { email: 'you@example.com' },
       submit: 'Sign In', submitting: 'Signing in...',
       forgotPassword: 'Forgot password?', noAccount: "Don't have an account?", signUp: 'Sign up',
+      fallbackError: 'Login failed',
     },
     register: {
       title: 'Create Account', description: 'Sign up for a new account',
@@ -39,7 +41,9 @@ vi.mock('@acme/i18n', () => {
       emailLabel: 'Email', passwordLabel: 'Password',
       passwordHint: 'Min 8 chars, uppercase, lowercase, and number',
       submit: 'Create Account', submitting: 'Creating...',
+      placeholder: { email: 'you@example.com' },
       hasAccount: 'Already have an account?', signIn: 'Sign in',
+      fallbackError: 'Registration failed',
     },
     forgotPassword: {
       title: 'Forgot Password', description: "Enter your email and we'll send you a reset link",
@@ -116,6 +120,9 @@ vi.mock('@acme/i18n', () => {
         const [ns, rest] = key.split(':');
         nsToUse = ns!;
         keyToUse = rest!;
+      }
+      if (opts && typeof opts.ns === 'string') {
+        nsToUse = opts.ns;
       }
       const nsResource = resources[nsToUse];
       if (!nsResource) return key;
