@@ -13,7 +13,7 @@ function DashboardPage() {
 
   return (
     <div data-testid="dashboard-page">
-      <h1 className="text-3xl font-bold mb-6" data-testid="dashboard-title">
+      <h1 className="text-3xl font-bold mb-6 font-heading" data-testid="dashboard-title">
         {t('dashboard.welcome', { firstName: user?.firstName })}
       </h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -30,7 +30,7 @@ function NotesPage() {
   return (
     <div data-testid="notes-page">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold" data-testid="notes-page-title">{t('pageTitle')}</h1>
+        <h1 className="text-3xl font-bold font-heading" data-testid="notes-page-title">{t('pageTitle')}</h1>
         <Button onClick={() => setDrawer({ open: true })} data-testid="notes-btn-create">
           {t('newNote')}
         </Button>

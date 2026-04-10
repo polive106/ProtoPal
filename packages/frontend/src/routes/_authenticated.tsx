@@ -25,7 +25,7 @@ function AuthenticatedLayout() {
       <header className="border-b" data-testid="app-header">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <nav className="flex items-center gap-6">
-            <a href="/dashboard" className="text-lg font-semibold" data-testid="nav-link-home">
+            <a href="/dashboard" className="text-lg font-semibold font-heading" data-testid="nav-link-home">
               {t('appName')}
             </a>
             <a href="/notes" className="text-sm text-muted-foreground hover:text-foreground" data-testid="nav-link-notes">
