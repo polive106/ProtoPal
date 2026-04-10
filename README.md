@@ -168,6 +168,11 @@ pnpm --filter @acme/frontend dev      # Frontend only (port 5173)
 pnpm --filter @acme/database db:push  # Apply schema to SQLite
 pnpm --filter @acme/database db:seed  # Seed with sample data
 pnpm --filter @acme/database db:studio # Visual database explorer
+```
+
+> **Warning:** Never run the seed script in production. The seed script contains test accounts with known credentials and will refuse to run when `NODE_ENV=production`. It is intended for local development and CI testing only.
+
+```bash
 
 # Testing
 pnpm test                             # Run all unit tests
@@ -188,11 +193,20 @@ pnpm lint                             # Type check all packages
 
 | Workflow | File | Trigger | What it does |
 |----------|------|---------|-------------|
-| Tests | `test.yml` | push/PR to main | Lint + unit tests |
+| Tests | `test.yml` | push/PR to main | Lint + unit tests + security audit |
 | E2E Tests | `e2e.yml` | push/PR to main | Playwright browser E2E tests |
+| Security Audit | `security-audit.yml` | Weekly (Monday 9am UTC) / manual | Full dependency audit, opens GitHub issue on findings |
 | Mobile E2E Tests | `e2e-mobile.yml` | manual (`workflow_dispatch`) | Builds Android debug APK + runs Maestro flows on emulator |
 
 > **Note:** Mobile E2E tests are fully configured but trigger manually only because the Android emulator + SDK download exceeds GitHub Actions free-tier runner limits (~45+ min). To enable automatic runs, add `push`/`pull_request` triggers to `e2e-mobile.yml` or use self-hosted runners with more capacity.
+
+### Dependency Security
+
+- **Automated scanning**: `pnpm audit --audit-level=high` runs on every push/PR. CI fails on critical or high severity vulnerabilities.
+- **Weekly audit**: A scheduled workflow runs every Monday and opens a GitHub issue if new vulnerabilities are found.
+- **Dependabot**: Configured to create PRs for dependency updates (npm packages and GitHub Actions) weekly.
+- **Lock file integrity**: CI verifies `pnpm-lock.yaml` is not modified by `pnpm install --frozen-lockfile`.
+- **Manual audit**: Run `pnpm audit` locally to check for known vulnerabilities.
 
 ## Project Structure
 

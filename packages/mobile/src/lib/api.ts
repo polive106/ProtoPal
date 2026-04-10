@@ -24,6 +24,7 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000';
 async function request<T>(method: string, path: string, body?: unknown): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    'X-Client-Type': 'mobile',
   };
 
   if (authToken) {

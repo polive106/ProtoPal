@@ -33,7 +33,7 @@ export async function registerAndVerify(
   const regBody = await regResponse.json();
   const token = regBody.verificationToken;
   if (token) {
-    await request.get(apiUrl(`/auth/verify?token=${token}`));
+    await verifyEmail(request, token);
   }
   const cookie = await loginAs(request, { email: userData.email, password: userData.password });
   return { cookie };
@@ -43,7 +43,7 @@ export async function verifyEmail(
   request: APIRequestContext,
   token: string,
 ) {
-  return request.get(apiUrl(`/auth/verify?token=${token}`));
+  return request.post(apiUrl('/auth/verify'), { data: { token } });
 }
 
 export async function resendVerification(

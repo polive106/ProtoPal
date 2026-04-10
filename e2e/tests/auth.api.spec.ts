@@ -156,7 +156,7 @@ test.describe('Auth API @api', () => {
     expect(body.verificationToken).toBeUndefined();
   });
 
-  test('Login with valid credentials (seeded user) → 200 + cookie', async ({ request }) => {
+  test('Web login → 200 + cookie, no token in response body', async ({ request }) => {
     const response = await request.post(apiUrl('/auth/login'), {
       data: testCredentials.user,
     });
@@ -164,6 +164,26 @@ test.describe('Auth API @api', () => {
     expect(response.status()).toBe(200);
     const cookies = response.headers()['set-cookie'] || '';
     expect(cookies).toContain('auth_token');
+    expect(cookies).toContain('SameSite=Strict');
+    const body = await response.json();
+    expect(body.message).toBe('Login successful');
+    expect(body.user).toBeDefined();
+    expect(body).not.toHaveProperty('token');
+  });
+
+  test('Mobile login (X-Client-Type: mobile) → 200 + token in body, no cookie', async ({ request }) => {
+    const response = await request.post(apiUrl('/auth/login'), {
+      data: testCredentials.user,
+      headers: { 'X-Client-Type': 'mobile' },
+    });
+
+    expect(response.status()).toBe(200);
+    const body = await response.json();
+    expect(body.message).toBe('Login successful');
+    expect(body.token).toBeTruthy();
+    expect(body.user).toBeDefined();
+    const cookies = response.headers()['set-cookie'] || '';
+    expect(cookies).not.toContain('auth_token');
   });
 
   test('Login with wrong password → 401', async ({ request }) => {

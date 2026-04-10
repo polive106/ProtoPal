@@ -3,13 +3,13 @@
 **User Story**: As a platform operator, I want the seed script and test credentials to be impossible to run or access in production so that known default accounts cannot be exploited by attackers.
 
 **Acceptance Criteria**:
-- [ ] Seed script exits immediately with an error if `NODE_ENV=production`
-- [ ] `TEST_CREDENTIALS` constant is not exported from the seed module (inlined or scoped locally)
-- [ ] Seed script does not print plaintext passwords to stdout
-- [ ] E2E seed file (`e2e/seed.ts`) is excluded from production builds
-- [ ] CI pipeline includes a check that no plaintext passwords appear in non-test source files
-- [ ] Default seed user passwords meet production password policy requirements
-- [ ] Documentation in README warns against running seed in production
+- [x] Seed script exits immediately with an error if `NODE_ENV=production`
+- [x] `TEST_CREDENTIALS` constant is not exported from the seed module (inlined or scoped locally)
+- [x] Seed script does not print plaintext passwords to stdout
+- [x] E2E seed file (`e2e/seed.ts`) is excluded from production builds
+- [x] CI pipeline includes a check that no plaintext passwords appear in non-test source files
+- [x] Default seed user passwords meet production password policy requirements
+- [x] Documentation in README warns against running seed in production
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -26,7 +26,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin
