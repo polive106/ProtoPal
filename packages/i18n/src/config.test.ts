@@ -29,8 +29,8 @@ describe('i18n config', () => {
     expect(i18next.t('login.title', { ns: 'auth' })).toBe('Sign In');
   });
 
-  it('translates common:appName to "Acme"', () => {
-    expect(i18next.t('appName')).toBe('Acme');
+  it('translates common:appName to "ProtoPal"', () => {
+    expect(i18next.t('appName')).toBe('ProtoPal');
   });
 
   it('translates notes:pageTitle to "Notes"', () => {
