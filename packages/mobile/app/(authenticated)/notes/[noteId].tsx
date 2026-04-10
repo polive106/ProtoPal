@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import {
   Button,
   PageSpinner,
@@ -21,18 +21,36 @@ export default function NoteDetailScreen() {
   if (!note) return <ErrorAlert testID="notes-alert-error" message="Note not found" />;
 
   return (
-    <ScrollView testID="notes-detail-screen" className="flex-1 px-4 pt-4">
-      <Text testID="notes-detail-title" className="text-2xl font-bold text-gray-900">
+    <ScrollView testID="notes-detail-screen" className="flex-1 px-5 pt-6">
+      <Stack.Screen options={{ title: note.title }} />
+
+      <Text
+        testID="notes-detail-title"
+        className="text-2xl text-ink"
+        style={{ fontFamily: 'SourceSerif4_600SemiBold' }}
+      >
         {note.title}
       </Text>
-      <Text className="mt-1 text-xs text-gray-400">
-        {new Date(note.updatedAt).toLocaleDateString()}
+      <Text
+        className="mt-2 text-xs text-ink-light"
+        style={{ fontFamily: 'Karla_400Regular' }}
+      >
+        {new Date(note.updatedAt).toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        })}
       </Text>
-      <Text testID="notes-detail-content" className="mt-4 text-base text-gray-700 leading-6">
+      <Text
+        testID="notes-detail-content"
+        className="mt-6 text-base text-ink leading-7"
+        style={{ fontFamily: 'Karla_400Regular' }}
+      >
         {note.content}
       </Text>
 
-      <View className="mt-8 flex-row gap-3">
+      <View className="mt-10 flex-row gap-4 pb-8">
         <Button
           testID="notes-btn-edit"
           variant="outline"

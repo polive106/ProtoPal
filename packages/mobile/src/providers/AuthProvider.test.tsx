@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
-vi.mock('expo-secure-store', () => ({
-  getItemAsync: vi.fn(),
-  setItemAsync: vi.fn(),
-  deleteItemAsync: vi.fn(),
+vi.mock('@/lib/secureStorage', () => ({
+  secureStorage: {
+    getItem: vi.fn(),
+    setItem: vi.fn(),
+    deleteItem: vi.fn(),
+  },
 }));
 
 vi.mock('@/lib/api', () => ({
@@ -21,7 +23,7 @@ vi.mock('@/features/auth/api', () => ({
 import React from 'react';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import * as SecureStore from 'expo-secure-store';
+import { secureStorage } from '@/lib/secureStorage';
 import { setToken } from '@/lib/api';
 import { authApi } from '@/features/auth/api';
 import { AuthProvider, useAuth } from './AuthProvider';
@@ -50,7 +52,7 @@ describe('AuthProvider', () => {
   });
 
   it('starts in loading state', () => {
-    vi.mocked(SecureStore.getItemAsync).mockResolvedValue(null);
+    vi.mocked(secureStorage.getItem).mockResolvedValue(null);
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
 
     expect(result.current.isLoading).toBe(true);
@@ -59,7 +61,7 @@ describe('AuthProvider', () => {
   });
 
   it('restores session from SecureStore on mount', async () => {
-    vi.mocked(SecureStore.getItemAsync).mockResolvedValue('stored-token');
+    vi.mocked(secureStorage.getItem).mockResolvedValue('stored-token');
     vi.mocked(authApi.getCurrentUser).mockResolvedValue({ user: mockUser });
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -72,20 +74,20 @@ describe('AuthProvider', () => {
   });
 
   it('clears token when session restore fails', async () => {
-    vi.mocked(SecureStore.getItemAsync).mockResolvedValue('bad-token');
+    vi.mocked(secureStorage.getItem).mockResolvedValue('bad-token');
     vi.mocked(authApi.getCurrentUser).mockRejectedValue(new Error('unauthorized'));
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    expect(SecureStore.deleteItemAsync).toHaveBeenCalledWith('auth_token');
+    expect(secureStorage.deleteItem).toHaveBeenCalledWith('auth_token');
     expect(setToken).toHaveBeenCalledWith(null);
     expect(result.current.isAuthenticated).toBe(false);
   });
 
   it('finishes loading with no user when no stored token', async () => {
-    vi.mocked(SecureStore.getItemAsync).mockResolvedValue(null);
+    vi.mocked(secureStorage.getItem).mockResolvedValue(null);
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
 
@@ -96,7 +98,7 @@ describe('AuthProvider', () => {
   });
 
   it('login stores token and sets user', async () => {
-    vi.mocked(SecureStore.getItemAsync).mockResolvedValue(null);
+    vi.mocked(secureStorage.getItem).mockResolvedValue(null);
     vi.mocked(authApi.login).mockResolvedValue({ user: mockUser, token: 'new-token' });
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -106,14 +108,14 @@ describe('AuthProvider', () => {
       await result.current.login('test@example.com', 'Password1!');
     });
 
-    expect(SecureStore.setItemAsync).toHaveBeenCalledWith('auth_token', 'new-token');
+    expect(secureStorage.setItem).toHaveBeenCalledWith('auth_token', 'new-token');
     expect(setToken).toHaveBeenCalledWith('new-token');
     expect(result.current.isAuthenticated).toBe(true);
     expect(result.current.user).toEqual(mockUser);
   });
 
   it('register calls API', async () => {
-    vi.mocked(SecureStore.getItemAsync).mockResolvedValue(null);
+    vi.mocked(secureStorage.getItem).mockResolvedValue(null);
     vi.mocked(authApi.register).mockResolvedValue(undefined);
 
     const { result } = renderHook(() => useAuth(), { wrapper: createWrapper() });
@@ -128,7 +130,7 @@ describe('AuthProvider', () => {
   });
 
   it('logout clears token and user', async () => {
-    vi.mocked(SecureStore.getItemAsync).mockResolvedValue('stored-token');
+    vi.mocked(secureStorage.getItem).mockResolvedValue('stored-token');
     vi.mocked(authApi.getCurrentUser).mockResolvedValue({ user: mockUser });
     vi.mocked(authApi.logout).mockResolvedValue(undefined);
 
@@ -139,7 +141,7 @@ describe('AuthProvider', () => {
       await result.current.logout();
     });
 
-    expect(SecureStore.deleteItemAsync).toHaveBeenCalledWith('auth_token');
+    expect(secureStorage.deleteItem).toHaveBeenCalledWith('auth_token');
     expect(setToken).toHaveBeenCalledWith(null);
     expect(result.current.isAuthenticated).toBe(false);
     expect(result.current.user).toBeNull();

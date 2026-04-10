@@ -138,12 +138,22 @@ The mobile app (`packages/mobile/`) mirrors the frontend architecture using Reac
 | `schemas.ts` | Zod validation schemas |
 | `index.ts` | Barrel re-exporting all sub-layers |
 
+### Mobile Stack
+- **Expo SDK 54** (stable, compatible with Expo Go)
+- React Native 0.81 + React 19.1
+- `pnpm dlx expo install` for Expo package updates (NOT `pnpm add`)
+
 ### Key Differences from Frontend
 - **`testID`** prop (not `data-testid`) — React Native convention, used by Maestro
 - **NativeWind** for styling (Tailwind CSS → React Native styles)
 - **Expo Router** for file-based routing (`app/` directory)
-- **`expo-secure-store`** for token storage (not cookies)
+- **`expo-secure-store`** for token storage (not cookies) — wrapped via `src/lib/secureStorage.ts` for web compatibility
 - **Bearer token** auth (not cookie-based)
+
+### Mobile Development Notes
+- Metro config at `packages/mobile/metro.config.js` includes monorepo watchFolders
+- After Expo package updates, run `pnpm dlx expo prebuild --clean` to regenerate native code
+- `EXPO_PUBLIC_API_URL` env var overrides API endpoint (default: http://localhost:3000)
 
 ### Mobile Testing Strategy
 | Tier | Location | What is real | What is mocked |
@@ -169,6 +179,12 @@ appId: com.acme.protopal
 - assertVisible:
     id: "dashboard-screen"
 ```
+
+### Mobile E2E Prerequisites
+Before running `pnpm test:e2e:mobile`:
+1. Android emulator running (check: `adb devices`)
+2. Maestro CLI installed (`curl -Ls "https://get.maestro.mobile.dev" | bash`)
+3. APK built: `pnpm build:mobile`
 
 ## Process Rules
 

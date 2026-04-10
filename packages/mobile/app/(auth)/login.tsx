@@ -1,6 +1,11 @@
 import React from 'react';
 import { LoginForm } from '@/features/auth/ui/LoginForm';
+import { AuthScreenWrapper } from './_layout';
 
 export default function LoginScreen() {
-  return <LoginForm />;
+  return (
+    <AuthScreenWrapper>
+      <LoginForm />
+    </AuthScreenWrapper>
+  );
 }

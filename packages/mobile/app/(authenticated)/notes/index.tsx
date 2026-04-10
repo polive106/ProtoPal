@@ -1,6 +1,6 @@
-import React from 'react';
-import { FlatList, View, Text } from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useState, useCallback } from 'react';
+import { FlatList, View, Text, RefreshControl } from 'react-native';
+import { useRouter, Stack } from 'expo-router';
 import {
   Button,
   PageSpinner,
@@ -12,46 +12,75 @@ import { NoteCard } from '@/features/notes/widgets/NoteCard';
 
 export default function NotesListScreen() {
   const router = useRouter();
-  const { data: notes, isLoading, error } = useNotes();
+  const { data: notes, isLoading, error, refetch } = useNotes();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  }, [refetch]);
 
   if (isLoading) return <PageSpinner label="Loading notes..." />;
   if (error) return <ErrorAlert testID="notes-alert-error" message={error.message} />;
 
   if (!notes || notes.length === 0) {
     return (
-      <EmptyState
-        testID="notes-empty-state"
-        title="No notes yet"
-        description="Create your first note to get started."
-        action={
-          <Button
-            testID="notes-btn-create"
-            onPress={() => router.push('/(authenticated)/notes/form')}
-          >
-            Create Note
-          </Button>
-        }
-      />
+      <>
+        <Stack.Screen
+          options={{
+            headerRight: () => (
+              <Button
+                testID="notes-btn-create"
+                size="sm"
+                onPress={() => router.push('/(authenticated)/notes/form')}
+              >
+                New Note
+              </Button>
+            ),
+          }}
+        />
+        <EmptyState
+          testID="notes-empty-state"
+          title="No notes yet"
+          description="Create your first note to get started."
+          icon={<Text className="text-4xl">📝</Text>}
+          action={
+            <Button
+              testID="notes-btn-create"
+              onPress={() => router.push('/(authenticated)/notes/form')}
+            >
+              Create Note
+            </Button>
+          }
+        />
+      </>
     );
   }
 
   return (
     <View testID="notes-list" className="flex-1">
-      <View className="flex-row items-center justify-between px-4 pt-4 pb-2">
-        <Text className="text-2xl font-bold text-gray-900">My Notes</Text>
-        <Button
-          testID="notes-btn-create"
-          size="sm"
-          onPress={() => router.push('/(authenticated)/notes/form')}
-        >
-          New Note
-        </Button>
-      </View>
+      <Stack.Screen
+        options={{
+          headerRight: () => (
+            <Button
+              testID="notes-btn-create"
+              size="sm"
+              onPress={() => router.push('/(authenticated)/notes/form')}
+            >
+              New Note
+            </Button>
+          ),
+        }}
+      />
 
       <FlatList
         data={notes}
         keyExtractor={(item) => item.id}
-        contentContainerClassName="gap-3 px-4 pb-4"
+        contentContainerClassName="gap-4 px-5 py-4"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         renderItem={({ item }) => (
           <NoteCard
             id={item.id}
@@ -62,7 +91,6 @@ export default function NotesListScreen() {
           />
         )}
       />
-
     </View>
   );
 }

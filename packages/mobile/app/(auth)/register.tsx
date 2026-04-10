@@ -1,6 +1,11 @@
 import React from 'react';
 import { RegisterForm } from '@/features/auth/ui/RegisterForm';
+import { AuthScreenWrapper } from './_layout';
 
 export default function RegisterScreen() {
-  return <RegisterForm />;
+  return (
+    <AuthScreenWrapper>
+      <RegisterForm />
+    </AuthScreenWrapper>
+  );
 }

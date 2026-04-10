@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
-import * as SecureStore from 'expo-secure-store';
+import { secureStorage } from '@/lib/secureStorage';
 import { useQueryClient } from '@tanstack/react-query';
 import { setToken } from '@/lib/api';
 import { authApi, type AuthUser } from '@/features/auth/api';
@@ -34,14 +34,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function restoreSession() {
       try {
-        const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
+        const storedToken = await secureStorage.getItem(TOKEN_KEY);
         if (storedToken) {
           setToken(storedToken);
           const response = await authApi.getCurrentUser();
           setUser(response.user);
         }
       } catch {
-        await SecureStore.deleteItemAsync(TOKEN_KEY);
+        await secureStorage.deleteItem(TOKEN_KEY);
         setToken(null);
       } finally {
         setIsLoading(false);
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await authApi.login({ email, password });
-    await SecureStore.setItemAsync(TOKEN_KEY, response.token);
+    await secureStorage.setItem(TOKEN_KEY, response.token);
     setToken(response.token);
     setUser(response.user);
   }, []);
@@ -67,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore logout API errors
     }
-    await SecureStore.deleteItemAsync(TOKEN_KEY);
+    await secureStorage.deleteItem(TOKEN_KEY);
     setToken(null);
     setUser(null);
     queryClient.clear();
