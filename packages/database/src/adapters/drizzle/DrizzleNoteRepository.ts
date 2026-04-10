@@ -2,8 +2,8 @@ import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { NoteRepository } from '@acme/domain';
 import type { Note, CreateNoteDTO, UpdateNoteDTO } from '@acme/domain';
-import type { DatabaseConnection } from '../connection';
-import { notes } from '../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { notes } from '../../schema';
 
 export class DrizzleNoteRepository implements NoteRepository {
   constructor(private readonly db: DatabaseConnection) {}

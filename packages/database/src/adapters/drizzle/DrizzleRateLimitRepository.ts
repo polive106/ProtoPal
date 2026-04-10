@@ -1,7 +1,7 @@
 import { eq, lt } from 'drizzle-orm';
 import type { RateLimitRepository, RateLimitEntry } from '@acme/domain';
-import type { DatabaseConnection } from '../connection';
-import { rateLimitEntries } from '../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { rateLimitEntries } from '../../schema';
 
 export class DrizzleRateLimitRepository implements RateLimitRepository {
   constructor(private readonly db: DatabaseConnection) {}

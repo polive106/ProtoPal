@@ -4,7 +4,7 @@ import { mkdirSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import type { SQL } from 'drizzle-orm';
-import * as sqliteSchema from './schema.sqlite';
+import * as sqliteSchema from '../schema/schema.sqlite';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -19,7 +19,7 @@ function getDatabasePath(): string {
   if (process.env.DATABASE_PATH) {
     return process.env.DATABASE_PATH;
   }
-  return resolve(__dirname, '../../../data/app.db');
+  return resolve(__dirname, '../../../../data/app.db');
 }
 
 function createSqliteConnection(dbPath?: string) {
@@ -35,7 +35,7 @@ async function createPostgresConnection(url: string): Promise<DatabaseConnection
   const pgModule = await import('postgres');
   const postgres = pgModule.default;
   const { drizzle: drizzlePg } = await import('drizzle-orm/postgres-js');
-  const pgSchema = await import('./schema.postgres');
+  const pgSchema = await import('../schema/schema.postgres');
   const client = postgres(url);
   return drizzlePg(client, { schema: pgSchema }) as unknown as DatabaseConnection;
 }

@@ -3,8 +3,8 @@ import { randomUUID } from 'crypto';
 import type { UserRepository } from '@acme/domain';
 import type { User, CreateUserDTO, UpdateUserDTO } from '@acme/domain';
 import type { UserStatus } from '@acme/shared';
-import type { DatabaseConnection } from '../connection';
-import { users } from '../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { users } from '../../schema';
 
 export class DrizzleUserRepository implements UserRepository {
   constructor(private readonly db: DatabaseConnection) {}

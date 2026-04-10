@@ -5,8 +5,8 @@ import type {
   CreateVerificationTokenDTO,
   VerificationToken,
 } from '@acme/domain';
-import type { DatabaseConnection } from '../connection';
-import { verificationTokens } from '../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { verificationTokens } from '../../schema';
 
 export class DrizzleVerificationTokenRepository implements VerificationTokenRepository {
   constructor(private readonly db: DatabaseConnection) {}

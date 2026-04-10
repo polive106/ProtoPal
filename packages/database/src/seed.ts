@@ -6,7 +6,7 @@ import { dirname, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import bcrypt from 'bcrypt';
 import * as schema from './schema';
-import { getDatabase, isPostgresUrl, execSQL, type DatabaseConnection } from './connection';
+import { getDatabase, isPostgresUrl, execSQL, type DatabaseConnection } from './connections';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

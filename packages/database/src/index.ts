@@ -5,6 +5,8 @@ export {
   createTestConnection,
   closeDatabase,
   isPostgresUrl,
-} from './connection';
-export type { DatabaseConnection } from './connection';
+  execSQL,
+  querySQL,
+} from './connections';
+export type { DatabaseConnection } from './connections';
 export * from './adapters';

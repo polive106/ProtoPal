@@ -2,8 +2,8 @@ import { eq } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { RoleRepository } from '@acme/domain';
 import type { Role, CreateRoleDTO } from '@acme/domain';
-import type { DatabaseConnection } from '../connection';
-import { roles } from '../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { roles } from '../../schema';
 
 export class DrizzleRoleRepository implements RoleRepository {
   constructor(private readonly db: DatabaseConnection) {}

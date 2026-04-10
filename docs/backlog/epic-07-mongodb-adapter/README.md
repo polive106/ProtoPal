@@ -8,7 +8,7 @@ Add MongoDB as an alternative database engine for the ProtoPal scaffold. Restruc
 
 | ID | Title | Complexity | Status | Dependencies |
 |----|-------|-----------|--------|--------------|
-| E7-US01 | Restructure @acme/database Package | M | Pending | None |
+| E7-US01 | Restructure @acme/database Package | M | Done | None |
 | E7-US02 | MongoDB Connection Factory | S | Pending | E7-US01 |
 | E7-US03 | Core Mongo Adapters | L | Pending | E7-US02 |
 | E7-US04 | Auth Mongo Adapters | M | Pending | E7-US02 |

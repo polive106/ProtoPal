@@ -1,8 +1,8 @@
 import { eq, lt } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import type { TokenBlacklistRepository } from '@acme/domain';
-import type { DatabaseConnection } from '../connection';
-import { tokenBlacklist } from '../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { tokenBlacklist } from '../../schema';
 
 export class DrizzleTokenBlacklistRepository implements TokenBlacklistRepository {
   constructor(private readonly db: DatabaseConnection) {}
