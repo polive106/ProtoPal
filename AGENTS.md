@@ -11,7 +11,7 @@ A fullstack monorepo with authentication, RBAC, and an example CRUD entity (Note
 |----------|---------|
 | `docs/backlog/` | User stories organized by epic |
 | `docs/backlog/README.md` | PRD overview: domain model, API contracts, implementation order |
-| `adr/` | Architecture Decision Records (MADR format) |
+| `adr/` | Architecture Decision Records (MADR format) — **READ BEFORE making architectural decisions** |
 | `.agents/skills/` | Development workflow skills (14 total) |
 | `docs/getting-started.md` | Setup and development guide |
 
@@ -48,6 +48,15 @@ A fullstack monorepo with authentication, RBAC, and an example CRUD entity (Note
 | `@acme/frontend` | React + Vite + TanStack Router/Query + Tailwind |
 | `@acme/mobile` | Expo + React Native + NativeWind + TanStack Query |
 | `@acme/design-system-mobile` | Mobile Radix-inspired components (NativeWind) |
+
+## Architecture Decision Records (ADRs)
+
+**Before making any architectural decision**, read the relevant ADRs in `adr/`. ADRs document the reasoning behind past decisions and MUST be respected.
+
+- **Read `adr/README.md`** to see the full index of decisions
+- **Check for relevant ADRs** before proposing changes to: database layer, frontend architecture, testing strategy, package structure, or design system
+- **If a proposed change contradicts an existing ADR**, discuss the conflict with the user before proceeding
+- **New architectural decisions** should be captured as new ADRs following the MADR format in `adr/`
 
 ## Architecture Rules
 
