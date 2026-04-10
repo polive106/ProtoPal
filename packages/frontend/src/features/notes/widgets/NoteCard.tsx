@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, Button } from '@acme/design-system';
+import { useTranslation } from '@acme/i18n';
 
 interface NoteCardProps {
   id: string;
@@ -11,6 +12,8 @@ interface NoteCardProps {
 }
 
 export function NoteCard({ id, title, content, updatedAt, onEdit, onDelete }: NoteCardProps) {
+  const { t } = useTranslation('notes');
+
   return (
     <Card data-testid={`notes-card-${id}`}>
       <CardHeader>
@@ -25,10 +28,10 @@ export function NoteCard({ id, title, content, updatedAt, onEdit, onDelete }: No
         </span>
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={() => onEdit({ id, title, content })} data-testid={`notes-btn-edit-${id}`}>
-            Edit
+            {t('card.edit')}
           </Button>
           <Button variant="destructive" size="sm" onClick={() => onDelete(id)} data-testid={`notes-btn-delete-${id}`}>
-            Delete
+            {t('card.delete')}
           </Button>
         </div>
       </CardFooter>

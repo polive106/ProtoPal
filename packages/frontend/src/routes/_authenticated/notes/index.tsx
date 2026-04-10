@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
+import { useTranslation } from '@acme/i18n';
 import { Button } from '@acme/design-system';
 import { NoteList, NoteDrawer, useCreateNote, useUpdateNote } from '@/features/notes';
 
@@ -13,6 +14,7 @@ interface DrawerState {
 }
 
 function NotesPage() {
+  const { t } = useTranslation('notes');
   const [drawer, setDrawer] = useState<DrawerState>({ open: false });
   const createNote = useCreateNote();
   const updateNote = useUpdateNote();
@@ -28,9 +30,9 @@ function NotesPage() {
   return (
     <div data-testid="notes-page">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold" data-testid="notes-page-title">Notes</h1>
+        <h1 className="text-3xl font-bold" data-testid="notes-page-title">{t('pageTitle')}</h1>
         <Button onClick={() => setDrawer({ open: true })} data-testid="notes-btn-create">
-          New Note
+          {t('newNote')}
         </Button>
       </div>
 

@@ -1,16 +1,18 @@
 import React from 'react';
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, ErrorAlert } from '@acme/design-system';
+import { useTranslation } from '@acme/i18n';
 import { useRegistrationForm } from '../hooks';
 import { handleFormSubmit, getFieldError } from '@/lib/formUtils';
 
 export function RegisterForm() {
+  const { t } = useTranslation('auth');
   const { form, serverError, setServerError, isLoading } = useRegistrationForm();
 
   return (
     <Card className="w-full max-w-md" data-testid="register-card">
       <CardHeader>
-        <CardTitle>Create Account</CardTitle>
-        <CardDescription>Sign up for a new account</CardDescription>
+        <CardTitle>{t('register.title')}</CardTitle>
+        <CardDescription>{t('register.description')}</CardDescription>
       </CardHeader>
       <form onSubmit={handleFormSubmit(() => form.handleSubmit())} noValidate>
         <CardContent className="space-y-4">
@@ -19,7 +21,7 @@ export function RegisterForm() {
             <form.Field name="firstName">
               {(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
+                  <Label htmlFor="firstName">{t('register.firstNameLabel')}</Label>
                   <Input
                     id="firstName"
                     value={field.state.value}
@@ -36,7 +38,7 @@ export function RegisterForm() {
             <form.Field name="lastName">
               {(field) => (
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
+                  <Label htmlFor="lastName">{t('register.lastNameLabel')}</Label>
                   <Input
                     id="lastName"
                     value={field.state.value}
@@ -54,7 +56,7 @@ export function RegisterForm() {
           <form.Field name="email">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('register.emailLabel')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -72,7 +74,7 @@ export function RegisterForm() {
           <form.Field name="password">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t('register.passwordLabel')}</Label>
                 <Input
                   id="password"
                   type="password"
@@ -84,19 +86,19 @@ export function RegisterForm() {
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
                   <p className="text-sm text-destructive" data-testid="register-error-password">{getFieldError(field.state.meta.errors)}</p>
                 )}
-                <p className="text-xs text-muted-foreground">Min 8 chars, uppercase, lowercase, and number</p>
+                <p className="text-xs text-muted-foreground">{t('register.passwordHint')}</p>
               </div>
             )}
           </form.Field>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <Button type="submit" className="w-full" disabled={isLoading} data-testid="register-btn-submit">
-            {isLoading ? 'Creating...' : 'Create Account'}
+            {isLoading ? t('register.submitting') : t('register.submit')}
           </Button>
           <p className="text-sm text-muted-foreground">
-            Already have an account?{' '}
+            {t('register.hasAccount')}{' '}
             <a href="/login" className="text-primary hover:underline" data-testid="register-link-login">
-              Sign in
+              {t('register.signIn')}
             </a>
           </p>
         </CardFooter>

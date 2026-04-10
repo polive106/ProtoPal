@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useAuth } from '@/providers/AuthProvider';
+import { useTranslation } from '@acme/i18n';
 import { Card, CardHeader, CardTitle, CardContent } from '@acme/design-system';
 
 export const Route = createFileRoute('/_authenticated/dashboard')({
@@ -7,22 +8,23 @@ export const Route = createFileRoute('/_authenticated/dashboard')({
 });
 
 function DashboardPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   return (
     <div data-testid="dashboard-page">
       <h1 className="text-3xl font-bold mb-6" data-testid="dashboard-title">
-        Welcome, {user?.firstName}!
+        {t('dashboard.welcome', { firstName: user?.firstName })}
       </h1>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>Notes</CardTitle>
+            <CardTitle>{t('dashboard.notesTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-muted-foreground">Manage your notes and ideas.</p>
+            <p className="text-muted-foreground">{t('dashboard.notesDescription')}</p>
             <a href="/notes" className="text-primary hover:underline text-sm mt-2 inline-block" data-testid="dashboard-link-notes">
-              View Notes
+              {t('dashboard.viewNotes')}
             </a>
           </CardContent>
         </Card>

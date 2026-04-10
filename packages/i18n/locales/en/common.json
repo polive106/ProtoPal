@@ -1,0 +1,22 @@
+{
+  "appName": "Acme",
+  "loading": "Loading...",
+  "error": "Something went wrong",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "create": "Create",
+  "back": "Back",
+  "logout": "Logout",
+  "notes": "Notes",
+  "nav": {
+    "notes": "Notes"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{firstName}}!",
+    "notesTitle": "Notes",
+    "notesDescription": "Manage your notes and ideas.",
+    "viewNotes": "View Notes"
+  }
+}

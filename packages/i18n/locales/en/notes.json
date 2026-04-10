@@ -1,0 +1,27 @@
+{
+  "pageTitle": "Notes",
+  "newNote": "New Note",
+  "drawer": {
+    "newTitle": "New Note",
+    "editTitle": "Edit Note",
+    "newDescription": "Fill in the details to create a new note.",
+    "editDescription": "Update the note details below.",
+    "titleLabel": "Title",
+    "contentLabel": "Content",
+    "cancel": "Cancel",
+    "save": {
+      "create": "Create",
+      "update": "Update",
+      "saving": "Saving..."
+    }
+  },
+  "empty": {
+    "title": "No notes yet",
+    "description": "Create your first note to get started.",
+    "createButton": "Create Note"
+  },
+  "card": {
+    "edit": "Edit",
+    "delete": "Delete"
+  }
+}

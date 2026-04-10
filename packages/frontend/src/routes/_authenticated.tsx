@@ -1,5 +1,6 @@
 import { createFileRoute, redirect, Outlet, useNavigate } from '@tanstack/react-router';
 import { useAuth } from '@/providers/AuthProvider';
+import { useTranslation } from '@acme/i18n';
 import { Button } from '@acme/design-system';
 import { PageSpinner } from '@acme/design-system';
 
@@ -13,6 +14,7 @@ export const Route = createFileRoute('/_authenticated')({
 });
 
 function AuthenticatedLayout() {
+  const { t } = useTranslation();
   const { user, logout, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -24,10 +26,10 @@ function AuthenticatedLayout() {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <nav className="flex items-center gap-6">
             <a href="/dashboard" className="text-lg font-semibold" data-testid="nav-link-home">
-              Acme
+              {t('appName')}
             </a>
             <a href="/notes" className="text-sm text-muted-foreground hover:text-foreground" data-testid="nav-link-notes">
-              Notes
+              {t('nav.notes')}
             </a>
           </nav>
           <div className="flex items-center gap-4">
@@ -43,7 +45,7 @@ function AuthenticatedLayout() {
               }}
               data-testid="app-btn-logout"
             >
-              Logout
+              {t('logout')}
             </Button>
           </div>
         </div>

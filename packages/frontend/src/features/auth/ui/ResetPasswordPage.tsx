@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Input, Label, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, ErrorAlert } from '@acme/design-system';
+import { useTranslation } from '@acme/i18n';
 import { useResetPasswordForm } from '../hooks';
 import { handleFormSubmit, getFieldError } from '@/lib/formUtils';
 
@@ -8,22 +9,23 @@ interface ResetPasswordPageProps {
 }
 
 export function ResetPasswordPage({ token }: ResetPasswordPageProps) {
+  const { t } = useTranslation('auth');
   const { form, serverError, setServerError, isLoading, isSuccess } = useResetPasswordForm(token);
 
   if (isSuccess) {
     return (
       <Card className="w-full max-w-md" data-testid="reset-password-card">
         <CardHeader>
-          <CardTitle>Password Reset</CardTitle>
+          <CardTitle>{t('resetPassword.successTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground" data-testid="reset-password-success">
-            Your password has been reset successfully. You can now sign in with your new password.
+            {t('resetPassword.successMessage')}
           </p>
         </CardContent>
         <CardFooter>
           <a href="/login" className="text-primary hover:underline" data-testid="reset-password-link-login">
-            Sign In
+            {t('resetPassword.signIn')}
           </a>
         </CardFooter>
       </Card>
@@ -33,8 +35,8 @@ export function ResetPasswordPage({ token }: ResetPasswordPageProps) {
   return (
     <Card className="w-full max-w-md" data-testid="reset-password-card">
       <CardHeader>
-        <CardTitle>Reset Password</CardTitle>
-        <CardDescription>Enter your new password</CardDescription>
+        <CardTitle>{t('resetPassword.title')}</CardTitle>
+        <CardDescription>{t('resetPassword.description')}</CardDescription>
       </CardHeader>
       <form onSubmit={handleFormSubmit(() => form.handleSubmit())} noValidate>
         <CardContent className="space-y-4">
@@ -43,7 +45,7 @@ export function ResetPasswordPage({ token }: ResetPasswordPageProps) {
           <form.Field name="password">
             {(field) => (
               <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
+                <Label htmlFor="new-password">{t('resetPassword.passwordLabel')}</Label>
                 <Input
                   id="new-password"
                   type="password"
@@ -53,7 +55,7 @@ export function ResetPasswordPage({ token }: ResetPasswordPageProps) {
                   data-testid="reset-password-input-password"
                 />
                 <p className="text-xs text-muted-foreground">
-                  Min 8 chars, uppercase, lowercase, and number
+                  {t('resetPassword.passwordHint')}
                 </p>
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
                   <p className="text-sm text-destructive" data-testid="reset-password-error-password">{getFieldError(field.state.meta.errors)}</p>
@@ -64,7 +66,7 @@ export function ResetPasswordPage({ token }: ResetPasswordPageProps) {
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
           <Button type="submit" className="w-full" disabled={isLoading} data-testid="reset-password-btn-submit">
-            {isLoading ? 'Resetting...' : 'Reset Password'}
+            {isLoading ? t('resetPassword.submitting') : t('resetPassword.submit')}
           </Button>
         </CardFooter>
       </form>
