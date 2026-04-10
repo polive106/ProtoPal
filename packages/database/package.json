@@ -20,12 +20,14 @@
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^11.0.0",
     "drizzle-orm": "^0.45.2",
+    "mongodb": "^7.1.1",
     "postgres": "^3.4.8"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/better-sqlite3": "^7.6.0",
     "drizzle-kit": "^0.31.8",
+    "mongodb-memory-server": "^11.0.1",
     "tsx": "^4.19.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"
