@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import type { Db, Collection } from 'mongodb';
 import type { LoginAttemptRepository, LoginAttempt } from '@acme/domain';
+import { ensureDate } from './utils';
 
 interface LoginAttemptDoc {
   _id: string;
@@ -31,7 +32,7 @@ export class MongoLoginAttemptRepository implements LoginAttemptRepository {
     lockedUntil: Date | null,
   ): Promise<LoginAttempt> {
     const now = new Date();
-    await this.collection.updateOne(
+    const doc = await this.collection.findOneAndUpdate(
       { email },
       {
         $set: {
@@ -46,11 +47,10 @@ export class MongoLoginAttemptRepository implements LoginAttemptRepository {
           createdAt: now,
         },
       },
-      { upsert: true },
+      { upsert: true, returnDocument: 'after' },
     );
-    const doc = await this.findByEmail(email);
     if (!doc) throw new Error('Failed to upsert login attempt');
-    return doc;
+    return this.mapDoc(doc);
   }
 
   async resetAttempts(email: string): Promise<void> {
@@ -67,15 +67,15 @@ export class MongoLoginAttemptRepository implements LoginAttemptRepository {
     );
   }
 
-  private mapDoc(doc: any): LoginAttempt {
+  private mapDoc(doc: LoginAttemptDoc): LoginAttempt {
     return {
       id: doc._id,
       email: doc.email,
       attempts: doc.attempts,
       lockoutCount: doc.lockoutCount,
       lockedUntil: doc.lockedUntil ?? null,
-      lastAttemptAt: doc.lastAttemptAt instanceof Date ? doc.lastAttemptAt : new Date(doc.lastAttemptAt),
-      createdAt: doc.createdAt instanceof Date ? doc.createdAt : new Date(doc.createdAt),
+      lastAttemptAt: ensureDate(doc.lastAttemptAt),
+      createdAt: ensureDate(doc.createdAt),
     };
   }
 }

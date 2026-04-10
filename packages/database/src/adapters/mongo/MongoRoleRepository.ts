@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import type { Db, Collection } from 'mongodb';
 import type { RoleRepository, Role, CreateRoleDTO } from '@acme/domain';
+import { ensureDate } from './utils';
 
 interface RoleDoc {
   _id: string;
@@ -21,7 +22,7 @@ export class MongoRoleRepository implements RoleRepository {
 
   async create(dto: CreateRoleDTO): Promise<Role> {
     const now = new Date();
-    const doc = {
+    const doc: RoleDoc = {
       _id: randomUUID(),
       name: dto.name,
       displayName: dto.displayName,
@@ -49,15 +50,15 @@ export class MongoRoleRepository implements RoleRepository {
     return docs.map((d) => this.mapDoc(d));
   }
 
-  private mapDoc(doc: any): Role {
+  private mapDoc(doc: RoleDoc): Role {
     return {
       id: doc._id,
       name: doc.name,
       displayName: doc.displayName,
       description: doc.description ?? undefined,
       isSystem: doc.isSystem,
-      createdAt: doc.createdAt instanceof Date ? doc.createdAt : new Date(doc.createdAt),
-      updatedAt: doc.updatedAt instanceof Date ? doc.updatedAt : new Date(doc.updatedAt),
+      createdAt: ensureDate(doc.createdAt),
+      updatedAt: ensureDate(doc.updatedAt),
     };
   }
 }

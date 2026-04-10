@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import type { Db, Collection } from 'mongodb';
 import type { UserRepository, User, CreateUserDTO, UpdateUserDTO } from '@acme/domain';
 import type { UserStatus } from '@acme/shared';
+import { ensureDate } from './utils';
 
 interface UserDoc {
   _id: string;
@@ -26,16 +27,16 @@ export class MongoUserRepository implements UserRepository {
 
   async create(dto: CreateUserDTO): Promise<User> {
     const now = new Date();
-    const doc = {
+    const doc: UserDoc = {
       _id: randomUUID(),
       email: dto.email,
       passwordHash: dto.passwordHash ?? null,
       firstName: dto.firstName,
       lastName: dto.lastName,
       isActive: dto.isActive ?? true,
-      status: (dto.status ?? 'pending') as string,
+      status: dto.status ?? 'pending',
       tokenVersion: 0,
-      lastLoginAt: null as Date | null,
+      lastLoginAt: null,
       createdAt: now,
       updatedAt: now,
     };
@@ -74,17 +75,20 @@ export class MongoUserRepository implements UserRepository {
     if (data.tokenVersion !== undefined) updateData.tokenVersion = data.tokenVersion;
     if (data.lastLoginAt !== undefined) updateData.lastLoginAt = data.lastLoginAt;
 
-    await this.collection.updateOne({ _id: id }, { $set: updateData });
-    const updated = await this.findById(id);
-    if (!updated) throw new Error('User not found after update');
-    return updated;
+    const doc = await this.collection.findOneAndUpdate(
+      { _id: id },
+      { $set: updateData },
+      { returnDocument: 'after' },
+    );
+    if (!doc) throw new Error('User not found after update');
+    return this.mapDoc(doc);
   }
 
   async delete(id: string): Promise<void> {
     await this.collection.deleteOne({ _id: id });
   }
 
-  private mapDoc(doc: any): User {
+  private mapDoc(doc: UserDoc): User {
     return {
       id: doc._id,
       email: doc.email,
@@ -92,11 +96,11 @@ export class MongoUserRepository implements UserRepository {
       firstName: doc.firstName,
       lastName: doc.lastName,
       isActive: doc.isActive,
-      status: doc.status,
+      status: doc.status as UserStatus,
       tokenVersion: doc.tokenVersion ?? 0,
       lastLoginAt: doc.lastLoginAt ?? undefined,
-      createdAt: doc.createdAt instanceof Date ? doc.createdAt : new Date(doc.createdAt),
-      updatedAt: doc.updatedAt instanceof Date ? doc.updatedAt : new Date(doc.updatedAt),
+      createdAt: ensureDate(doc.createdAt),
+      updatedAt: ensureDate(doc.updatedAt),
     };
   }
 }

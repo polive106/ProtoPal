@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import type { Db, Collection } from 'mongodb';
 import type { UserRoleRepository, UserWithRoles, UserRole, CreateUserRoleDTO } from '@acme/domain';
+import { ensureDate } from './utils';
 
 interface UserRoleDoc {
   _id: string;
@@ -89,7 +90,7 @@ export class MongoUserRoleRepository implements UserRoleRepository {
       id: d._id,
       userId: d.userId,
       roleId: d.roleId,
-      assignedAt: d.assignedAt instanceof Date ? d.assignedAt : new Date(d.assignedAt),
+      assignedAt: ensureDate(d.assignedAt),
       assignedBy: d.assignedBy ?? undefined,
     }));
   }

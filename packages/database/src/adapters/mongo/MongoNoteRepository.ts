@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import type { Db, Collection } from 'mongodb';
 import type { NoteRepository, Note, CreateNoteDTO, UpdateNoteDTO } from '@acme/domain';
+import { ensureDate } from './utils';
 
 interface NoteDoc {
   _id: string;
@@ -20,7 +21,7 @@ export class MongoNoteRepository implements NoteRepository {
 
   async create(dto: CreateNoteDTO): Promise<Note> {
     const now = new Date();
-    const doc = {
+    const doc: NoteDoc = {
       _id: randomUUID(),
       title: dto.title,
       content: dto.content,
@@ -47,24 +48,27 @@ export class MongoNoteRepository implements NoteRepository {
     if (data.title !== undefined) updateData.title = data.title;
     if (data.content !== undefined) updateData.content = data.content;
 
-    await this.collection.updateOne({ _id: id }, { $set: updateData });
-    const updated = await this.findById(id);
-    if (!updated) throw new Error('Note not found after update');
-    return updated;
+    const doc = await this.collection.findOneAndUpdate(
+      { _id: id },
+      { $set: updateData },
+      { returnDocument: 'after' },
+    );
+    if (!doc) throw new Error('Note not found after update');
+    return this.mapDoc(doc);
   }
 
   async delete(id: string): Promise<void> {
     await this.collection.deleteOne({ _id: id });
   }
 
-  private mapDoc(doc: any): Note {
+  private mapDoc(doc: NoteDoc): Note {
     return {
       id: doc._id,
       title: doc.title,
       content: doc.content,
       userId: doc.userId,
-      createdAt: doc.createdAt instanceof Date ? doc.createdAt : new Date(doc.createdAt),
-      updatedAt: doc.updatedAt instanceof Date ? doc.updatedAt : new Date(doc.updatedAt),
+      createdAt: ensureDate(doc.createdAt),
+      updatedAt: ensureDate(doc.updatedAt),
     };
   }
 }

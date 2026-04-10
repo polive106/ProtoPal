@@ -5,6 +5,7 @@ import type {
   CreateVerificationTokenDTO,
   VerificationToken,
 } from '@acme/domain';
+import { ensureDate } from './utils';
 
 interface VerificationTokenDoc {
   _id: string;
@@ -24,12 +25,12 @@ export class MongoVerificationTokenRepository implements VerificationTokenReposi
 
   async create(dto: CreateVerificationTokenDTO): Promise<VerificationToken> {
     const now = new Date();
-    const doc = {
+    const doc: VerificationTokenDoc = {
       _id: randomUUID(),
       userId: dto.userId,
       tokenHash: dto.tokenHash,
       expiresAt: dto.expiresAt,
-      verifiedAt: null as Date | null,
+      verifiedAt: null,
       createdAt: now,
     };
     await this.collection.insertOne(doc);
@@ -53,11 +54,11 @@ export class MongoVerificationTokenRepository implements VerificationTokenReposi
 
   async markVerified(id: string): Promise<VerificationToken> {
     const now = new Date();
-    await this.collection.updateOne(
+    const doc = await this.collection.findOneAndUpdate(
       { _id: id },
       { $set: { verifiedAt: now } },
+      { returnDocument: 'after' },
     );
-    const doc = await this.collection.findOne({ _id: id });
     if (!doc) throw new Error('Verification token not found');
     return this.mapDoc(doc);
   }
@@ -66,14 +67,14 @@ export class MongoVerificationTokenRepository implements VerificationTokenReposi
     await this.collection.deleteMany({ userId, verifiedAt: null });
   }
 
-  private mapDoc(doc: any): VerificationToken {
+  private mapDoc(doc: VerificationTokenDoc): VerificationToken {
     return {
       id: doc._id,
       userId: doc.userId,
       tokenHash: doc.tokenHash,
-      expiresAt: doc.expiresAt instanceof Date ? doc.expiresAt : new Date(doc.expiresAt),
+      expiresAt: ensureDate(doc.expiresAt),
       verifiedAt: doc.verifiedAt ?? null,
-      createdAt: doc.createdAt instanceof Date ? doc.createdAt : new Date(doc.createdAt),
+      createdAt: ensureDate(doc.createdAt),
     };
   }
 }

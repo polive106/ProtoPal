@@ -29,7 +29,7 @@ export async function teardownTestDb(): Promise<void> {
 export async function clearCollections(): Promise<void> {
   if (!db) return;
   const collections = await db.listCollections().toArray();
-  for (const col of collections) {
-    await db.collection(col.name).deleteMany({});
-  }
+  await Promise.all(
+    collections.map((col) => db!.collection(col.name).deleteMany({})),
+  );
 }

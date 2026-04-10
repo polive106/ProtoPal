@@ -5,6 +5,7 @@ import type {
   CreatePasswordResetTokenDTO,
   PasswordResetToken,
 } from '@acme/domain';
+import { ensureDate } from './utils';
 
 interface PasswordResetTokenDoc {
   _id: string;
@@ -24,12 +25,12 @@ export class MongoPasswordResetTokenRepository implements PasswordResetTokenRepo
 
   async create(dto: CreatePasswordResetTokenDTO): Promise<PasswordResetToken> {
     const now = new Date();
-    const doc = {
+    const doc: PasswordResetTokenDoc = {
       _id: randomUUID(),
       userId: dto.userId,
       tokenHash: dto.tokenHash,
       expiresAt: dto.expiresAt,
-      usedAt: null as Date | null,
+      usedAt: null,
       createdAt: now,
     };
     await this.collection.insertOne(doc);
@@ -43,11 +44,11 @@ export class MongoPasswordResetTokenRepository implements PasswordResetTokenRepo
 
   async markUsed(id: string): Promise<PasswordResetToken> {
     const now = new Date();
-    await this.collection.updateOne(
+    const doc = await this.collection.findOneAndUpdate(
       { _id: id },
       { $set: { usedAt: now } },
+      { returnDocument: 'after' },
     );
-    const doc = await this.collection.findOne({ _id: id });
     if (!doc) throw new Error('Password reset token not found');
     return this.mapDoc(doc);
   }
@@ -56,14 +57,14 @@ export class MongoPasswordResetTokenRepository implements PasswordResetTokenRepo
     await this.collection.deleteMany({ userId, usedAt: null });
   }
 
-  private mapDoc(doc: any): PasswordResetToken {
+  private mapDoc(doc: PasswordResetTokenDoc): PasswordResetToken {
     return {
       id: doc._id,
       userId: doc.userId,
       tokenHash: doc.tokenHash,
-      expiresAt: doc.expiresAt instanceof Date ? doc.expiresAt : new Date(doc.expiresAt),
+      expiresAt: ensureDate(doc.expiresAt),
       usedAt: doc.usedAt ?? null,
-      createdAt: doc.createdAt instanceof Date ? doc.createdAt : new Date(doc.createdAt),
+      createdAt: ensureDate(doc.createdAt),
     };
   }
 }
