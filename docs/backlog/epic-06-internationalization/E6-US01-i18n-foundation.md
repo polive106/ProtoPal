@@ -3,14 +3,14 @@
 **User Story**: As a developer, I want a shared i18n package with react-i18next configuration and typed English translation keys so that web and mobile can consume translations from a single source of truth.
 
 **Acceptance Criteria**:
-- [ ] `@acme/i18n` package exists in `packages/i18n/`
-- [ ] `i18next` and `react-i18next` are installed as dependencies
-- [ ] i18next is configured with English as the default language and French as a supported language
-- [ ] English translation files are organized by feature namespace (`auth`, `notes`, `common`)
-- [ ] Namespaces contain placeholder keys matching current hardcoded strings
-- [ ] TypeScript module augmentation provides typed `t()` keys with autocomplete
-- [ ] Package exports a configured i18n instance and typed `useTranslation` hook
-- [ ] Package builds successfully and is consumable by frontend and mobile packages
+- [x] `@acme/i18n` package exists in `packages/i18n/`
+- [x] `i18next` and `react-i18next` are installed as dependencies
+- [x] i18next is configured with English as the default language and French as a supported language
+- [x] English translation files are organized by feature namespace (`auth`, `notes`, `common`)
+- [x] Namespaces contain placeholder keys matching current hardcoded strings
+- [x] TypeScript module augmentation provides typed `t()` keys with autocomplete
+- [x] Package exports a configured i18n instance and typed `useTranslation` hook
+- [x] Package builds successfully and is consumable by frontend and mobile packages
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -27,7 +27,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

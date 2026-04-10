@@ -3,14 +3,14 @@
 **User Story**: As a user of the mobile app, I want login and registration screens to display translated text so that I can use the app in my preferred language.
 
 **Acceptance Criteria**:
-- [ ] i18next provider is wired into the mobile app root
-- [ ] `@acme/i18n` is added as a mobile dependency
-- [ ] `expo-localization` is installed for device locale detection
-- [ ] Mobile LoginForm uses `t()` for all user-facing strings
-- [ ] Mobile RegisterForm uses `t()` for all user-facing strings
-- [ ] No hardcoded English strings remain in mobile auth feature components
-- [ ] Device locale is detected via expo-localization and used as default
-- [ ] Existing Maestro E2E flows pass without modification (testID selectors unaffected)
+- [x] i18next provider is wired into the mobile app root
+- [x] `@acme/i18n` is added as a mobile dependency
+- [x] `expo-localization` is installed for device locale detection
+- [x] Mobile LoginForm uses `t()` for all user-facing strings
+- [x] Mobile RegisterForm uses `t()` for all user-facing strings
+- [x] No hardcoded English strings remain in mobile auth feature components
+- [x] Device locale is detected via expo-localization and used as default
+- [x] Existing Maestro E2E flows pass without modification (testID selectors unaffected)
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -26,7 +26,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

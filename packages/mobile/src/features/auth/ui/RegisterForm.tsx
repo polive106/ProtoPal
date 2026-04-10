@@ -13,11 +13,14 @@ import {
   CardFooter,
   ErrorAlert,
 } from '@acme/design-system-mobile';
+import { useTranslation } from '@acme/i18n';
 import { useRegistrationForm } from '../hooks';
 import { getFieldError } from '@/lib/formUtils';
 
 export function RegisterForm() {
   const { form, serverError, setServerError, isLoading } = useRegistrationForm();
+  const { t } = useTranslation('auth');
+  const { t: tc } = useTranslation('common');
 
   return (
     <View className="w-full max-w-sm">
@@ -26,20 +29,20 @@ export function RegisterForm() {
           className="text-3xl text-ink"
           style={{ fontFamily: 'SourceSerif4_600SemiBold' }}
         >
-          ProtoPal
+          {tc('appName')}
         </Text>
         <Text
           className="mt-1 text-sm text-ink-muted"
           style={{ fontFamily: 'Karla_400Regular' }}
         >
-          Your notes, your way
+          {tc('tagline')}
         </Text>
       </View>
 
       <Card testID="register-card">
         <CardHeader>
-          <CardTitle>Create Account</CardTitle>
-          <CardDescription>Sign up for a new account</CardDescription>
+          <CardTitle>{t('register.title')}</CardTitle>
+          <CardDescription>{t('register.description')}</CardDescription>
         </CardHeader>
         <CardContent className="gap-4">
           {serverError && (
@@ -54,7 +57,7 @@ export function RegisterForm() {
             <form.Field name="firstName">
               {(field) => (
                 <View className="flex-1 gap-2">
-                  <Label>First Name</Label>
+                  <Label>{t('register.firstNameLabel')}</Label>
                   <Input
                     testID="register-input-first-name"
                     value={field.state.value}
@@ -72,7 +75,7 @@ export function RegisterForm() {
             <form.Field name="lastName">
               {(field) => (
                 <View className="flex-1 gap-2">
-                  <Label>Last Name</Label>
+                  <Label>{t('register.lastNameLabel')}</Label>
                   <Input
                     testID="register-input-last-name"
                     value={field.state.value}
@@ -91,13 +94,13 @@ export function RegisterForm() {
           <form.Field name="email">
             {(field) => (
               <View className="gap-2">
-                <Label>Email</Label>
+                <Label>{t('register.emailLabel')}</Label>
                 <Input
                   testID="register-input-email"
                   value={field.state.value}
                   onChangeText={(text) => field.handleChange(text)}
                   onBlur={() => field.handleBlur()}
-                  placeholder="you@example.com"
+                  placeholder={t('register.placeholder.email')}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -112,7 +115,7 @@ export function RegisterForm() {
           <form.Field name="password">
             {(field) => (
               <View className="gap-2">
-                <Label>Password</Label>
+                <Label>{t('register.passwordLabel')}</Label>
                 <Input
                   testID="register-input-password"
                   value={field.state.value}
@@ -127,7 +130,7 @@ export function RegisterForm() {
                   className="text-xs text-ink-light"
                   style={{ fontFamily: 'Karla_400Regular' }}
                 >
-                  Min 8 chars, uppercase, lowercase, and number
+                  {t('register.passwordHint')}
                 </Text>
               </View>
             )}
@@ -141,14 +144,14 @@ export function RegisterForm() {
             loading={isLoading}
             onPress={() => form.handleSubmit()}
           >
-            Create Account
+            {t('register.submit')}
           </Button>
           <View className="flex-row items-center gap-1">
             <Text
               className="text-sm text-ink-muted"
               style={{ fontFamily: 'Karla_400Regular' }}
             >
-              Already have an account?
+              {t('register.hasAccount')}
             </Text>
             <Link href="/(auth)/login" asChild>
               <Pressable testID="register-link-login">
@@ -156,7 +159,7 @@ export function RegisterForm() {
                   className="text-sm text-brand"
                   style={{ fontFamily: 'Karla_500Medium' }}
                 >
-                  Sign in
+                  {t('register.signIn')}
                 </Text>
               </Pressable>
             </Link>

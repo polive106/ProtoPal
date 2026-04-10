@@ -13,11 +13,14 @@ import {
   CardFooter,
   ErrorAlert,
 } from '@acme/design-system-mobile';
+import { useTranslation } from '@acme/i18n';
 import { useLoginForm } from '../hooks';
 import { getFieldError } from '@/lib/formUtils';
 
 export function LoginForm() {
   const { form, serverError, setServerError, isPending } = useLoginForm();
+  const { t } = useTranslation('auth');
+  const { t: tc } = useTranslation('common');
 
   return (
     <View className="w-full max-w-sm">
@@ -26,20 +29,20 @@ export function LoginForm() {
           className="text-3xl text-ink"
           style={{ fontFamily: 'SourceSerif4_600SemiBold' }}
         >
-          ProtoPal
+          {tc('appName')}
         </Text>
         <Text
           className="mt-1 text-sm text-ink-muted"
           style={{ fontFamily: 'Karla_400Regular' }}
         >
-          Your notes, your way
+          {tc('tagline')}
         </Text>
       </View>
 
       <Card testID="login-card">
         <CardHeader>
-          <CardTitle>Sign In</CardTitle>
-          <CardDescription>Enter your credentials to access your account</CardDescription>
+          <CardTitle>{t('login.title')}</CardTitle>
+          <CardDescription>{t('login.description')}</CardDescription>
         </CardHeader>
         <CardContent className="gap-4">
           {serverError && (
@@ -53,13 +56,13 @@ export function LoginForm() {
           <form.Field name="email">
             {(field) => (
               <View className="gap-2">
-                <Label>Email</Label>
+                <Label>{t('login.emailLabel')}</Label>
                 <Input
                   testID="login-input-email"
                   value={field.state.value}
                   onChangeText={(text) => field.handleChange(text)}
                   onBlur={() => field.handleBlur()}
-                  placeholder="you@example.com"
+                  placeholder={t('login.placeholder.email')}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   autoCorrect={false}
@@ -74,7 +77,7 @@ export function LoginForm() {
           <form.Field name="password">
             {(field) => (
               <View className="gap-2">
-                <Label>Password</Label>
+                <Label>{t('login.passwordLabel')}</Label>
                 <Input
                   testID="login-input-password"
                   value={field.state.value}
@@ -89,7 +92,7 @@ export function LoginForm() {
                   className="mt-1 text-sm text-ink-light"
                   style={{ fontFamily: 'Karla_400Regular' }}
                 >
-                  Forgot password?
+                  {t('login.forgotPassword')}
                 </Text>
               </View>
             )}
@@ -103,14 +106,14 @@ export function LoginForm() {
             loading={isPending}
             onPress={() => form.handleSubmit()}
           >
-            Sign In
+            {t('login.submit')}
           </Button>
           <View className="flex-row items-center gap-1">
             <Text
               className="text-sm text-ink-muted"
               style={{ fontFamily: 'Karla_400Regular' }}
             >
-              Don't have an account?
+              {t('login.noAccount')}
             </Text>
             <Link href="/(auth)/register" asChild>
               <Pressable testID="login-link-register">
@@ -118,7 +121,7 @@ export function LoginForm() {
                   className="text-sm text-brand"
                   style={{ fontFamily: 'Karla_500Medium' }}
                 >
-                  Sign up
+                  {t('login.signUp')}
                 </Text>
               </Pressable>
             </Link>
