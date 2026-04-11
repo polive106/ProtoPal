@@ -18,7 +18,7 @@
     "@acme/domain": "workspace:*",
     "@acme/shared": "workspace:*",
     "bcrypt": "^6.0.0",
-    "better-sqlite3": "^11.0.0",
+    "better-sqlite3": "^12.8.0",
     "drizzle-orm": "^0.45.2",
     "mongodb": "^7.1.1",
     "postgres": "^3.4.8"
