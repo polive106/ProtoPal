@@ -90,6 +90,17 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 43. E7-US07: Mongo Adapter Unit Tests
 44. E7-US08: MongoDB Documentation
 
+### Phase 8: Security Hardening Phase 2 (Pending)
+45. E8-US01: Command Injection Prevention
+46. E8-US02: Token & Parameter Schema Hardening
+47. E8-US03: Mobile Transport Security
+48. E8-US04: Mobile Web Token Storage Security
+49. E8-US05: CORS & Proxy Trust Hardening
+50. E8-US06: CSP & Security Headers Enhancement
+51. E8-US07: Persistent Audit Log Storage
+52. E8-US08: Development Token Exposure Cleanup
+53. E8-US09: CSRF Protection Evaluation
+
 ## Status Conventions
 
 - **Pending**: Not started
