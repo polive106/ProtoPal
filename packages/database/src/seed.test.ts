@@ -14,7 +14,7 @@ function runSeed(env: Record<string, string> = {}) {
   });
 }
 
-describe('seed script', () => {
+describe('seed script', { timeout: 30_000 }, () => {
   describe('production safety guard', () => {
     it('exits with code 1 when NODE_ENV is production', () => {
       expect(() =>

@@ -7,6 +7,7 @@ export {
   isPostgresUrl,
   execSQL,
   querySQL,
+  createMongoConnection,
 } from './connections';
-export type { DatabaseConnection } from './connections';
+export type { DatabaseConnection, AppConnection, SqlConnection, MongoConnection } from './connections';
 export * from './adapters';
