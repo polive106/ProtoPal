@@ -20,7 +20,7 @@
 
 **Complexity**: XS
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

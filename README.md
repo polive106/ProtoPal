@@ -123,7 +123,7 @@ The typical workflow: kick off `/implement-story` from the Claude mobile app, an
 |---------|-----------|
 | `@acme/shared` | Pure TypeScript types |
 | `@acme/domain` | Entities, ports, use cases (zero deps) |
-| `@acme/database` | Drizzle ORM — SQLite (local) / PostgreSQL (prod) |
+| `@acme/database` | Drizzle ORM — SQLite (local) / PostgreSQL (prod) / [MongoDB](docs/mongodb.md) (alternative) |
 | `@acme/api` | NestJS REST API |
 | `@acme/design-system` | Radix UI + Tailwind components |
 | `@acme/frontend` | React + Vite + TanStack Router/Query |
@@ -168,6 +168,14 @@ pnpm --filter @acme/frontend dev      # Frontend only (port 5173)
 pnpm --filter @acme/database db:push  # Apply schema to SQLite
 pnpm --filter @acme/database db:seed  # Seed with sample data
 pnpm --filter @acme/database db:studio # Visual database explorer
+```
+
+### MongoDB (Alternative Backend)
+
+Set `MONGODB_URL` in your `.env` to switch to MongoDB. See the [MongoDB guide](docs/mongodb.md) for full setup instructions.
+
+```bash
+pnpm --filter @acme/database db:setup:mongo  # Create collections, indexes, seed roles
 ```
 
 > **Warning:** Never run the seed script in production. The seed script contains test accounts with known credentials and will refuse to run when `NODE_ENV=production`. It is intended for local development and CI testing only.
