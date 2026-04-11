@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import {
   createConnection,
   createMongoConnection,
-  type DatabaseConnection,
   DrizzleUserRepository,
   DrizzleRoleRepository,
   DrizzleUserRoleRepository,
@@ -22,7 +21,6 @@ import {
   MongoPasswordResetTokenRepository,
   MongoLoginAttemptRepository,
 } from '@acme/database';
-import type { Db } from 'mongodb';
 import {
   DATABASE_CONNECTION,
   USER_REPOSITORY,
@@ -38,24 +36,11 @@ import {
 
 const isMongoEnabled = () => !!process.env.MONGODB_URL;
 
-function repositoryProvider(
-  token: string,
-  AdapterClass: new (db: DatabaseConnection) => unknown,
-) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function repositoryProvider(token: string, AdapterClass: new (db: any) => unknown) {
   return {
     provide: token,
-    useFactory: (db: DatabaseConnection) => new AdapterClass(db),
-    inject: [DATABASE_CONNECTION],
-  };
-}
-
-function mongoRepositoryProvider(
-  token: string,
-  AdapterClass: new (db: Db) => unknown,
-) {
-  return {
-    provide: token,
-    useFactory: (db: Db) => new AdapterClass(db),
+    useFactory: (db: unknown) => new AdapterClass(db),
     inject: [DATABASE_CONNECTION],
   };
 }
@@ -63,15 +48,15 @@ function mongoRepositoryProvider(
 function getRepositoryProviders() {
   if (isMongoEnabled()) {
     return [
-      mongoRepositoryProvider(USER_REPOSITORY, MongoUserRepository),
-      mongoRepositoryProvider(ROLE_REPOSITORY, MongoRoleRepository),
-      mongoRepositoryProvider(USER_ROLE_REPOSITORY, MongoUserRoleRepository),
-      mongoRepositoryProvider(NOTE_REPOSITORY, MongoNoteRepository),
-      mongoRepositoryProvider(TOKEN_BLACKLIST_REPOSITORY, MongoTokenBlacklistRepository),
-      mongoRepositoryProvider(RATE_LIMIT_REPOSITORY, MongoRateLimitRepository),
-      mongoRepositoryProvider(VERIFICATION_TOKEN_REPOSITORY, MongoVerificationTokenRepository),
-      mongoRepositoryProvider(PASSWORD_RESET_TOKEN_REPOSITORY, MongoPasswordResetTokenRepository),
-      mongoRepositoryProvider(LOGIN_ATTEMPT_REPOSITORY, MongoLoginAttemptRepository),
+      repositoryProvider(USER_REPOSITORY, MongoUserRepository),
+      repositoryProvider(ROLE_REPOSITORY, MongoRoleRepository),
+      repositoryProvider(USER_ROLE_REPOSITORY, MongoUserRoleRepository),
+      repositoryProvider(NOTE_REPOSITORY, MongoNoteRepository),
+      repositoryProvider(TOKEN_BLACKLIST_REPOSITORY, MongoTokenBlacklistRepository),
+      repositoryProvider(RATE_LIMIT_REPOSITORY, MongoRateLimitRepository),
+      repositoryProvider(VERIFICATION_TOKEN_REPOSITORY, MongoVerificationTokenRepository),
+      repositoryProvider(PASSWORD_RESET_TOKEN_REPOSITORY, MongoPasswordResetTokenRepository),
+      repositoryProvider(LOGIN_ATTEMPT_REPOSITORY, MongoLoginAttemptRepository),
     ];
   }
   return [

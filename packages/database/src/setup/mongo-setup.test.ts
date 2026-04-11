@@ -1,10 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
 import type { Db } from 'mongodb';
-import {
-  setupTestDb,
-  teardownTestDb,
-  clearCollections,
-} from '../adapters/mongo/test-helper';
+import { setupTestDb, teardownTestDb } from '../adapters/mongo/test-helper';
 import { setupMongo } from './mongo-setup';
 import { COLLECTION_NAMES } from './mongo-indexes';
 
@@ -20,8 +16,6 @@ describe('setupMongo', () => {
   });
 
   beforeEach(async () => {
-    await clearCollections();
-    // Drop all collections for a clean slate
     const collections = await db.listCollections().toArray();
     await Promise.all(collections.map((c) => db.dropCollection(c.name)));
   });

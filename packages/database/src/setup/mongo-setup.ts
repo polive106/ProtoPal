@@ -18,51 +18,56 @@ const DEFAULT_ROLES = [
 ];
 
 async function createCollections(db: Db): Promise<void> {
-  const existing = (await db.listCollections().toArray()).map((c) => c.name);
-  for (const name of COLLECTION_NAMES) {
-    if (!existing.includes(name)) {
-      await db.createCollection(name);
-    }
-  }
+  const existing = new Set(
+    (await db.listCollections().toArray()).map((c) => c.name),
+  );
+  await Promise.all(
+    COLLECTION_NAMES.filter((name) => !existing.has(name)).map((name) =>
+      db.createCollection(name),
+    ),
+  );
 }
 
 async function createIndexes(db: Db): Promise<void> {
-  for (const [collection, indexes] of Object.entries(MONGO_INDEXES)) {
-    for (const index of indexes) {
-      await db.collection(collection).createIndex(index.key, {
-        unique: index.unique ?? false,
-        ...(index.expireAfterSeconds != null && {
-          expireAfterSeconds: index.expireAfterSeconds,
+  await Promise.all(
+    Object.entries(MONGO_INDEXES).flatMap(([collection, indexes]) =>
+      indexes.map((index) =>
+        db.collection(collection).createIndex(index.key, {
+          unique: index.unique ?? false,
+          ...(index.expireAfterSeconds != null && {
+            expireAfterSeconds: index.expireAfterSeconds,
+          }),
         }),
-      });
-    }
-  }
+      ),
+    ),
+  );
 }
 
 async function seedRoles(db: Db): Promise<void> {
   const roles = db.collection('roles');
   const now = new Date();
 
-  for (const role of DEFAULT_ROLES) {
-    await roles.updateOne(
-      { name: role.name },
-      {
-        $setOnInsert: {
-          _id: randomUUID(),
-          ...role,
-          createdAt: now,
-          updatedAt: now,
+  await Promise.all(
+    DEFAULT_ROLES.map((role) =>
+      roles.updateOne(
+        { name: role.name },
+        {
+          $setOnInsert: {
+            _id: randomUUID(),
+            ...role,
+            createdAt: now,
+            updatedAt: now,
+          },
         },
-      },
-      { upsert: true },
-    );
-  }
+        { upsert: true },
+      ),
+    ),
+  );
 }
 
 export async function setupMongo(db: Db): Promise<void> {
   await createCollections(db);
-  await createIndexes(db);
-  await seedRoles(db);
+  await Promise.all([createIndexes(db), seedRoles(db)]);
 }
 
 // CLI entrypoint
@@ -79,18 +84,16 @@ if (isCli) {
       process.exit(1);
     }
 
-    const { MongoClient } = await import('mongodb');
-    const client = new MongoClient(url);
+    const { createMongoConnection } = await import('../connections');
+    const conn = await createMongoConnection(url);
     try {
-      await client.connect();
-      const db = client.db();
       console.log('Running MongoDB setup...');
-      await setupMongo(db);
+      await setupMongo(conn.db);
       console.log('MongoDB setup complete!');
       console.log('  Collections created: ' + COLLECTION_NAMES.join(', '));
       console.log('  Default roles seeded: admin, user');
     } finally {
-      await client.close();
+      await conn.close();
     }
   })().catch((err) => {
     console.error('MongoDB setup failed:', err);
