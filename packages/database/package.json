@@ -30,6 +30,6 @@
     "mongodb-memory-server": "^11.0.1",
     "tsx": "^4.19.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.16"
+    "vitest": "^4.1.4"
   }
 }
