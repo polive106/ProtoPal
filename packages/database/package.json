@@ -10,6 +10,7 @@
     "db:generate": "drizzle-kit generate",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx src/seed.ts",
+    "db:setup:mongo": "tsx src/setup/mongo-setup.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "tsc --noEmit"
