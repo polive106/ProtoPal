@@ -12,10 +12,10 @@ Add MongoDB as an alternative database engine for the ProtoPal scaffold. Restruc
 | E7-US02 | MongoDB Connection Factory | S | Done | E7-US01 |
 | E7-US03 | Core Mongo Adapters | L | Done | E7-US02 |
 | E7-US04 | Auth Mongo Adapters | M | Done | E7-US02 |
-| E7-US05 | MongoDB Setup Script | S | Pending | E7-US03, E7-US04 |
-| E7-US06 | DI Wiring for Database Selection | S | Pending | E7-US05 |
-| E7-US07 | Mongo Adapter Unit Tests | M | Pending | E7-US06 |
-| E7-US08 | MongoDB Documentation | XS | Pending | E7-US07 |
+| E7-US05 | MongoDB Setup Script | S | Done | E7-US03, E7-US04 |
+| E7-US06 | DI Wiring for Database Selection | S | Done | E7-US05 |
+| E7-US07 | Mongo Adapter Unit Tests | M | Done | E7-US06 |
+| E7-US08 | MongoDB Documentation | XS | Done | E7-US07 |
 
 ## Dependency Graph
 

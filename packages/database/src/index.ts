@@ -11,3 +11,5 @@ export {
 } from './connections';
 export type { DatabaseConnection, AppConnection, SqlConnection, MongoConnection } from './connections';
 export * from './adapters';
+export { setupMongo } from './setup/mongo-setup';
+export { MONGO_INDEXES, COLLECTION_NAMES } from './setup/mongo-indexes';

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import {
   createConnection,
-  type DatabaseConnection,
+  createMongoConnection,
   DrizzleUserRepository,
   DrizzleRoleRepository,
   DrizzleUserRoleRepository,
@@ -11,6 +11,15 @@ import {
   DrizzleVerificationTokenRepository,
   DrizzlePasswordResetTokenRepository,
   DrizzleLoginAttemptRepository,
+  MongoUserRepository,
+  MongoRoleRepository,
+  MongoUserRoleRepository,
+  MongoNoteRepository,
+  MongoTokenBlacklistRepository,
+  MongoRateLimitRepository,
+  MongoVerificationTokenRepository,
+  MongoPasswordResetTokenRepository,
+  MongoLoginAttemptRepository,
 } from '@acme/database';
 import {
   DATABASE_CONNECTION,
@@ -25,20 +34,32 @@ import {
   LOGIN_ATTEMPT_REPOSITORY,
 } from './tokens';
 
-function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnection) => unknown) {
+const isMongoEnabled = () => !!process.env.MONGODB_URL;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function repositoryProvider(token: string, AdapterClass: new (db: any) => unknown) {
   return {
     provide: token,
-    useFactory: (db: DatabaseConnection) => new AdapterClass(db),
+    useFactory: (db: unknown) => new AdapterClass(db),
     inject: [DATABASE_CONNECTION],
   };
 }
 
-@Module({
-  providers: [
-    {
-      provide: DATABASE_CONNECTION,
-      useFactory: async () => createConnection(),
-    },
+function getRepositoryProviders() {
+  if (isMongoEnabled()) {
+    return [
+      repositoryProvider(USER_REPOSITORY, MongoUserRepository),
+      repositoryProvider(ROLE_REPOSITORY, MongoRoleRepository),
+      repositoryProvider(USER_ROLE_REPOSITORY, MongoUserRoleRepository),
+      repositoryProvider(NOTE_REPOSITORY, MongoNoteRepository),
+      repositoryProvider(TOKEN_BLACKLIST_REPOSITORY, MongoTokenBlacklistRepository),
+      repositoryProvider(RATE_LIMIT_REPOSITORY, MongoRateLimitRepository),
+      repositoryProvider(VERIFICATION_TOKEN_REPOSITORY, MongoVerificationTokenRepository),
+      repositoryProvider(PASSWORD_RESET_TOKEN_REPOSITORY, MongoPasswordResetTokenRepository),
+      repositoryProvider(LOGIN_ATTEMPT_REPOSITORY, MongoLoginAttemptRepository),
+    ];
+  }
+  return [
     repositoryProvider(USER_REPOSITORY, DrizzleUserRepository),
     repositoryProvider(ROLE_REPOSITORY, DrizzleRoleRepository),
     repositoryProvider(USER_ROLE_REPOSITORY, DrizzleUserRoleRepository),
@@ -48,6 +69,23 @@ function repositoryProvider(token: string, AdapterClass: new (db: DatabaseConnec
     repositoryProvider(VERIFICATION_TOKEN_REPOSITORY, DrizzleVerificationTokenRepository),
     repositoryProvider(PASSWORD_RESET_TOKEN_REPOSITORY, DrizzlePasswordResetTokenRepository),
     repositoryProvider(LOGIN_ATTEMPT_REPOSITORY, DrizzleLoginAttemptRepository),
+  ];
+}
+
+@Module({
+  providers: [
+    {
+      provide: DATABASE_CONNECTION,
+      useFactory: async () => {
+        const mongoUrl = process.env.MONGODB_URL;
+        if (mongoUrl) {
+          const conn = await createMongoConnection(mongoUrl);
+          return conn.db;
+        }
+        return createConnection();
+      },
+    },
+    ...getRepositoryProviders(),
   ],
   exports: [
     DATABASE_CONNECTION,
