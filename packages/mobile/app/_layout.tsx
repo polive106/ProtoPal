@@ -1,6 +1,6 @@
 import '../global.css';
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Slot } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
@@ -20,6 +20,8 @@ import { QueryProvider } from '@/providers/QueryProvider';
 import { AuthProvider } from '@/providers/AuthProvider';
 import i18n, { supportedLngs } from '@acme/i18n';
 import { getLocales } from 'expo-localization';
+import { secureStorage } from '@/lib/secureStorage';
+import { LANG_PREF_KEY } from '@/components/LanguageSwitcher';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,23 +33,34 @@ export default function RootLayout() {
     SourceSerif4_400Regular,
     SourceSerif4_600SemiBold,
   });
-
-  const deviceLang = getLocales()[0]?.languageCode ?? 'en';
-  const lang = (supportedLngs as readonly string[]).includes(deviceLang) ? deviceLang : 'en';
+  const [langReady, setLangReady] = useState(false);
 
   useEffect(() => {
-    if (i18n.language !== lang) {
-      i18n.changeLanguage(lang);
+    async function initLanguage() {
+      const savedLang = await secureStorage.getItem(LANG_PREF_KEY);
+      if (savedLang && (supportedLngs as readonly string[]).includes(savedLang)) {
+        if (i18n.language !== savedLang) {
+          await i18n.changeLanguage(savedLang);
+        }
+      } else {
+        const deviceLang = getLocales()[0]?.languageCode ?? 'en';
+        const lang = (supportedLngs as readonly string[]).includes(deviceLang) ? deviceLang : 'en';
+        if (i18n.language !== lang) {
+          await i18n.changeLanguage(lang);
+        }
+      }
+      setLangReady(true);
     }
-  }, [lang]);
+    initLanguage();
+  }, []);
 
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded) {
+    if (fontsLoaded && langReady) {
       await SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [fontsLoaded, langReady]);
 
-  if (!fontsLoaded) {
+  if (!fontsLoaded || !langReady) {
     return null;
   }
 

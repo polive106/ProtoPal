@@ -11,6 +11,7 @@ import {
   CardFooter,
   ErrorAlert,
 } from '@acme/design-system-mobile';
+import { useTranslation } from '@acme/i18n';
 import { useNoteForm } from '../hooks';
 import { getFieldError } from '@/lib/formUtils';
 
@@ -20,12 +21,13 @@ interface NoteFormProps {
 
 export function NoteForm({ note }: NoteFormProps) {
   const { form, serverError, setServerError, isPending, isEdit } = useNoteForm(note);
+  const { t } = useTranslation('notes');
 
   return (
     <ScrollView className="flex-1 px-5 pt-4" testID="notes-form">
       <Card>
         <CardHeader>
-          <CardTitle>{isEdit ? 'Edit Note' : 'New Note'}</CardTitle>
+          <CardTitle>{isEdit ? t('drawer.editTitle') : t('drawer.newTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="gap-4">
           {serverError && (
@@ -39,13 +41,13 @@ export function NoteForm({ note }: NoteFormProps) {
           <form.Field name="title">
             {(field) => (
               <View className="gap-2">
-                <Label>Title</Label>
+                <Label>{t('drawer.titleLabel')}</Label>
                 <Input
                   testID="notes-input-title"
                   value={field.state.value}
                   onChangeText={(text) => field.handleChange(text)}
                   onBlur={() => field.handleBlur()}
-                  placeholder="Note title"
+                  placeholder={t('drawer.titlePlaceholder')}
                 />
                 {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
                   <Text className="text-sm text-red-500">{getFieldError(field.state.meta.errors)}</Text>
@@ -57,13 +59,13 @@ export function NoteForm({ note }: NoteFormProps) {
           <form.Field name="content">
             {(field) => (
               <View className="gap-2">
-                <Label>Content</Label>
+                <Label>{t('drawer.contentLabel')}</Label>
                 <TextInput
                   testID="notes-input-content"
                   value={field.state.value}
                   onChangeText={(text) => field.handleChange(text)}
                   onBlur={() => field.handleBlur()}
-                  placeholder="Write your note..."
+                  placeholder={t('drawer.contentPlaceholder')}
                   placeholderTextColor="#a8a29e"
                   multiline
                   numberOfLines={8}
@@ -86,7 +88,7 @@ export function NoteForm({ note }: NoteFormProps) {
             loading={isPending}
             onPress={() => form.handleSubmit()}
           >
-            {isEdit ? 'Update' : 'Create'}
+            {isEdit ? t('drawer.save.update') : t('drawer.save.create')}
           </Button>
         </CardFooter>
       </Card>

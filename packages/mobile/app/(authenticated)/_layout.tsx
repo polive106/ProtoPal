@@ -1,12 +1,16 @@
 import React, { useEffect } from 'react';
 import { Stack, useRouter } from 'expo-router';
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { PageSpinner } from '@acme/design-system-mobile';
+import { useTranslation } from '@acme/i18n';
 import { useAuth } from '@/providers/AuthProvider';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function AuthenticatedLayout() {
   const { isAuthenticated, isLoading, logout } = useAuth();
   const router = useRouter();
+  const { t } = useTranslation('notes');
+  const { t: tc } = useTranslation();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -15,7 +19,7 @@ export default function AuthenticatedLayout() {
   }, [isLoading, isAuthenticated, router]);
 
   if (isLoading) {
-    return <PageSpinner label="Loading..." />;
+    return <PageSpinner label={tc('loading')} />;
   }
 
   if (!isAuthenticated) {
@@ -38,36 +42,39 @@ export default function AuthenticatedLayout() {
       <Stack.Screen
         name="dashboard"
         options={{
-          title: 'ProtoPal',
+          title: tc('appName'),
           headerTitleStyle: {
             fontFamily: 'SourceSerif4_600SemiBold',
             fontSize: 22,
           },
           headerRight: () => (
-            <Pressable onPress={() => logout()} hitSlop={8}>
-              <Text style={{ fontFamily: 'Karla_500Medium', fontSize: 15, color: '#78716c' }}>
-                Sign Out
-              </Text>
-            </Pressable>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+              <LanguageSwitcher />
+              <Pressable onPress={() => logout()} hitSlop={8}>
+                <Text style={{ fontFamily: 'Karla_500Medium', fontSize: 15, color: '#78716c' }}>
+                  {tc('signOut')}
+                </Text>
+              </Pressable>
+            </View>
           ),
         }}
       />
       <Stack.Screen
         name="notes/index"
         options={{
-          title: 'My Notes',
+          title: t('pageTitle'),
         }}
       />
       <Stack.Screen
         name="notes/[noteId]"
         options={{
-          title: 'Note',
+          title: '',
         }}
       />
       <Stack.Screen
         name="notes/form"
         options={{
-          title: 'New Note',
+          title: t('newNote'),
         }}
       />
     </Stack>

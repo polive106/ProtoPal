@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Card } from '@acme/design-system-mobile';
+import { useTranslation } from '@acme/i18n';
 import { useAuth } from '@/providers/AuthProvider';
 
 function UserAvatar({ firstName, lastName }: { firstName?: string; lastName?: string }) {
@@ -21,6 +22,7 @@ function UserAvatar({ firstName, lastName }: { firstName?: string; lastName?: st
 export default function DashboardScreen() {
   const { user } = useAuth();
   const router = useRouter();
+  const { t: tc } = useTranslation();
 
   return (
     <View testID="dashboard-screen" className="flex-1 px-5 pt-8">
@@ -31,7 +33,7 @@ export default function DashboardScreen() {
             className="text-sm text-ink-muted"
             style={{ fontFamily: 'Karla_400Regular' }}
           >
-            Welcome back,
+            {tc('dashboard.greeting')}
           </Text>
           <Text
             testID="dashboard-text-welcome"
@@ -58,13 +60,13 @@ export default function DashboardScreen() {
                     className="text-base text-ink"
                     style={{ fontFamily: 'Karla_700Bold' }}
                   >
-                    My Notes
+                    {tc('dashboard.notesTitle')}
                   </Text>
                   <Text
                     className="mt-0.5 text-sm text-ink-muted"
                     style={{ fontFamily: 'Karla_400Regular' }}
                   >
-                    View and manage your notes
+                    {tc('dashboard.notesDescription')}
                   </Text>
                 </View>
               </View>
