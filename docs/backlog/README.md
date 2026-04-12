@@ -90,6 +90,17 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 43. E7-US07: Mongo Adapter Unit Tests
 44. E7-US08: MongoDB Documentation
 
+### Phase 8: Security Hardening Phase 2 (Pending)
+45. E8-US01: Reverse Proxy & IP Trust Configuration
+46. E8-US02: Short-Lived Access Tokens & Refresh Token Rotation
+47. E8-US03: JWT Hardening — Issuer/Audience Claims & Role Re-validation
+48. E8-US04: PostgreSQL Schema Parity for Security Tables
+49. E8-US05: Path Parameter Validation Pipes
+50. E8-US06: Account Lockout DoS Mitigation
+51. E8-US07: Security Headers & CSP Hardening
+52. E8-US08: Mobile Web Token Storage Security
+53. E8-US09: Structured Audit Log Persistence
+
 ## Status Conventions
 
 - **Pending**: Not started
