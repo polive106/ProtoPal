@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { useRouter } from 'expo-router';
+import i18n from '@acme/i18n';
 import { ApiError } from '@/lib/api';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
@@ -42,7 +43,7 @@ export function useNoteForm(note?: NoteForEdit) {
         if (error instanceof ApiError) {
           setServerError(error.message);
         } else {
-          setServerError('Failed to save note');
+          setServerError(i18n.t('drawer.save.fallbackError', { ns: 'notes' }));
         }
       } finally {
         setIsPending(false);

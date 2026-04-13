@@ -7,18 +7,20 @@ import {
   ErrorAlert,
   ConfirmDialog,
 } from '@acme/design-system-mobile';
+import { useTranslation } from '@acme/i18n';
 import { useNote, useDeleteNote } from '@/features/notes/hooks';
 
 export default function NoteDetailScreen() {
   const { noteId } = useLocalSearchParams<{ noteId: string }>();
   const router = useRouter();
+  const { t } = useTranslation('notes');
   const { data: note, isLoading, error } = useNote(noteId!);
   const deleteNote = useDeleteNote();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
-  if (isLoading) return <PageSpinner label="Loading note..." />;
+  if (isLoading) return <PageSpinner label={t('detail.loading')} />;
   if (error) return <ErrorAlert testID="notes-alert-error" message={error.message} />;
-  if (!note) return <ErrorAlert testID="notes-alert-error" message="Note not found" />;
+  if (!note) return <ErrorAlert testID="notes-alert-error" message={t('detail.notFound')} />;
 
   return (
     <ScrollView testID="notes-detail-screen" className="flex-1 px-5 pt-6">
@@ -35,7 +37,7 @@ export default function NoteDetailScreen() {
         className="mt-2 text-xs text-ink-light"
         style={{ fontFamily: 'Karla_400Regular' }}
       >
-        {new Date(note.updatedAt).toLocaleDateString('en-US', {
+        {new Date(note.updatedAt).toLocaleDateString(undefined, {
           weekday: 'long',
           year: 'numeric',
           month: 'long',
@@ -57,7 +59,7 @@ export default function NoteDetailScreen() {
           className="flex-1"
           onPress={() => router.push(`/(authenticated)/notes/form?noteId=${note.id}`)}
         >
-          Edit
+          {t('card.edit')}
         </Button>
         <Button
           testID="notes-btn-delete"
@@ -65,15 +67,15 @@ export default function NoteDetailScreen() {
           className="flex-1"
           onPress={() => setShowDeleteConfirm(true)}
         >
-          Delete
+          {t('card.delete')}
         </Button>
       </View>
 
       <ConfirmDialog
         testID="notes-confirm-delete"
         visible={showDeleteConfirm}
-        title="Delete Note"
-        message="Are you sure you want to delete this note? This cannot be undone."
+        title={t('detail.deleteConfirm.title')}
+        message={t('detail.deleteConfirm.message')}
         onConfirm={() => {
           deleteNote.mutate(note.id, {
             onSuccess: () => router.back(),

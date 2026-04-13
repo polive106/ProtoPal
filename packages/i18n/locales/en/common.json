@@ -9,6 +9,7 @@
   "edit": "Edit",
   "create": "Create",
   "back": "Back",
+  "signOut": "Sign Out",
   "logout": "Logout",
   "notes": "Notes",
   "nav": {
@@ -16,8 +17,9 @@
   },
   "dashboard": {
     "welcome": "Welcome, {{firstName}}!",
-    "notesTitle": "Notes",
-    "notesDescription": "Manage your notes and ideas.",
+    "greeting": "Welcome back,",
+    "notesTitle": "My Notes",
+    "notesDescription": "View and manage your notes",
     "viewNotes": "View Notes"
   }
 }

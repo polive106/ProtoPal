@@ -3,15 +3,15 @@
 **User Story**: As a user of the mobile app, I want notes, navigation, and layout text to be translated and a language switcher available so that the entire mobile experience is in my preferred language.
 
 **Acceptance Criteria**:
-- [ ] Mobile NoteDrawer/NoteForm uses `t()` for all user-facing strings
-- [ ] Mobile NoteCard and NoteList use `t()` for all user-facing strings
-- [ ] Mobile empty state text is translated
-- [ ] Mobile navigation/tab bar labels are translated
-- [ ] A language switcher is available in the mobile app (settings screen or header)
-- [ ] Language preference is persisted in AsyncStorage
-- [ ] On subsequent launches, the persisted preference is used over device locale
-- [ ] No hardcoded English strings remain in mobile notes or layout components
-- [ ] Existing Maestro E2E flows pass without modification
+- [x] Mobile NoteDrawer/NoteForm uses `t()` for all user-facing strings
+- [x] Mobile NoteCard and NoteList use `t()` for all user-facing strings
+- [x] Mobile empty state text is translated
+- [x] Mobile navigation/tab bar labels are translated
+- [x] A language switcher is available in the mobile app (settings screen or header)
+- [x] Language preference is persisted in AsyncStorage
+- [x] On subsequent launches, the persisted preference is used over device locale
+- [x] No hardcoded English strings remain in mobile notes or layout components
+- [x] Existing Maestro E2E flows pass without modification
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -28,7 +28,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

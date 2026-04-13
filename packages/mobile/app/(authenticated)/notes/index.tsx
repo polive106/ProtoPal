@@ -7,11 +7,13 @@ import {
   ErrorAlert,
   EmptyState,
 } from '@acme/design-system-mobile';
+import { useTranslation } from '@acme/i18n';
 import { useNotes } from '@/features/notes/hooks';
 import { NoteCard } from '@/features/notes/widgets/NoteCard';
 
 export default function NotesListScreen() {
   const router = useRouter();
+  const { t } = useTranslation('notes');
   const { data: notes, isLoading, error, refetch } = useNotes();
   const [refreshing, setRefreshing] = useState(false);
 
@@ -21,7 +23,7 @@ export default function NotesListScreen() {
     setRefreshing(false);
   }, [refetch]);
 
-  if (isLoading) return <PageSpinner label="Loading notes..." />;
+  if (isLoading) return <PageSpinner label={t('list.loading')} />;
   if (error) return <ErrorAlert testID="notes-alert-error" message={error.message} />;
 
   if (!notes || notes.length === 0) {
@@ -35,22 +37,22 @@ export default function NotesListScreen() {
                 size="sm"
                 onPress={() => router.push('/(authenticated)/notes/form')}
               >
-                New Note
+                {t('newNote')}
               </Button>
             ),
           }}
         />
         <EmptyState
           testID="notes-empty-state"
-          title="No notes yet"
-          description="Create your first note to get started."
+          title={t('empty.title')}
+          description={t('empty.description')}
           icon={<Text className="text-4xl">📝</Text>}
           action={
             <Button
               testID="notes-btn-create"
               onPress={() => router.push('/(authenticated)/notes/form')}
             >
-              Create Note
+              {t('empty.createButton')}
             </Button>
           }
         />
@@ -68,7 +70,7 @@ export default function NotesListScreen() {
               size="sm"
               onPress={() => router.push('/(authenticated)/notes/form')}
             >
-              New Note
+              {t('newNote')}
             </Button>
           ),
         }}

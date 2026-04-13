@@ -21,13 +21,15 @@ vi.mock('@acme/i18n', () => {
     edit: 'Edit',
     create: 'Create',
     back: 'Back',
+    signOut: 'Sign Out',
     logout: 'Logout',
     notes: 'Notes',
     nav: { notes: 'Notes' },
     dashboard: {
       welcome: 'Welcome, {{firstName}}!',
-      notesTitle: 'Notes',
-      notesDescription: 'Manage your notes and ideas.',
+      greeting: 'Welcome back,',
+      notesTitle: 'My Notes',
+      notesDescription: 'View and manage your notes',
       viewNotes: 'View Notes',
     },
   };
@@ -95,11 +97,20 @@ vi.mock('@acme/i18n', () => {
       newTitle: 'New Note', editTitle: 'Edit Note',
       newDescription: 'Fill in the details to create a new note.',
       editDescription: 'Update the note details below.',
-      titleLabel: 'Title', contentLabel: 'Content', cancel: 'Cancel',
-      save: { create: 'Create', update: 'Update', saving: 'Saving...' },
+      titleLabel: 'Title', titlePlaceholder: 'Note title',
+      contentLabel: 'Content', contentPlaceholder: 'Write your note...',
+      cancel: 'Cancel',
+      save: { create: 'Create', update: 'Update', saving: 'Saving...', fallbackError: 'Failed to save note' },
+    },
+    list: { loading: 'Loading notes...' },
+    detail: {
+      loading: 'Loading note...',
+      notFound: 'Note not found',
+      deleteConfirm: { title: 'Delete Note', message: 'Are you sure you want to delete this note? This cannot be undone.' },
     },
     empty: { title: 'No notes yet', description: 'Create your first note to get started.', createButton: 'Create Note' },
     card: { edit: 'Edit', delete: 'Delete' },
+    validation: { titleRequired: 'Title is required', contentRequired: 'Content is required' },
   };
 
   const resources: Record<string, Record<string, unknown>> = { common: commonEn, auth: authEn, notes: notesEn };
@@ -155,6 +166,7 @@ vi.mock('@acme/i18n', () => {
     }),
     Trans: ({ children }: { children: React.ReactNode }) => children,
     I18nextProvider: ({ children }: { children: React.ReactNode }) => children,
+    supportedLngs: ['en', 'fr'],
     default: mockI18n,
   };
 });

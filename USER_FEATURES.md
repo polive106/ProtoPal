@@ -43,3 +43,5 @@
 | Mobile: Edit notes | Done | E3-US03 |
 | Mobile: Delete notes | Done | E3-US03 |
 | Mobile: Token-based auth via X-Client-Type header | Done | E2-US10 |
+| Mobile: Notes, layout & navigation translated (i18n) | Done | E6-US06 |
+| Mobile: Language switcher with persistence | Done | E6-US06 |
