@@ -13,14 +13,18 @@ export function getFieldError(errors: unknown[], ns = 'auth'): string | undefine
   if (errors.length === 0) return undefined;
   const err = errors[0];
   let message: string | undefined;
-  if (typeof err === 'string') message = err;
-  else if (err && typeof err === 'object' && 'message' in err) {
-    message = (err as { message: string }).message;
+  let interpolation: Record<string, unknown> | undefined;
+  if (typeof err === 'string') {
+    message = err;
+  } else if (err && typeof err === 'object') {
+    if ('message' in err) message = (err as { message: string }).message;
+    if ('maximum' in err) interpolation = { max: (err as { maximum: number }).maximum };
+    if ('minimum' in err) interpolation = { min: (err as { minimum: number }).minimum };
   }
   if (!message) return undefined;
 
   if (message.startsWith('validation.')) {
-    return i18n.t(message, { ns });
+    return i18n.t(message, { ns, ...interpolation });
   }
   return message;
 }

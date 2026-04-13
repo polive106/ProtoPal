@@ -51,4 +51,14 @@ describe('getFieldError', () => {
   it('translates notes validation keys when ns is "notes"', () => {
     expect(getFieldError(['validation.titleRequired'], 'notes')).toBe('Title is required');
   });
+
+  it('interpolates max from Zod maximum property', () => {
+    const zodMaxError = { message: 'validation.emailMaxLength', maximum: 254 };
+    expect(getFieldError([zodMaxError])).toBe('Email must be at most 254 characters');
+  });
+
+  it('interpolates max for notes namespace', () => {
+    const zodMaxError = { message: 'validation.titleMaxLength', maximum: 255 };
+    expect(getFieldError([zodMaxError], 'notes')).toBe('Title must be at most 255 characters');
+  });
 });
