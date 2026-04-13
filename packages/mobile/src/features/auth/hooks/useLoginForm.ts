@@ -23,7 +23,11 @@ export function useLoginForm() {
         router.replace('/(authenticated)/dashboard');
       } catch (error) {
         if (error instanceof ApiError) {
-          setServerError(error.message);
+          setServerError(
+            error.errorKey
+              ? i18n.t(error.errorKey, { ns: 'errors', defaultValue: error.message })
+              : error.message,
+          );
         } else {
           setServerError(i18n.t('login.fallbackError', { ns: 'auth' }));
         }

@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { z } from 'zod';
 import { ResetPasswordPage } from '@/features/auth';
+import { PublicPageLayout } from '@/components/PublicPageLayout';
 
 const searchSchema = z.object({
   token: z.string().optional().default(''),
@@ -22,8 +23,10 @@ export const Route = createFileRoute('/reset-password')({
 function ResetPasswordRoute() {
   const { token } = Route.useSearch();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/50 p-4">
-      <ResetPasswordPage token={token} />
-    </div>
+    <PublicPageLayout>
+      <div className="flex min-h-screen items-center justify-center bg-muted/50 p-4">
+        <ResetPasswordPage token={token} />
+      </div>
+    </PublicPageLayout>
   );
 }

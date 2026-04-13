@@ -3,6 +3,7 @@ import { useForm } from '@tanstack/react-form';
 import { authApi } from '../api';
 import { ApiError } from '@/lib/api';
 import { resetPasswordSchema } from '../schemas';
+import i18n from '@acme/i18n';
 
 export function useResetPasswordForm(token: string) {
   const [serverError, setServerError] = useState<string | null>(null);
@@ -20,9 +21,13 @@ export function useResetPasswordForm(token: string) {
         setIsSuccess(true);
       } catch (error) {
         if (error instanceof ApiError) {
-          setServerError(error.message);
+          setServerError(
+            error.errorKey
+              ? i18n.t(error.errorKey, { ns: 'errors', defaultValue: error.message })
+              : error.message,
+          );
         } else {
-          setServerError('Something went wrong. Please try again.');
+          setServerError(i18n.t('error'));
         }
       } finally {
         setIsLoading(false);

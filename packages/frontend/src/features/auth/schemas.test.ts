@@ -11,7 +11,7 @@ describe('loginSchema', () => {
     const result = loginSchema.safeParse({ email: '', password: 'pass123' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]!.message).toBe('Email is required');
+      expect(result.error.issues[0]!.message).toBe('validation.emailRequired');
     }
   });
 
@@ -19,7 +19,7 @@ describe('loginSchema', () => {
     const result = loginSchema.safeParse({ email: 'not-an-email', password: 'pass123' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]!.message).toBe('Invalid email address');
+      expect(result.error.issues[0]!.message).toBe('validation.emailInvalid');
     }
   });
 
@@ -27,7 +27,7 @@ describe('loginSchema', () => {
     const result = loginSchema.safeParse({ email: 'test@example.com', password: '' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]!.message).toBe('Password is required');
+      expect(result.error.issues[0]!.message).toBe('validation.passwordRequired');
     }
   });
 });
@@ -49,7 +49,7 @@ describe('registrationSchema', () => {
     const result = registrationSchema.safeParse({ ...validData, firstName: '' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]!.message).toBe('First name is required');
+      expect(result.error.issues[0]!.message).toBe('validation.firstNameRequired');
     }
   });
 
@@ -57,7 +57,7 @@ describe('registrationSchema', () => {
     const result = registrationSchema.safeParse({ ...validData, lastName: '' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]!.message).toBe('Last name is required');
+      expect(result.error.issues[0]!.message).toBe('validation.lastNameRequired');
     }
   });
 
@@ -71,7 +71,7 @@ describe('registrationSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.issues.map((i) => i.message);
-      expect(messages).toContain('Must contain an uppercase letter');
+      expect(messages).toContain('validation.passwordUppercase');
     }
   });
 
@@ -80,7 +80,7 @@ describe('registrationSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.issues.map((i) => i.message);
-      expect(messages).toContain('Must contain a lowercase letter');
+      expect(messages).toContain('validation.passwordLowercase');
     }
   });
 
@@ -89,7 +89,7 @@ describe('registrationSchema', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       const messages = result.error.issues.map((i) => i.message);
-      expect(messages).toContain('Must contain a number');
+      expect(messages).toContain('validation.passwordNumber');
     }
   });
 });

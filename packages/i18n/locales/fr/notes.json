@@ -1,0 +1,47 @@
+{
+  "pageTitle": "Notes",
+  "newNote": "Nouvelle note",
+  "drawer": {
+    "newTitle": "Nouvelle note",
+    "editTitle": "Modifier la note",
+    "newDescription": "Remplissez les détails pour créer une nouvelle note.",
+    "editDescription": "Modifiez les détails de la note ci-dessous.",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Titre de la note",
+    "contentLabel": "Contenu",
+    "contentPlaceholder": "Rédigez votre note…",
+    "cancel": "Annuler",
+    "save": {
+      "create": "Créer",
+      "update": "Mettre à jour",
+      "saving": "Enregistrement…",
+      "fallbackError": "Échec de l'enregistrement de la note"
+    }
+  },
+  "list": {
+    "loading": "Chargement des notes…"
+  },
+  "detail": {
+    "loading": "Chargement de la note…",
+    "notFound": "Note introuvable",
+    "deleteConfirm": {
+      "title": "Supprimer la note",
+      "message": "Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible."
+    }
+  },
+  "empty": {
+    "title": "Aucune note",
+    "description": "Créez votre première note pour commencer.",
+    "createButton": "Créer une note"
+  },
+  "card": {
+    "edit": "Modifier",
+    "delete": "Supprimer"
+  },
+  "validation": {
+    "titleRequired": "Le titre est requis",
+    "titleMaxLength": "Le titre doit contenir au plus {{max}} caractères",
+    "contentRequired": "Le contenu est requis",
+    "contentMaxLength": "Le contenu doit contenir au plus {{max}} caractères"
+  }
+}

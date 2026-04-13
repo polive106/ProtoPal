@@ -23,7 +23,11 @@ export function useRegistrationForm() {
         router.replace('/(auth)/login');
       } catch (error) {
         if (error instanceof ApiError) {
-          setServerError(error.message);
+          setServerError(
+            error.errorKey
+              ? i18n.t(error.errorKey, { ns: 'errors', defaultValue: error.message })
+              : error.message,
+          );
         } else {
           setServerError(i18n.t('register.fallbackError', { ns: 'auth' }));
         }

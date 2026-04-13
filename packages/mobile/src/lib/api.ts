@@ -3,6 +3,7 @@ export class ApiError extends Error {
     public readonly status: number,
     message: string,
     public readonly details?: Record<string, string[]>,
+    public readonly errorKey?: string,
   ) {
     super(message);
     this.name = 'ApiError';
@@ -48,6 +49,7 @@ async function request<T>(method: string, path: string, body?: unknown): Promise
       response.status,
       data.error || data.message || `Request failed with status ${response.status}`,
       data.details,
+      data.errorKey,
     );
   }
 
