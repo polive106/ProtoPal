@@ -21,6 +21,12 @@
     "db:seed": "pnpm --filter @acme/database db:seed",
     "prepare": "husky"
   },
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "8.2.1",
+      "downloadDir": "./node_modules/.cache/mongodb-memory-server"
+    }
+  },
   "engines": {
     "node": ">=20"
   },
