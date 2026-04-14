@@ -167,6 +167,8 @@ vi.mock('@acme/i18n', () => {
     Trans: ({ children }: { children: React.ReactNode }) => children,
     I18nextProvider: ({ children }: { children: React.ReactNode }) => children,
     supportedLngs: ['en', 'fr'],
+    isSupportedLng: (lang: string) => ['en', 'fr'].includes(lang),
+    translateApiError: (error: { errorKey?: string; message: string }) => error.message,
     default: mockI18n,
   };
 });

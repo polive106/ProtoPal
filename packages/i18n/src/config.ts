@@ -13,6 +13,10 @@ export const defaultNS = 'common' as const;
 export const supportedLngs = ['en', 'fr'] as const;
 export const ns = ['common', 'auth', 'notes', 'errors'] as const;
 
+export function isSupportedLng(lang: string): boolean {
+  return (supportedLngs as readonly string[]).includes(lang);
+}
+
 export const resources = {
   en: {
     common: commonEn,

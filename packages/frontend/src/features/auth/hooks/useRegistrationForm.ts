@@ -4,7 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { authApi } from '../api';
 import { ApiError } from '@/lib/api';
 import { registrationSchema } from '../schemas';
-import i18n from '@acme/i18n';
+import i18n, { translateApiError } from '@acme/i18n';
 
 export function useRegistrationForm() {
   const navigate = useNavigate();
@@ -22,11 +22,7 @@ export function useRegistrationForm() {
         navigate({ to: '/check-email', search: { email: value.email } });
       } catch (error) {
         if (error instanceof ApiError) {
-          setServerError(
-            error.errorKey
-              ? i18n.t(error.errorKey, { ns: 'errors', defaultValue: error.message })
-              : error.message,
-          );
+          setServerError(translateApiError(error));
         } else {
           setServerError(i18n.t('register.fallbackError', { ns: 'auth' }));
         }
