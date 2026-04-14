@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useForm } from '@tanstack/react-form';
 import { noteFormSchema } from '../schemas';
+import { ApiError } from '@/lib/api';
+import i18n, { translateApiError } from '@acme/i18n';
 
 interface UseNoteDrawerFormOptions {
   open: boolean;
@@ -26,8 +28,12 @@ export function useNoteDrawerForm({ open, note, onSubmit, onOpenChange }: UseNot
       try {
         await onSubmit(value);
         onOpenChange(false);
-      } catch (error: any) {
-        setServerError(error.message || 'Failed to save note');
+      } catch (error: unknown) {
+        if (error instanceof ApiError) {
+          setServerError(translateApiError(error));
+        } else {
+          setServerError(i18n.t('drawer.save.fallbackError', { ns: 'notes' }));
+        }
       } finally {
         setIsLoading(false);
       }

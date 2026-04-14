@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useLogin } from './useLogin';
 import { ApiError } from '@/lib/api';
 import { loginSchema } from '../schemas';
+import i18n, { translateApiError } from '@acme/i18n';
 
 export function useLoginForm() {
   const navigate = useNavigate();
@@ -20,9 +21,9 @@ export function useLoginForm() {
         navigate({ to: '/dashboard' });
       } catch (error) {
         if (error instanceof ApiError) {
-          setServerError(error.message);
+          setServerError(translateApiError(error));
         } else {
-          setServerError('Login failed');
+          setServerError(i18n.t('login.fallbackError', { ns: 'auth' }));
         }
       }
     },

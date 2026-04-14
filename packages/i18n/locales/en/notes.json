@@ -40,6 +40,8 @@
   },
   "validation": {
     "titleRequired": "Title is required",
-    "contentRequired": "Content is required"
+    "titleMaxLength": "Title must be at most {{max}} characters",
+    "contentRequired": "Content is required",
+    "contentMaxLength": "Content must be at most {{max}} characters"
   }
 }

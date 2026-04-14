@@ -11,7 +11,7 @@ describe('noteFormSchema', () => {
     const result = noteFormSchema.safeParse({ title: '', content: 'Some content' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]!.message).toBe('Title is required');
+      expect(result.error.issues[0]!.message).toBe('validation.titleRequired');
     }
   });
 
@@ -19,7 +19,7 @@ describe('noteFormSchema', () => {
     const result = noteFormSchema.safeParse({ title: 'My Note', content: '' });
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.issues[0]!.message).toBe('Content is required');
+      expect(result.error.issues[0]!.message).toBe('validation.contentRequired');
     }
   });
 });

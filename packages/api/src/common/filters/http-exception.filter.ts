@@ -1,5 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import type { Response } from 'express';
+import { ERROR_MESSAGE_TO_KEY } from './error-key-map';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -23,11 +24,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     const message = typeof body === 'object' && body !== null ? body.message : undefined;
+    const bodyErrorKey = typeof body === 'object' && body !== null ? body.errorKey as string | undefined : undefined;
+    const errorKey = bodyErrorKey
+      ?? ERROR_MESSAGE_TO_KEY[message as string]
+      ?? ERROR_MESSAGE_TO_KEY[error];
 
     response.status(status).json({
       error,
       statusCode: status,
       ...(message && error !== message ? { message } : {}),
+      ...(errorKey ? { errorKey } : {}),
     });
   }
 }

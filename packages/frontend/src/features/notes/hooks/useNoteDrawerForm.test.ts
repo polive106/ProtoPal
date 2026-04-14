@@ -80,7 +80,7 @@ describe('useNoteDrawerForm', () => {
       await result.current.form.handleSubmit();
     });
 
-    expect(result.current.serverError).toBe('Save failed');
+    expect(result.current.serverError).toBe('Failed to save note');
     expect(onOpenChange).not.toHaveBeenCalledWith(false);
   });
 
@@ -99,7 +99,7 @@ describe('useNoteDrawerForm', () => {
       await result.current.form.handleSubmit();
     });
 
-    expect(result.current.serverError).toBe('fail');
+    expect(result.current.serverError).toBe('Failed to save note');
 
     act(() => {
       result.current.setServerError(null);

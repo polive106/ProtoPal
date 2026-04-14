@@ -27,7 +27,7 @@ describe('getFieldError', () => {
     expect(getFieldError([])).toBeUndefined();
   });
 
-  it('returns the string when first error is a string', () => {
+  it('returns the string when first error is a plain string', () => {
     expect(getFieldError(['Email is required'])).toBe('Email is required');
   });
 
@@ -41,5 +41,24 @@ describe('getFieldError', () => {
 
   it('uses only the first error', () => {
     expect(getFieldError(['First error', 'Second error'])).toBe('First error');
+  });
+
+  it('translates i18n validation keys via i18n.t()', () => {
+    // The mock i18n.t resolves 'validation.emailRequired' from the auth namespace
+    expect(getFieldError(['validation.emailRequired'])).toBe('Email is required');
+  });
+
+  it('translates notes validation keys when ns is "notes"', () => {
+    expect(getFieldError(['validation.titleRequired'], 'notes')).toBe('Title is required');
+  });
+
+  it('interpolates max from Zod maximum property', () => {
+    const zodMaxError = { message: 'validation.emailMaxLength', maximum: 254 };
+    expect(getFieldError([zodMaxError])).toBe('Email must be at most 254 characters');
+  });
+
+  it('interpolates max for notes namespace', () => {
+    const zodMaxError = { message: 'validation.titleMaxLength', maximum: 255 };
+    expect(getFieldError([zodMaxError], 'notes')).toBe('Title must be at most 255 characters');
   });
 });

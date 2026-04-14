@@ -1,17 +1,18 @@
 import React from 'react';
 import { Pressable, Text } from 'react-native';
-import i18n, { supportedLngs } from '@acme/i18n';
+import { useTranslation, isSupportedLng } from '@acme/i18n';
 import { secureStorage } from '@/lib/secureStorage';
 
 const LANG_PREF_KEY = 'LANG_PREF';
 
 export function LanguageSwitcher() {
+  const { i18n } = useTranslation();
   const currentLang = i18n.language;
   const nextLang = currentLang === 'en' ? 'fr' : 'en';
   const label = currentLang.toUpperCase();
 
   const handleSwitch = async () => {
-    if ((supportedLngs as readonly string[]).includes(nextLang)) {
+    if (isSupportedLng(nextLang)) {
       await i18n.changeLanguage(nextLang);
       await secureStorage.setItem(LANG_PREF_KEY, nextLang);
     }

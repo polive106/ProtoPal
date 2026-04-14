@@ -83,6 +83,21 @@ vi.mock('@acme/i18n', () => {
       successMessage: 'Your email has been verified. You can now sign in.',
       signInButton: 'Sign In',
     },
+    validation: {
+      emailRequired: 'Email is required',
+      emailInvalid: 'Invalid email address',
+      emailMaxLength: 'Email must be at most {{max}} characters',
+      passwordRequired: 'Password is required',
+      passwordMinLength: 'Minimum 8 characters',
+      passwordMaxLength: 'Password must be at most {{max}} characters',
+      passwordUppercase: 'Must contain an uppercase letter',
+      passwordLowercase: 'Must contain a lowercase letter',
+      passwordNumber: 'Must contain a number',
+      firstNameRequired: 'First name is required',
+      firstNameMaxLength: 'First name must be at most {{max}} characters',
+      lastNameRequired: 'Last name is required',
+      lastNameMaxLength: 'Last name must be at most {{max}} characters',
+    },
   };
   const notesEn = {
     pageTitle: 'Notes', newNote: 'New Note',
@@ -91,13 +106,33 @@ vi.mock('@acme/i18n', () => {
       newDescription: 'Fill in the details to create a new note.',
       editDescription: 'Update the note details below.',
       titleLabel: 'Title', contentLabel: 'Content', cancel: 'Cancel',
-      save: { create: 'Create', update: 'Update', saving: 'Saving...' },
+      save: { create: 'Create', update: 'Update', saving: 'Saving...', fallbackError: 'Failed to save note' },
     },
     empty: { title: 'No notes yet', description: 'Create your first note to get started.', createButton: 'Create Note' },
     card: { edit: 'Edit', delete: 'Delete' },
+    validation: {
+      titleRequired: 'Title is required',
+      titleMaxLength: 'Title must be at most {{max}} characters',
+      contentRequired: 'Content is required',
+      contentMaxLength: 'Content must be at most {{max}} characters',
+    },
   };
 
-  const resources: Record<string, Record<string, unknown>> = { common: commonEn, auth: authEn, notes: notesEn };
+  const errorsEn: Record<string, string> = {
+    INVALID_CREDENTIALS: 'Invalid email or password',
+    ACCOUNT_LOCKED: 'Account is temporarily locked. Please try again later.',
+    EMAIL_NOT_VERIFIED: 'Please verify your email before logging in.',
+    INVALID_VERIFICATION_TOKEN: 'Invalid or expired verification link.',
+    EMAIL_ALREADY_VERIFIED: 'Email has already been verified.',
+    INVALID_RESET_TOKEN: 'Invalid or expired reset link.',
+    RESET_TOKEN_USED: 'This reset link has already been used.',
+    USER_NOT_FOUND: 'User not found.',
+    NOTE_NOT_FOUND: 'Note not found.',
+    NOTE_ACCESS_DENIED: 'You do not have access to this note.',
+    VALIDATION_ERROR: 'Please check the form for errors.',
+  };
+
+  const resources: Record<string, Record<string, unknown>> = { common: commonEn, auth: authEn, notes: notesEn, errors: errorsEn };
 
   function resolveKey(obj: unknown, path: string): string {
     const parts = path.split('.');
@@ -137,13 +172,28 @@ vi.mock('@acme/i18n', () => {
     };
   }
 
+  const mockI18n = {
+    language: 'en',
+    changeLanguage: vi.fn(),
+    t: createT('common'),
+  };
+
   return {
     useTranslation: (ns?: string) => ({
       t: createT(ns ?? 'common'),
-      i18n: { language: 'en', changeLanguage: vi.fn() },
+      i18n: mockI18n,
     }),
     Trans: ({ children }: { children: React.ReactNode }) => children,
     I18nextProvider: ({ children }: { children: React.ReactNode }) => children,
-    default: {},
+    default: mockI18n,
+    supportedLngs: ['en', 'fr'],
+    isSupportedLng: (lang: string) => ['en', 'fr'].includes(lang),
+    translateApiError: (error: { errorKey?: string; message: string }) => {
+      if (error.errorKey) {
+        const val = (resources.errors as Record<string, string>)[error.errorKey];
+        return val ?? error.message;
+      }
+      return error.message;
+    },
   };
 });

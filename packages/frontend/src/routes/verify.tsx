@@ -1,6 +1,7 @@
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { z } from 'zod';
 import { VerifyEmailPage } from '@/features/auth';
+import { PublicPageLayout } from '@/components/PublicPageLayout';
 
 const searchSchema = z.object({
   token: z.string().optional().default(''),
@@ -21,5 +22,9 @@ export const Route = createFileRoute('/verify')({
 
 function VerifyRoute() {
   const { token } = Route.useSearch();
-  return <VerifyEmailPage token={token} />;
+  return (
+    <PublicPageLayout>
+      <VerifyEmailPage token={token} />
+    </PublicPageLayout>
+  );
 }

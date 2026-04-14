@@ -3,6 +3,24 @@ import i18next from './config';
 import commonEn from '../locales/en/common.json';
 import authEn from '../locales/en/auth.json';
 import notesEn from '../locales/en/notes.json';
+import errorsEn from '../locales/en/errors.json';
+import commonFr from '../locales/fr/common.json';
+import authFr from '../locales/fr/auth.json';
+import notesFr from '../locales/fr/notes.json';
+import errorsFr from '../locales/fr/errors.json';
+
+function extractKeys(obj: Record<string, unknown>, prefix = ''): string[] {
+  const keys: string[] = [];
+  for (const key of Object.keys(obj)) {
+    const fullKey = prefix ? `${prefix}.${key}` : key;
+    if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+      keys.push(...extractKeys(obj[key] as Record<string, unknown>, fullKey));
+    } else {
+      keys.push(fullKey);
+    }
+  }
+  return keys.sort();
+}
 
 describe('i18n config', () => {
   it('has English as the default language', () => {
@@ -21,8 +39,8 @@ describe('i18n config', () => {
     expect(i18next.options.defaultNS).toBe('common');
   });
 
-  it('loads all three namespaces', () => {
-    expect(i18next.options.ns).toEqual(['common', 'auth', 'notes']);
+  it('loads all four namespaces', () => {
+    expect(i18next.options.ns).toEqual(['common', 'auth', 'notes', 'errors']);
   });
 
   it('translates auth:login.title to "Sign In"', () => {
@@ -54,5 +72,42 @@ describe('i18n config', () => {
   it('has all expected keys in the common namespace', () => {
     const expectedTopLevelKeys = ['appName', 'loading', 'logout', 'notes', 'nav', 'dashboard'];
     expect(Object.keys(commonEn)).toEqual(expect.arrayContaining(expectedTopLevelKeys));
+  });
+
+  describe('French translations', () => {
+    it('has French resources loaded', () => {
+      const frResources = i18next.options.resources?.fr;
+      expect(frResources).toBeDefined();
+    });
+
+    it('translates auth:login.title to French', () => {
+      expect(i18next.t('login.title', { ns: 'auth', lng: 'fr' })).toBe('Se connecter');
+    });
+
+    it('translates common:appName to "ProtoPal" in French (brand name)', () => {
+      expect(i18next.t('appName', { lng: 'fr' })).toBe('ProtoPal');
+    });
+
+    it('handles interpolation correctly in French', () => {
+      expect(i18next.t('dashboard.welcome', { firstName: 'Alice', lng: 'fr' })).toBe('Bienvenue, Alice !');
+    });
+  });
+
+  describe('key parity between EN and FR', () => {
+    it('common namespace has identical keys', () => {
+      expect(extractKeys(commonFr)).toEqual(extractKeys(commonEn));
+    });
+
+    it('auth namespace has identical keys', () => {
+      expect(extractKeys(authFr)).toEqual(extractKeys(authEn));
+    });
+
+    it('notes namespace has identical keys', () => {
+      expect(extractKeys(notesFr)).toEqual(extractKeys(notesEn));
+    });
+
+    it('errors namespace has identical keys', () => {
+      expect(extractKeys(errorsFr)).toEqual(extractKeys(errorsEn));
+    });
   });
 });

@@ -3,6 +3,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { useTranslation } from '@acme/i18n';
 import { Button } from '@acme/design-system';
 import { PageSpinner } from '@acme/design-system';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context }) => {
@@ -36,6 +37,7 @@ function AuthenticatedLayout() {
             <span className="text-sm text-muted-foreground" data-testid="app-user-name">
               {user?.firstName} {user?.lastName}
             </span>
+            <LanguageSwitcher />
             <Button
               variant="outline"
               size="sm"

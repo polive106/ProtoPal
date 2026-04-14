@@ -7,7 +7,10 @@ import { ToastProvider } from './providers/ToastProvider';
 import { queryClient } from './lib/queryClient';
 import { routeTree } from './routeTree.gen';
 import '@acme/i18n';
+import { initBrowserLanguage } from './lib/i18nBrowser';
 import './styles/index.css';
+
+initBrowserLanguage();
 
 const router = createRouter({
   routeTree,

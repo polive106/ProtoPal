@@ -1,0 +1,13 @@
+{
+  "INVALID_CREDENTIALS": "Courriel ou mot de passe invalide",
+  "ACCOUNT_LOCKED": "Le compte est temporairement verrouillé. Veuillez réessayer plus tard.",
+  "EMAIL_NOT_VERIFIED": "Veuillez vérifier votre courriel avant de vous connecter.",
+  "INVALID_VERIFICATION_TOKEN": "Lien de vérification invalide ou expiré.",
+  "EMAIL_ALREADY_VERIFIED": "Le courriel a déjà été vérifié.",
+  "INVALID_RESET_TOKEN": "Lien de réinitialisation invalide ou expiré.",
+  "RESET_TOKEN_USED": "Ce lien de réinitialisation a déjà été utilisé.",
+  "USER_NOT_FOUND": "Utilisateur introuvable.",
+  "NOTE_NOT_FOUND": "Note introuvable.",
+  "NOTE_ACCESS_DENIED": "Vous n'avez pas accès à cette note.",
+  "VALIDATION_ERROR": "Veuillez vérifier les erreurs dans le formulaire."
+}

@@ -78,6 +78,7 @@ export const testIds = {
     btnLogout: 'app-btn-logout',
     navNotes: 'nav-link-notes',
     navHome: 'nav-link-home',
+    languageSwitcher: 'language-switcher',
   },
   dashboard: {
     page: 'dashboard-page',

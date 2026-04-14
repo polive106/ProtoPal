@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { useAuth } from '@/providers/AuthProvider';
 import { ApiError } from '@/lib/api';
 import { registrationSchema } from '../schemas';
-import i18n from '@acme/i18n';
+import i18n, { translateApiError } from '@acme/i18n';
 
 export function useRegistrationForm() {
   const router = useRouter();
@@ -23,7 +23,7 @@ export function useRegistrationForm() {
         router.replace('/(auth)/login');
       } catch (error) {
         if (error instanceof ApiError) {
-          setServerError(error.message);
+          setServerError(translateApiError(error));
         } else {
           setServerError(i18n.t('register.fallbackError', { ns: 'auth' }));
         }

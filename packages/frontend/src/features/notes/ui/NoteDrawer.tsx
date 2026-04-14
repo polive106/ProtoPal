@@ -49,7 +49,7 @@ export function NoteDrawer(props: NoteDrawerProps) {
                     data-testid="notes-input-title"
                   />
                   {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                    <p className="text-sm text-destructive" data-testid="notes-error-title">{getFieldError(field.state.meta.errors)}</p>
+                    <p className="text-sm text-destructive" data-testid="notes-error-title">{getFieldError(field.state.meta.errors, 'notes')}</p>
                   )}
                 </div>
               )}
@@ -68,7 +68,7 @@ export function NoteDrawer(props: NoteDrawerProps) {
                     data-testid="notes-input-content"
                   />
                   {field.state.meta.isTouched && field.state.meta.errors.length > 0 && (
-                    <p className="text-sm text-destructive" data-testid="notes-error-content">{getFieldError(field.state.meta.errors)}</p>
+                    <p className="text-sm text-destructive" data-testid="notes-error-content">{getFieldError(field.state.meta.errors, 'notes')}</p>
                   )}
                 </div>
               )}

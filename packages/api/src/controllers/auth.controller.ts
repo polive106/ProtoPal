@@ -12,6 +12,7 @@ import {
   UnauthorizedException,
   NotFoundException,
 } from '@nestjs/common';
+import { ERROR_KEYS } from '@acme/shared';
 import type { Request, Response } from 'express';
 import {
   RegisterUser,
@@ -263,6 +264,7 @@ export class AuthController {
         res.status(HttpStatus.TOO_MANY_REQUESTS).json({
           statusCode: HttpStatus.TOO_MANY_REQUESTS,
           message: error.message,
+          errorKey: ERROR_KEYS.ACCOUNT_LOCKED,
           retryAfter: error.retryAfterSeconds,
         });
         return;

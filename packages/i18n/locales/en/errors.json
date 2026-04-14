@@ -1,0 +1,13 @@
+{
+  "INVALID_CREDENTIALS": "Invalid email or password",
+  "ACCOUNT_LOCKED": "Account is temporarily locked. Please try again later.",
+  "EMAIL_NOT_VERIFIED": "Please verify your email before logging in.",
+  "INVALID_VERIFICATION_TOKEN": "Invalid or expired verification link.",
+  "EMAIL_ALREADY_VERIFIED": "Email has already been verified.",
+  "INVALID_RESET_TOKEN": "Invalid or expired reset link.",
+  "RESET_TOKEN_USED": "This reset link has already been used.",
+  "USER_NOT_FOUND": "User not found.",
+  "NOTE_NOT_FOUND": "Note not found.",
+  "NOTE_ACCESS_DENIED": "You do not have access to this note.",
+  "VALIDATION_ERROR": "Please check the form for errors."
+}

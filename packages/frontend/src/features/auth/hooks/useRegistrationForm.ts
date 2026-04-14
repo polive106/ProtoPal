@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { authApi } from '../api';
 import { ApiError } from '@/lib/api';
 import { registrationSchema } from '../schemas';
+import i18n, { translateApiError } from '@acme/i18n';
 
 export function useRegistrationForm() {
   const navigate = useNavigate();
@@ -21,9 +22,9 @@ export function useRegistrationForm() {
         navigate({ to: '/check-email', search: { email: value.email } });
       } catch (error) {
         if (error instanceof ApiError) {
-          setServerError(error.message);
+          setServerError(translateApiError(error));
         } else {
-          setServerError('Registration failed');
+          setServerError(i18n.t('register.fallbackError', { ns: 'auth' }));
         }
       } finally {
         setIsLoading(false);

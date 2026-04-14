@@ -3,6 +3,7 @@ import { useForm } from '@tanstack/react-form';
 import { authApi } from '../api';
 import { ApiError } from '@/lib/api';
 import { forgotPasswordSchema } from '../schemas';
+import i18n, { translateApiError } from '@acme/i18n';
 
 export function useForgotPasswordForm() {
   const [serverError, setServerError] = useState<string | null>(null);
@@ -20,9 +21,9 @@ export function useForgotPasswordForm() {
         setIsSubmitted(true);
       } catch (error) {
         if (error instanceof ApiError) {
-          setServerError(error.message);
+          setServerError(translateApiError(error));
         } else {
-          setServerError('Something went wrong. Please try again.');
+          setServerError(i18n.t('error'));
         }
       } finally {
         setIsLoading(false);
