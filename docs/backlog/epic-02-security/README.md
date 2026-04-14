@@ -20,3 +20,11 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US10 | Token Exposure Reduction | M | Done |
 | E2-US11 | Seed Data & Production Safety Guards | S | Done |
 | E2-US12 | Dependency Security Scanning & Supply Chain Protection | S | Done |
+| E2-US13 | Refresh Token Rotation & Short-Lived Access Tokens | L | Pending |
+| E2-US14 | Non-Production Token Exposure Hardening | S | Pending |
+| E2-US15 | Persistent Audit Log Storage | M | Pending |
+| E2-US16 | Admin Endpoint Hardening | S | Pending |
+| E2-US17 | Data Mutation Audit Trail | S | Pending |
+| E2-US18 | Session Management & Forced Logout | M | Pending |
+| E2-US19 | Production Environment Hardening | S | Pending |
+| E2-US20 | Security Disclosure Policy | XS | Pending |
