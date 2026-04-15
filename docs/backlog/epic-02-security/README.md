@@ -28,3 +28,8 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US18 | Session Management & Forced Logout | M | Pending |
 | E2-US19 | Production Environment Hardening | S | Pending |
 | E2-US20 | Security Disclosure Policy | XS | Pending |
+| E2-US21 | PostgreSQL Schema Security Parity | L | Pending |
+| E2-US22 | JWT Claims Hardening (jti, iss, aud) | M | Pending |
+| E2-US23 | Logging Interceptor Header Sanitization | S | Pending |
+| E2-US24 | Password History Enforcement | M | Pending |
+| E2-US25 | Startup Environment Validation Hardening | S | Pending |
