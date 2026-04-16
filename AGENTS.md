@@ -307,6 +307,37 @@ When modifying `packages/database/src/schema.ts`:
 2. Add realistic sample data for new entities
 3. Maintain referential integrity with existing seed data
 
+## i18n Enforcement
+
+All user-facing strings must go through `@acme/i18n` translation functions. Four automated guardrails enforce this:
+
+| Guardrail | What it catches | How it runs |
+|-----------|----------------|-------------|
+| **TypeScript module augmentation** | Invalid `t()` keys (typos, removed keys) | `tsc --noEmit` via `pnpm lint` |
+| **ESLint `i18next/no-literal-string`** | Hardcoded user-facing strings in JSX | `eslint src` in frontend & mobile lint |
+| **`scripts/check-translations.ts`** | Missing/extra keys between en and fr locales | `pnpm lint` (root) and CI |
+| **`i18next-parser --fail-on-update`** | Drift between source code `t()` calls and locale files | CI step (`pnpm --filter @acme/i18n i18n:check`) |
+
+### Adding a new translation key
+
+1. Add the key to `packages/i18n/locales/en/<namespace>.json`
+2. Add the corresponding French translation to `packages/i18n/locales/fr/<namespace>.json`
+3. Use the key in code via `t('key')` or `t('key', { ns: 'namespace' })`
+4. Run `pnpm lint` to verify parity and type safety
+
+### Adding a new locale
+
+1. Create `packages/i18n/locales/<lang>/` with all four namespace files (common, auth, notes, errors)
+2. Add the language to `supportedLngs` in `packages/i18n/src/config.ts`
+3. Import and add resources in `config.ts`
+4. Update `i18next-parser.config.js` locales array
+
+### ESLint i18n config
+
+- Frontend: `packages/frontend/eslint.config.js`
+- Mobile: `packages/mobile/eslint.config.mjs`
+- Rule: `i18next/no-literal-string` in `jsx-text-only` mode (warns on hardcoded text between JSX tags)
+
 ## Project Conventions
 
 - TanStack Query: Use `invalidateQueries` instead of `setQueryData` in mutation callbacks

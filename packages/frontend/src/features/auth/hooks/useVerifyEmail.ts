@@ -12,7 +12,6 @@ export function useVerifyEmail(token: string) {
     if (token) {
       mutation.mutate(token);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   return {

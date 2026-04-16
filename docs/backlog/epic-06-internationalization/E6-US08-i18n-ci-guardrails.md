@@ -3,13 +3,13 @@
 **User Story**: As a developer, I want CI to block PRs with missing translations or hardcoded strings so that i18n completeness is enforced automatically and nothing ships untranslated.
 
 **Acceptance Criteria**:
-- [ ] TypeScript module augmentation enforces valid `t()` keys at compile time (invalid keys are TS errors)
-- [ ] `eslint-plugin-i18next` (or equivalent) catches hardcoded user-facing strings in JSX
-- [ ] A CI script compares keys across all locale JSON files and fails if any locale is missing keys
-- [ ] `i18next-parser` is configured to extract keys from source and detect drift
-- [ ] CI pipeline includes the translation completeness check as a required step
-- [ ] ESLint i18n rule is integrated into the existing lint command
-- [ ] Documentation in AGENTS.md or CLAUDE.md describes the i18n enforcement rules
+- [x] TypeScript module augmentation enforces valid `t()` keys at compile time (invalid keys are TS errors)
+- [x] `eslint-plugin-i18next` (or equivalent) catches hardcoded user-facing strings in JSX
+- [x] A CI script compares keys across all locale JSON files and fails if any locale is missing keys
+- [x] `i18next-parser` is configured to extract keys from source and detect drift
+- [x] CI pipeline includes the translation completeness check as a required step
+- [x] ESLint i18n rule is integrated into the existing lint command
+- [x] Documentation in AGENTS.md or CLAUDE.md describes the i18n enforcement rules
 
 **Technical Tasks**:
 | Layer | Task | File(s) |
@@ -25,7 +25,7 @@
 
 **Complexity**: S
 
-**Status**: Pending
+**Status**: Done
 
 **Test Scenarios**:
 ```gherkin

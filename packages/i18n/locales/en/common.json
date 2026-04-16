@@ -1,25 +1,25 @@
 {
   "appName": "ProtoPal",
-  "tagline": "Your notes, your way",
-  "loading": "Loading...",
-  "error": "Something went wrong",
-  "save": "Save",
+  "back": "Back",
   "cancel": "Cancel",
+  "create": "Create",
+  "dashboard": {
+    "greeting": "Welcome back,",
+    "notesDescription": "View and manage your notes",
+    "notesTitle": "My Notes",
+    "viewNotes": "View Notes",
+    "welcome": "Welcome, {{firstName}}!"
+  },
   "delete": "Delete",
   "edit": "Edit",
-  "create": "Create",
-  "back": "Back",
-  "signOut": "Sign Out",
+  "error": "Something went wrong",
+  "loading": "Loading...",
   "logout": "Logout",
-  "notes": "Notes",
   "nav": {
     "notes": "Notes"
   },
-  "dashboard": {
-    "welcome": "Welcome, {{firstName}}!",
-    "greeting": "Welcome back,",
-    "notesTitle": "My Notes",
-    "notesDescription": "View and manage your notes",
-    "viewNotes": "View Notes"
-  }
+  "notes": "Notes",
+  "save": "Save",
+  "signOut": "Sign Out",
+  "tagline": "Your notes, your way"
 }

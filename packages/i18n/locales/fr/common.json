@@ -1,25 +1,25 @@
 {
   "appName": "ProtoPal",
-  "tagline": "Vos notes, à votre façon",
-  "loading": "Chargement…",
-  "error": "Une erreur est survenue",
-  "save": "Enregistrer",
+  "back": "Retour",
   "cancel": "Annuler",
+  "create": "Créer",
+  "dashboard": {
+    "greeting": "Bon retour,",
+    "notesDescription": "Consultez et gérez vos notes",
+    "notesTitle": "Mes notes",
+    "viewNotes": "Voir les notes",
+    "welcome": "Bienvenue, {{firstName}} !"
+  },
   "delete": "Supprimer",
   "edit": "Modifier",
-  "create": "Créer",
-  "back": "Retour",
-  "signOut": "Déconnexion",
+  "error": "Une erreur est survenue",
+  "loading": "Chargement…",
   "logout": "Déconnexion",
-  "notes": "Notes",
   "nav": {
     "notes": "Notes"
   },
-  "dashboard": {
-    "welcome": "Bienvenue, {{firstName}} !",
-    "greeting": "Bon retour,",
-    "notesTitle": "Mes notes",
-    "notesDescription": "Consultez et gérez vos notes",
-    "viewNotes": "Voir les notes"
-  }
+  "notes": "Notes",
+  "save": "Enregistrer",
+  "signOut": "Déconnexion",
+  "tagline": "Vos notes, à votre façon"
 }

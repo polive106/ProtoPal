@@ -1,47 +1,47 @@
 {
-  "pageTitle": "Notes",
-  "newNote": "Nouvelle note",
+  "card": {
+    "delete": "Supprimer",
+    "edit": "Modifier"
+  },
+  "detail": {
+    "deleteConfirm": {
+      "message": "Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible.",
+      "title": "Supprimer la note"
+    },
+    "loading": "Chargement de la note…",
+    "notFound": "Note introuvable"
+  },
   "drawer": {
-    "newTitle": "Nouvelle note",
-    "editTitle": "Modifier la note",
-    "newDescription": "Remplissez les détails pour créer une nouvelle note.",
-    "editDescription": "Modifiez les détails de la note ci-dessous.",
-    "titleLabel": "Titre",
-    "titlePlaceholder": "Titre de la note",
+    "cancel": "Annuler",
     "contentLabel": "Contenu",
     "contentPlaceholder": "Rédigez votre note…",
-    "cancel": "Annuler",
+    "editDescription": "Modifiez les détails de la note ci-dessous.",
+    "editTitle": "Modifier la note",
+    "newDescription": "Remplissez les détails pour créer une nouvelle note.",
+    "newTitle": "Nouvelle note",
     "save": {
       "create": "Créer",
-      "update": "Mettre à jour",
+      "fallbackError": "Échec de l'enregistrement de la note",
       "saving": "Enregistrement…",
-      "fallbackError": "Échec de l'enregistrement de la note"
-    }
+      "update": "Mettre à jour"
+    },
+    "titleLabel": "Titre",
+    "titlePlaceholder": "Titre de la note"
+  },
+  "empty": {
+    "createButton": "Créer une note",
+    "description": "Créez votre première note pour commencer.",
+    "title": "Aucune note"
   },
   "list": {
     "loading": "Chargement des notes…"
   },
-  "detail": {
-    "loading": "Chargement de la note…",
-    "notFound": "Note introuvable",
-    "deleteConfirm": {
-      "title": "Supprimer la note",
-      "message": "Êtes-vous sûr de vouloir supprimer cette note ? Cette action est irréversible."
-    }
-  },
-  "empty": {
-    "title": "Aucune note",
-    "description": "Créez votre première note pour commencer.",
-    "createButton": "Créer une note"
-  },
-  "card": {
-    "edit": "Modifier",
-    "delete": "Supprimer"
-  },
+  "newNote": "Nouvelle note",
+  "pageTitle": "Notes",
   "validation": {
-    "titleRequired": "Le titre est requis",
-    "titleMaxLength": "Le titre doit contenir au plus {{max}} caractères",
+    "contentMaxLength": "Le contenu doit contenir au plus {{max}} caractères",
     "contentRequired": "Le contenu est requis",
-    "contentMaxLength": "Le contenu doit contenir au plus {{max}} caractères"
+    "titleMaxLength": "Le titre doit contenir au plus {{max}} caractères",
+    "titleRequired": "Le titre est requis"
   }
 }

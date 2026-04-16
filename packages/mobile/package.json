@@ -8,7 +8,7 @@
     "build": "echo 'Mobile build requires expo prebuild — use dev for local development'",
     "prebuild": "expo prebuild --platform android --no-install",
     "build:android": "cd android && ./gradlew assembleDebug",
-    "lint": "tsc --noEmit",
+    "lint": "eslint src && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest watch"
   },
@@ -47,6 +47,9 @@
     "@testing-library/react-native": "^13.3.3",
     "@types/react": "^19.1.17",
     "@types/react-dom": "^19.1.11",
+    "@typescript-eslint/parser": "^8.58.2",
+    "eslint": "^10.2.0",
+    "eslint-plugin-i18next": "^6.1.4",
     "jsdom": "^26.1.0",
     "react-test-renderer": "19.1.0",
     "typescript": "^5.9.3",

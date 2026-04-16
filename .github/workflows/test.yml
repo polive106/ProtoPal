@@ -38,4 +38,6 @@ jobs:
       - name: Security audit
         run: pnpm audit --audit-level=high
       - run: pnpm lint
+      - name: Check i18n key extraction drift
+        run: pnpm --filter @acme/i18n i18n:check
       - run: pnpm test

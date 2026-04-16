@@ -12,7 +12,7 @@
     "test:e2e:api": "tsx e2e/setup-e2e.ts && playwright test --project=api",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "lint": "turbo lint && tsc --noEmit -p e2e/tsconfig.json",
+    "lint": "turbo lint && tsc --noEmit -p e2e/tsconfig.json && tsx scripts/check-translations.ts",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "dev:mobile": "pnpm --filter @acme/mobile dev",
     "test:e2e:mobile": "tsx e2e/run-e2e-mobile.ts",

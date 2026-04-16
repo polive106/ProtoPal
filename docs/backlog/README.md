@@ -69,7 +69,7 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 26. E5-US04: Auth Navigation & Page Flow E2E Tests
 27. E5-US05: Notes List States, Dashboard & Layout E2E Tests
 
-### Phase 6: Internationalization (In Progress)
+### Phase 6: Internationalization (Done)
 28. E6-US01: i18n Foundation — @acme/i18n Package
 29. E6-US02: Web i18n Provider & Auth Strings
 30. E6-US03: Web Notes & Layout Strings
