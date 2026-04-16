@@ -37,7 +37,7 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 2. E1-US02: Auth System
 3. E1-US03: Notes CRUD
 
-### Phase 2: Security Hardening (Done)
+### Phase 2: Security Hardening (In Progress)
 4. E2-US01: JWT Secret & Token Revocation
 5. E2-US02: Registration Flow & Email Verification
 6. E2-US03: CORS & Environment Hardening
@@ -50,6 +50,21 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 13. E2-US10: Token Exposure Reduction
 14. E2-US11: Seed Data & Production Safety Guards
 15. E2-US12: Dependency Security Scanning & Supply Chain Protection
+46. E2-US13: Refresh Token Rotation & Short-Lived Access Tokens
+47. E2-US14: Non-Production Token Exposure Hardening
+48. E2-US15: Persistent Audit Log Storage
+49. E2-US16: Admin Endpoint Hardening
+50. E2-US17: Data Mutation Audit Trail
+51. E2-US18: Session Management & Forced Logout
+52. E2-US19: Production Environment Hardening
+53. E2-US20: Security Disclosure Policy
+54. E2-US21: PostgreSQL Schema Security Parity
+55. E2-US22: Password Policy Enhancement
+56. E2-US23: Protected Endpoint Rate Limiting
+57. E2-US24: JWT Payload PII Minimization
+58. E2-US25: Audit Log Sanitization Hardening
+59. E2-US26: Token Input Length Validation
+60. E2-US27: Mobile Web Token Storage Hardening
 
 ### Phase 3: Mobile App (Done)
 16. E3-US01: Mobile Project Shell & Design System
