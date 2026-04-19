@@ -90,6 +90,14 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 43. E7-US07: Mongo Adapter Unit Tests
 44. E7-US08: MongoDB Documentation
 
+### Phase 8: Security Hardening Phase 2 (Pending)
+45. E2-US21: Two-Factor Authentication (TOTP)
+46. E2-US22: Password History & Reuse Prevention
+47. E2-US23: Mobile Certificate Pinning
+48. E2-US24: Frontend CSP & Source Map Hardening
+49. E2-US25: Mobile Token Storage Hardening
+50. E2-US26: JWT Secret Rotation
+
 ## Status Conventions
 
 - **Pending**: Not started

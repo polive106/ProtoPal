@@ -28,3 +28,9 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US18 | Session Management & Forced Logout | M | Pending |
 | E2-US19 | Production Environment Hardening | S | Pending |
 | E2-US20 | Security Disclosure Policy | XS | Pending |
+| E2-US21 | Two-Factor Authentication (TOTP) | XL | Pending |
+| E2-US22 | Password History & Reuse Prevention | M | Pending |
+| E2-US23 | Mobile Certificate Pinning | M | Pending |
+| E2-US24 | Frontend CSP & Source Map Hardening | S | Pending |
+| E2-US25 | Mobile Token Storage Hardening | S | Pending |
+| E2-US26 | JWT Secret Rotation | M | Pending |
