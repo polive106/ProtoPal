@@ -34,3 +34,8 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US24 | Frontend CSP & Source Map Hardening | S | Pending |
 | E2-US25 | Mobile Token Storage Hardening | S | Pending |
 | E2-US26 | JWT Secret Rotation | M | Pending |
+| E2-US27 | Database Connection Security & TLS Enforcement | M | Pending |
+| E2-US28 | Container Security Baseline | M | Pending |
+| E2-US29 | Security Event Monitoring & Alerting | L | Pending |
+| E2-US30 | User Account Deletion & Data Privacy | L | Pending |
+| E2-US31 | Unhandled Exception Logging & Error Correlation | M | Pending |
