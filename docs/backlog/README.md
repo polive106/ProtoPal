@@ -105,6 +105,15 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 54. E2-US30: User Account Deletion & Data Privacy
 55. E2-US31: Unhandled Exception Logging & Error Correlation
 
+### Phase 10: Security Hardening Phase 4 (Pending)
+56. E2-US32: CSRF Protection
+57. E2-US33: Auth Endpoint Rate Limit & Access Gaps
+58. E2-US34: PostgreSQL Schema Security Parity
+59. E2-US35: Dependency Vulnerability Remediation
+60. E2-US36: JWT Claim Hardening
+61. E2-US37: Password Policy Strengthening
+62. E2-US38: Mobile Network & Deep Link Hardening
+
 ## Status Conventions
 
 - **Pending**: Not started

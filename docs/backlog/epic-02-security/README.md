@@ -39,3 +39,10 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US29 | Security Event Monitoring & Alerting | L | Pending |
 | E2-US30 | User Account Deletion & Data Privacy | L | Pending |
 | E2-US31 | Unhandled Exception Logging & Error Correlation | M | Pending |
+| E2-US32 | CSRF Protection | M | Pending |
+| E2-US33 | Auth Endpoint Rate Limit & Access Gaps | S | Pending |
+| E2-US34 | PostgreSQL Schema Security Parity | M | Pending |
+| E2-US35 | Dependency Vulnerability Remediation | XS | Pending |
+| E2-US36 | JWT Claim Hardening | S | Pending |
+| E2-US37 | Password Policy Strengthening | S | Pending |
+| E2-US38 | Mobile Network & Deep Link Hardening | M | Pending |
