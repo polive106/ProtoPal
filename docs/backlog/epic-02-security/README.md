@@ -2,7 +2,7 @@
 
 ## Overview
 
-Harden the application against the vulnerabilities and gaps identified in the security review. Covers JWT management, registration verification, environment configuration, brute-force protection, rate limiting persistence, password recovery, and observability.
+Harden the application against the vulnerabilities and gaps identified in the security review. Covers JWT management, registration verification, environment configuration, brute-force protection, rate limiting persistence, password recovery, observability, API pagination, request timeouts, command injection prevention, and mobile client authentication hardening.
 
 ## Stories
 
@@ -34,3 +34,9 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US24 | Frontend CSP & Source Map Hardening | S | Pending |
 | E2-US25 | Mobile Token Storage Hardening | S | Pending |
 | E2-US26 | JWT Secret Rotation | M | Pending |
+| E2-US27 | Verify & Reset-Password Endpoint Rate Limiting | S | Pending |
+| E2-US28 | Command Injection Prevention in Email Service | XS | Pending |
+| E2-US29 | Notes API Pagination & Write Rate Limiting | M | Pending |
+| E2-US30 | Logout Cookie Cleanup Hardening | XS | Pending |
+| E2-US31 | API Request Timeout & Slow Loris Protection | S | Pending |
+| E2-US32 | Mobile Client Type Header Spoofing Prevention | M | Pending |
