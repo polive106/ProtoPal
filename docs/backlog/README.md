@@ -97,6 +97,11 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 48. E2-US24: Frontend CSP & Source Map Hardening
 49. E2-US25: Mobile Token Storage Hardening
 50. E2-US26: JWT Secret Rotation
+51. E2-US27: CRUD Endpoint Rate Limiting
+52. E2-US28: Mobile Deep Link Validation
+53. E2-US29: Subresource Integrity for External Resources
+54. E2-US30: Automated Security Regression Test Suite
+55. E2-US31: Account Self-Deletion & Data Purge
 
 ## Status Conventions
 

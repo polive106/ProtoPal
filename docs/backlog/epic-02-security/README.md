@@ -34,3 +34,8 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US24 | Frontend CSP & Source Map Hardening | S | Pending |
 | E2-US25 | Mobile Token Storage Hardening | S | Pending |
 | E2-US26 | JWT Secret Rotation | M | Pending |
+| E2-US27 | CRUD Endpoint Rate Limiting | S | Pending |
+| E2-US28 | Mobile Deep Link Validation | S | Pending |
+| E2-US29 | Subresource Integrity for External Resources | XS | Pending |
+| E2-US30 | Automated Security Regression Test Suite | M | Pending |
+| E2-US31 | Account Self-Deletion & Data Purge | L | Pending |
