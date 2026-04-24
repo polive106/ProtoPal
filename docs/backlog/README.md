@@ -114,6 +114,12 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 61. E2-US37: Password Policy Strengthening
 62. E2-US38: Mobile Network & Deep Link Hardening
 
+### Phase 11: Security Hardening Phase 5 (Pending)
+63. E2-US39: CORS Null Origin Rejection
+64. E2-US40: Auth Column Database Indexes
+65. E2-US41: Atomic Password Reset Transaction Safety
+66. E2-US42: Password Reset Token URL Exposure Prevention
+
 ## Status Conventions
 
 - **Pending**: Not started

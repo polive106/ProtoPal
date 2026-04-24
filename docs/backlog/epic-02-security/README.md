@@ -2,7 +2,7 @@
 
 ## Overview
 
-Harden the application against the vulnerabilities and gaps identified in the security review. Covers JWT management, registration verification, environment configuration, brute-force protection, rate limiting persistence, password recovery, and observability.
+Harden the application against the vulnerabilities and gaps identified in security reviews. Covers JWT management, registration verification, environment configuration, brute-force protection, rate limiting persistence, password recovery, observability, CORS hardening, database schema parity, transaction safety, and mobile security.
 
 ## Stories
 
@@ -46,3 +46,7 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US36 | JWT Claim Hardening | S | Pending |
 | E2-US37 | Password Policy Strengthening | S | Pending |
 | E2-US38 | Mobile Network & Deep Link Hardening | M | Pending |
+| E2-US39 | CORS Null Origin Rejection | XS | Pending |
+| E2-US40 | Auth Column Database Indexes | S | Pending |
+| E2-US41 | Atomic Password Reset Transaction Safety | M | Pending |
+| E2-US42 | Password Reset Token URL Exposure Prevention | S | Pending |
