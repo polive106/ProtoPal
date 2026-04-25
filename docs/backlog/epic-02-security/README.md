@@ -34,3 +34,16 @@ Harden the application against the vulnerabilities and gaps identified in the se
 | E2-US24 | Frontend CSP & Source Map Hardening | S | Pending |
 | E2-US25 | Mobile Token Storage Hardening | S | Pending |
 | E2-US26 | JWT Secret Rotation | M | Pending |
+| E2-US27 | Rate Limit Verify & Reset Password Endpoints | S | Pending |
+| E2-US28 | CSRF Double-Submit Cookie Protection | M | Pending |
+| E2-US29 | JWT Issuer & Audience Claims | S | Pending |
+| E2-US30 | Audit Log PII Redaction | S | Pending |
+| E2-US31 | Breached Password Detection | M | Pending |
+| E2-US32 | GitHub Actions Supply Chain Hardening | S | Pending |
+| E2-US33 | Static Application Security Testing (SAST) in CI | M | Pending |
+| E2-US34 | Mobile Production HTTPS Enforcement | S | Pending |
+| E2-US35 | @xmldom/xmldom Vulnerability Remediation | XS | Pending |
+| E2-US36 | Mobile Input Validation Parity | XS | Pending |
+| E2-US37 | Mobile Deep Link Parameter Validation | S | Pending |
+| E2-US38 | Sensitive Data URL Leakage Prevention | S | Pending |
+| E2-US39 | Auth Form Autocomplete Attributes | XS | Pending |
