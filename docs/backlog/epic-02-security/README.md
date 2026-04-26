@@ -50,3 +50,7 @@ Harden the application against the vulnerabilities and gaps identified in securi
 | E2-US40 | Auth Column Database Indexes | S | Pending |
 | E2-US41 | Atomic Password Reset Transaction Safety | M | Pending |
 | E2-US42 | Password Reset Token URL Exposure Prevention | S | Pending |
+| E2-US43 | Notes API Pagination & Resource Rate Limiting | M | Pending |
+| E2-US44 | Verification Endpoint Lockout Bypass Prevention | S | Pending |
+| E2-US45 | Security Configuration Tightening | S | Pending |
+| E2-US46 | Helmet Security Headers Completeness | S | Pending |

@@ -120,6 +120,12 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 65. E2-US41: Atomic Password Reset Transaction Safety
 66. E2-US42: Password Reset Token URL Exposure Prevention
 
+### Phase 12: Security Hardening Phase 6 (Pending)
+67. E2-US43: Notes API Pagination & Resource Rate Limiting
+68. E2-US44: Verification Endpoint Lockout Bypass Prevention
+69. E2-US45: Security Configuration Tightening
+70. E2-US46: Helmet Security Headers Completeness
+
 ## Status Conventions
 
 - **Pending**: Not started
