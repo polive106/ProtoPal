@@ -21,8 +21,8 @@
     "bcrypt": "^6.0.0",
     "better-sqlite3": "^11.0.0",
     "drizzle-orm": "^0.45.2",
-    "mongodb": "^7.1.1",
-    "postgres": "^3.4.8"
+    "mongodb": "^7.2.0",
+    "postgres": "^3.4.9"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
