@@ -98,6 +98,14 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 49. E2-US25: Mobile Token Storage Hardening
 50. E2-US26: JWT Secret Rotation
 
+### Phase 9: Security Hardening Phase 3 (Pending)
+51. E2-US27: CSRF Protection
+52. E2-US28: Mass Assignment Prevention
+53. E2-US29: Password Reset Flow Hardening
+54. E2-US30: Request Timeout & Resource Exhaustion Protection
+55. E2-US31: Timing-Safe Token Comparison
+56. E2-US32: Configurable Security Parameters
+
 ## Status Conventions
 
 - **Pending**: Not started
