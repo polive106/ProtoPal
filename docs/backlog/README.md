@@ -106,6 +106,17 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 55. E2-US31: Timing-Safe Token Comparison
 56. E2-US32: Configurable Security Parameters
 
+### Phase 10: Security Review Findings (Pending)
+57. E2-US33: Rate Limit Coverage Gaps & Per-Account Limiting
+58. E2-US34: AuthGuard Required Dependencies
+59. E2-US35: Production Email Service Implementation
+60. E2-US36: Reverse Proxy Trust Configuration
+61. E2-US37: Dependency Vulnerability Remediation
+62. E2-US38: Notes API Pagination & Bounded Queries
+63. E2-US39: Defense-in-Depth Repository Access Scoping
+64. E2-US40: Startup Validation & Error Observability Gaps
+65. E2-US41: Bearer Token Delivery Client Verification
+
 ## Status Conventions
 
 - **Pending**: Not started

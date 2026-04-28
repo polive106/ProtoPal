@@ -40,3 +40,12 @@ Harden the application against the vulnerabilities and gaps identified in securi
 | E2-US30 | Request Timeout & Resource Exhaustion Protection | S | Pending |
 | E2-US31 | Timing-Safe Token Comparison | S | Pending |
 | E2-US32 | Configurable Security Parameters | S | Pending |
+| E2-US33 | Rate Limit Coverage Gaps & Per-Account Limiting | S | Pending |
+| E2-US34 | AuthGuard Required Dependencies | XS | Pending |
+| E2-US35 | Production Email Service Implementation | M | Pending |
+| E2-US36 | Reverse Proxy Trust Configuration | S | Pending |
+| E2-US37 | Dependency Vulnerability Remediation | S | Pending |
+| E2-US38 | Notes API Pagination & Bounded Queries | S | Pending |
+| E2-US39 | Defense-in-Depth Repository Access Scoping | S | Pending |
+| E2-US40 | Startup Validation & Error Observability Gaps | S | Pending |
+| E2-US41 | Bearer Token Delivery Client Verification | S | Pending |
