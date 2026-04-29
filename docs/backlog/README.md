@@ -106,6 +106,14 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 55. E2-US31: Timing-Safe Token Comparison
 56. E2-US32: Configurable Security Parameters
 
+### Phase 10: Security Hardening Phase 4 (Pending)
+57. E2-US33: Guard Dependency Fail-Open Prevention
+58. E2-US34: Postgres Schema Security Parity
+59. E2-US35: Database Connection TLS Enforcement
+60. E2-US36: JWT Token Validation Hardening
+61. E2-US37: Domain Layer Defense-in-Depth Validation
+62. E2-US38: Database Schema & Query Safeguards
+
 ## Status Conventions
 
 - **Pending**: Not started
