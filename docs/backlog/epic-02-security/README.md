@@ -2,7 +2,7 @@
 
 ## Overview
 
-Harden the application against the vulnerabilities and gaps identified in security reviews. Covers JWT management, registration verification, environment configuration, brute-force protection, rate limiting persistence, password recovery, observability, CSRF protection, mass assignment prevention, timing-safe operations, and configurable security parameters.
+Harden the application against the vulnerabilities and gaps identified in security reviews. Covers JWT management, registration verification, environment configuration, brute-force protection, rate limiting persistence, password recovery, observability, CSRF protection, mass assignment prevention, timing-safe operations, configurable security parameters, database schema parity, data cleanup, input validation, and infrastructure hardening.
 
 ## Stories
 
@@ -40,3 +40,12 @@ Harden the application against the vulnerabilities and gaps identified in securi
 | E2-US30 | Request Timeout & Resource Exhaustion Protection | S | Pending |
 | E2-US31 | Timing-Safe Token Comparison | S | Pending |
 | E2-US32 | Configurable Security Parameters | S | Pending |
+| E2-US33 | Email Verification Endpoint Rate Limiting | S | Pending |
+| E2-US34 | Token Invalidation Race Condition Fix | S | Pending |
+| E2-US35 | Security Data Cleanup Jobs | S | Pending |
+| E2-US36 | Postgres Schema Parity for Security Tables | M | Pending |
+| E2-US37 | SQL Foreign Key & Query Performance Indexes | S | Pending |
+| E2-US38 | Email Validation Strengthening | S | Pending |
+| E2-US39 | Trust Proxy & IP Detection Configuration | S | Pending |
+| E2-US40 | PreviewEmailService Command Injection Fix | XS | Pending |
+| E2-US41 | URL Parameter Validation (Admin Email & Note ID) | S | Pending |

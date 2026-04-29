@@ -106,6 +106,17 @@ This scaffold provides a fullstack monorepo with authentication, RBAC, and an ex
 55. E2-US31: Timing-Safe Token Comparison
 56. E2-US32: Configurable Security Parameters
 
+### Phase 10: Security Hardening Phase 4 — Review Findings (Pending)
+57. E2-US33: Email Verification Endpoint Rate Limiting
+58. E2-US34: Token Invalidation Race Condition Fix
+59. E2-US35: Security Data Cleanup Jobs
+60. E2-US36: Postgres Schema Parity for Security Tables
+61. E2-US37: SQL Foreign Key & Query Performance Indexes
+62. E2-US38: Email Validation Strengthening
+63. E2-US39: Trust Proxy & IP Detection Configuration
+64. E2-US40: PreviewEmailService Command Injection Fix
+65. E2-US41: URL Parameter Validation (Admin Email & Note ID)
+
 ## Status Conventions
 
 - **Pending**: Not started
