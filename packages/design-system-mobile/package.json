@@ -12,7 +12,7 @@
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.6.0"
   },
   "peerDependencies": {
     "nativewind": "^4.0.0",
@@ -20,9 +20,9 @@
     "react-native": "*"
   },
   "devDependencies": {
-    "@types/react": "^19.1.17",
-    "nativewind": "^4.1.23",
-    "react": "19.1.0",
+    "@types/react": "^19.2.15",
+    "nativewind": "^4.2.4",
+    "react": "19.2.6",
     "react-native": "^0.81.5",
     "typescript": "^5.9.3",
     "vitest": "^3.2.1"
