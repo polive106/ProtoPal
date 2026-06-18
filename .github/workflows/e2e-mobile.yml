@@ -60,7 +60,7 @@ jobs:
         run: ./gradlew assembleDebug -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2
 
       - name: Upload APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: debug-apk
           path: packages/mobile/android/app/build/outputs/apk/debug/app-debug.apk
@@ -138,7 +138,7 @@ jobs:
             $HOME/.maestro/bin/maestro test packages/mobile/maestro/flows/
 
       - name: Upload Maestro artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: maestro-artifacts
