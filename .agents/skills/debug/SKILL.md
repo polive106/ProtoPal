@@ -11,7 +11,8 @@ description: Investigate bugs using a systematic approach: reproduce, identify t
 4. **Write a failing test** that demonstrates the bug
 5. **Fix the root cause** (not just the symptom)
 6. **Verify**: Run the test, ensure it passes
-7. **Run full suite**: `pnpm test && pnpm lint`
+7. **Verify narrowly, then widen once**: re-run the failing test, then
+   `pnpm test && pnpm lint`. See AGENTS.md → **Test Execution Policy**.
 
 ## Common Debug Commands
 
@@ -19,14 +20,18 @@ description: Investigate bugs using a systematic approach: reproduce, identify t
 # Check API responses
 curl -s http://localhost:3000/health | jq
 
-# Check database content
-pnpm --filter @acme/database db:studio
+# Check database content (db:studio is a persistent server — ask the user to run it)
+pnpm --filter @acme/database db:seed
 
 # Run specific test file
 pnpm --filter @acme/domain test -- --run src/use-cases/__tests__/MyUseCase.test.ts
 
-# Run E2E with visible browser
-pnpm test:e2e --headed --project=chromium
+# Re-run a single E2E spec (headless — never use --headed, it needs a display)
+pnpm test:e2e e2e/tests/notes/crud.spec.ts
+
+# Inspect the last failure without re-running anything
+cat test-results/*/error-context.md      # page snapshot at failure
+ls test-results/*/*.png                  # screenshot
 
 # Check TypeScript errors
 pnpm lint

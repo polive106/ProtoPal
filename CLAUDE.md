@@ -3,8 +3,19 @@
 This project uses AGENTS.md as the source of truth for all agent instructions. See [AGENTS.md](./AGENTS.md) for:
 - Architecture rules and stack details
 - TDD and E2E testing mandates
+- **[Test Execution Policy](./AGENTS.md#test-execution-policy)** — which suite to run when, and the commands that never exit
 - Process rules and commands
 - Database conventions
+
+## Before running any test command
+
+Read **[Test Execution Policy](./AGENTS.md#test-execution-policy)**. In short:
+
+- Run the narrowest command that can disprove your change; widen only at checkpoints.
+- `pnpm test:e2e` (the full suite) runs **once per story**, at the end — not per layer, not per commit.
+- Never re-run a suite that just passed and whose inputs have not changed.
+- After two identical failures, stop and report — a third run will not fix it.
+- Never start `pnpm dev`, `test:watch`, `--ui`, `--headed`, `show-report`, or `db:studio`; they never exit.
 
 ## Claude Code-Specific
 

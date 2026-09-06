@@ -102,7 +102,13 @@ appId: com.acme.protopal
 3. Update `e2e/seed.ts` if new test data is needed
 4. Create test file at `e2e/tests/<feature>/<test-name>.spec.ts`
 5. Tag tests with `@api` or `@ui`
-6. Run: `pnpm test:e2e`
+6. Run **only the spec you just wrote** while iterating on it:
+   ```bash
+   pnpm test:e2e e2e/tests/<feature>/<test-name>.spec.ts
+   pnpm test:e2e e2e/tests/<feature>/<test-name>.spec.ts --grep "should create"
+   ```
+   Run the full `pnpm test:e2e` once, after the spec is green — not on every edit.
+   Cross-browser (`E2E_BROWSERS=all`) is opt-in and not required for a new spec.
 
 ### Mobile (Maestro)
 1. Add `testID` props to all interactive React Native components

@@ -44,7 +44,8 @@ pnpm --filter @acme/database db:studio # Visual database explorer
 # Testing
 pnpm test                             # Run all unit tests
 pnpm lint                             # TypeScript type checking
-pnpm test:e2e                         # E2E tests (requires pnpm dev)
+pnpm test:e2e                         # E2E tests — starts its own API + frontend
+pnpm test:e2e:api                     # @api tests only (fastest useful signal)
 
 # Building
 pnpm build                            # Build all packages

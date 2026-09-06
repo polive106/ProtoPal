@@ -202,6 +202,9 @@ Before running `pnpm test:e2e:mobile`:
   1. `pnpm lint` — fix any TypeScript/linting errors
   2. `pnpm test` — ensure all tests pass
 
+  The `pre-commit` hook runs both again as a safety net. Do not run them a third
+  time by hand — see **Test Execution Policy**.
+
 ## TDD Rules
 
 **NEVER write implementation code without a failing test first.**
@@ -265,11 +268,82 @@ Use kebab-case: `{page}-{element-type}-{name}`
 ### Running E2E Tests
 
 ```bash
-npx playwright install --with-deps    # Required before first run
-pnpm test:e2e                         # Run all
-pnpm test:e2e --project=api           # API tests only
-pnpm test:e2e --headed                # With visible browser
+npx playwright install --with-deps         # Required before first run
+pnpm test:e2e                              # api + chromium (131 tests) — same set as CI
+pnpm test:e2e:api                          # @api tests only (~25s) — no browser needed
+pnpm test:e2e:web                          # @ui tests only (chromium)
+pnpm test:e2e e2e/tests/notes/crud.spec.ts # One spec file
+pnpm test:e2e --grep "should create"       # One test by title
+E2E_BROWSERS=all pnpm test:e2e             # + Firefox/WebKit (287 tests, ~3x slower)
 ```
+
+Firefox and WebKit are **opt-in**. By default the local suite runs exactly what
+CI runs, so a green local run means a green CI run. Reach for `E2E_BROWSERS=all`
+only for browser-specific changes (CSS, layout, browser APIs).
+
+See **Test Execution Policy** below before running any suite.
+
+## Test Execution Policy
+
+Re-running broad test suites after every edit is the single biggest cause of slow
+agent runs on this repo. **Run the narrowest command that can disprove the change
+you just made**, and widen only at the checkpoints below.
+
+### Scope ladder — pick the lowest rung that covers your change
+
+| Rung | Use when | Command |
+|------|----------|---------|
+| 1 | Iterating on one function/component | `pnpm --filter @acme/<pkg> test -- <path>` |
+| 2 | A layer is finished (domain, database, api, frontend) | `pnpm --filter @acme/<pkg> test` |
+| 3 | Writing or fixing one E2E spec | `pnpm test:e2e e2e/tests/<feature>/<name>.spec.ts` |
+| 4 | Backend change, before commit | `pnpm test:e2e:api` |
+| 5 | Before commit | `pnpm lint` + `pnpm test` |
+| 6 | **Once**, at story completion | `pnpm test:e2e` |
+
+### Rules
+
+1. **The full E2E suite runs once per story**, at the end — not per layer, not per
+   commit, not after each test you add.
+2. **Never re-run a suite that just passed** when nothing it covers has changed.
+   If `/implement-story` finished on a green `pnpm test:e2e`, `/story-complete`
+   records that result instead of running it again.
+3. **On failure, narrow before you widen.** Re-run only the failing spec
+   (by path, or `--grep "<title>"`) until it is green, then re-run the suite
+   **once** to confirm.
+4. **Cap re-runs at 2.** A third identical failure is a real bug or a broken
+   environment, never something a fourth run will fix — stop and report what
+   failed, with the error text.
+5. **Diagnose from artifacts, not from re-runs.** A failed run already wrote
+   everything you need (see below).
+6. **Cross-browser is opt-in** (`E2E_BROWSERS=all`) and is not part of the
+   definition of done — CI does not run it either.
+
+### Never run these — they never exit
+
+An agent that starts one of these blocks until it is killed. If one is genuinely
+needed, ask the user to run it.
+
+| Command | Why it blocks | Use instead |
+|---------|---------------|-------------|
+| `pnpm dev`, `pnpm --filter … dev` | Persistent dev server | Playwright starts its own via `webServer` |
+| `pnpm --filter … test:watch` | Vitest watch mode | `pnpm --filter … test` (`vitest run`) |
+| `pnpm test:e2e:uimode` / `playwright test --ui` | Interactive UI mode | `pnpm test:e2e <spec>` |
+| `pnpm test:e2e:headed` / `--headed` | Needs a display | Read the trace/screenshot artifacts |
+| `pnpm test:e2e:report` / `playwright show-report` | Serves on `:9323` until Ctrl+C | Read `playwright-report/` from disk |
+| `pnpm --filter @acme/database db:studio` | Persistent server | `pnpm --filter @acme/database db:seed` |
+
+> The Playwright config deliberately pins the HTML reporter to `open: 'never'`.
+> The bare `'html'` reporter defaults to `open: 'on-failure'`, which serves the
+> report and blocks — do not change it back.
+
+### Reading E2E failures without re-running
+
+| Artifact | Contains |
+|----------|----------|
+| `test-results/**/error-context.md` | Page snapshot at the moment of failure |
+| `test-results/**/*.png` | Screenshot (`screenshot: 'only-on-failure'`) |
+| `test-results/**/trace.zip` | Full trace (`trace: 'on-first-retry'`) |
+| `playwright-report/` | HTML report — written to disk, never served |
 
 ## Commands Reference
 
@@ -285,11 +359,17 @@ pnpm --filter @acme/database db:push    # Apply schema to SQLite
 pnpm --filter @acme/database db:seed    # Seed with sample data
 pnpm --filter @acme/database db:studio  # Visual database explorer
 
-# Testing
+# Testing (all of these exit on their own — safe for agents)
 pnpm test                               # All unit tests
-pnpm --filter @acme/domain test:watch   # TDD mode
-pnpm test:e2e                           # E2E tests (Playwright)
+pnpm --filter @acme/domain test         # One package's unit tests
+pnpm test:e2e                           # E2E tests (Playwright: api + chromium)
+pnpm test:e2e:api                       # E2E @api tests only (fastest useful signal)
 pnpm test:e2e:mobile                    # Mobile E2E (Maestro — requires device/emulator)
+
+# Interactive — HUMANS ONLY, these never exit (see Test Execution Policy)
+pnpm --filter @acme/domain test:watch   # Vitest watch (TDD mode)
+pnpm test:e2e:uimode                    # Playwright UI mode
+pnpm test:e2e:report                    # Serve the last HTML report on :9323
 
 # Building
 pnpm build                              # Build all packages

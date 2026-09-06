@@ -3,13 +3,23 @@ import { resolve } from 'path';
 
 const E2E_DATABASE_PATH = resolve(__dirname, './data/e2e-test.db');
 
+// Cross-browser coverage is opt-in. By default — locally and in CI — the suite
+// runs `api` + `chromium` only. Firefox/WebKit triple the @ui runtime and are
+// chained serially (they share one seeded database), so they are reserved for
+// explicit cross-browser checks: E2E_BROWSERS=all pnpm test:e2e
+const crossBrowser = process.env.E2E_BROWSERS === 'all';
+
 export default defineConfig({
   testDir: './e2e/tests',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? 'github' : 'html',
+  // NEVER use the bare 'html' reporter: it defaults to open: 'on-failure', which
+  // serves the report on :9323 and blocks until Ctrl+C. Under an agent or any
+  // other non-interactive runner that is an unrecoverable hang, so the report is
+  // always written to disk and never served (view it with `pnpm test:e2e:report`).
+  reporter: process.env.CI ? 'github' : [['list'], ['html', { open: 'never' }]],
   timeout: 30_000,
 
   use: {
@@ -33,9 +43,8 @@ export default defineConfig({
       grep: /@ui/,
       dependencies: ['api'],
     },
-    ...(process.env.CI
-      ? []
-      : [
+    ...(crossBrowser
+      ? [
           {
             name: 'firefox',
             use: { ...devices['Desktop Firefox'] },
@@ -48,7 +57,8 @@ export default defineConfig({
             grep: /@ui/,
             dependencies: ['firefox'],
           },
-        ]),
+        ]
+      : []),
   ],
 
   webServer: [

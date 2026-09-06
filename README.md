@@ -184,9 +184,12 @@ pnpm --filter @acme/database db:setup:mongo  # Create collections, indexes, seed
 
 # Testing
 pnpm test                             # Run all unit tests
-pnpm test:watch                       # Watch mode
-pnpm test:e2e                         # E2E tests (requires pnpm dev)
-pnpm test:e2e --headed                # With visible browser
+pnpm --filter @acme/domain test:watch # Watch mode (interactive — does not exit)
+pnpm test:e2e                         # E2E tests: api + chromium (same set as CI)
+pnpm test:e2e:api                     # @api tests only (fastest useful signal)
+pnpm test:e2e:web                     # @ui tests only (chromium)
+E2E_BROWSERS=all pnpm test:e2e        # + Firefox/WebKit (opt-in, ~3x slower)
+pnpm test:e2e:report                  # Open the last HTML report (serves on :9323)
 
 # Mobile E2E Testing (requires Android emulator + Maestro CLI)
 pnpm build:mobile                     # Build Android debug APK

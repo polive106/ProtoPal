@@ -10,7 +10,10 @@ disable-model-invocation: true
 2. **Categorize the failure**:
    - **Lint**: TypeScript errors → run `pnpm lint` locally
    - **Test**: Unit test failure → run `pnpm test` locally
-   - **E2E**: Playwright failure → run `pnpm test:e2e` locally
+   - **E2E**: Playwright failure → reproduce the *failing spec only*
+     (`pnpm test:e2e <spec path>` or `--grep "<test title>"`), fix it, then run
+     `pnpm test:e2e` once to confirm. The local default now matches CI exactly
+     (`api` + `chromium`), so a green local run means a green CI run.
    - **Build**: Compilation error → run `pnpm build` locally
    - **Install**: Dependency issue → check lockfile
 3. **Reproduce locally**: Use the same commands as CI

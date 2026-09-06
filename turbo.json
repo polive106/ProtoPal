@@ -11,11 +11,10 @@
       "persistent": true
     },
     "test": {
-      "dependsOn": ["build"],
       "outputs": []
     },
     "test:e2e": {
-      "dependsOn": ["build"],
+      "cache": false,
       "outputs": []
     },
     "lint": {

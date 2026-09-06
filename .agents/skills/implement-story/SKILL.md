@@ -16,13 +16,22 @@ disable-model-invocation: true
    - Verify test passes
    - Refactor if needed
 6. **Add E2E tests** — use `/add-e2e-tests` skill. Must include **both** API tests (`@api` tag) and UI browser tests (`@ui` tag)
-7. **Verify everything passes**:
+7. **Verify — once, at the end.** Follow the scope ladder in AGENTS.md
+   (**Test Execution Policy**) while building: run each layer's own package tests
+   as you finish it, and a single spec while writing E2E tests. Only when the
+   whole story is implemented, run the full gate:
    ```bash
    pnpm lint
    pnpm test
-   pnpm test:e2e
-   pnpm test:e2e:mobile  # if mobile layer is affected
+   pnpm test:e2e                # once — api + chromium, same set as CI
+   pnpm test:e2e:mobile         # only if the mobile layer changed
    ```
+   If something fails, re-run **only** the failing spec until it is green, then
+   re-run the suite once to confirm. Stop and report after two identical
+   failures — do not keep re-running the suite.
+
+   Record the result (pass/fail + timestamp) so `/story-complete` does not
+   repeat this run.
 8. **Update story status** — mark checkboxes and set status to "Done"
 9. **Update epic README** — set the story's status column to "Done" in the epic README table
 10. **Update USER_FEATURES.md** — add new features for affected user types
