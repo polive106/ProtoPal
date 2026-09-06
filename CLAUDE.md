@@ -12,7 +12,16 @@ This project uses AGENTS.md as the source of truth for all agent instructions. S
 Read **[Test Execution Policy](./AGENTS.md#test-execution-policy)**. In short:
 
 - Run the narrowest command that can disprove your change; widen only at checkpoints.
-- `pnpm test:e2e` (the full suite) runs **once per story**, at the end — not per layer, not per commit.
+- `pnpm test:e2e` (the full suite) runs **exactly once per story, inside `/commit`**:
+
+  ```
+  implement → write E2E specs → /simplify → /review → /commit (lint, test, test:e2e, commit)
+  ```
+
+- **`/commit` owns the gate.** `/implement-story` and `/story-complete` never run the
+  full suite themselves. Typing `pnpm test:e2e` outside `/commit` duplicates a run.
+- **Never run it before `/simplify`** — `/simplify` and `/review` rewrite source, so a
+  suite run before them is invalidated by the next edit.
 - Never re-run a suite that just passed and whose inputs have not changed.
 - After two identical failures, stop and report — a third run will not fix it.
 - Never start `pnpm dev`, `test:watch`, `--ui`, `--headed`, `show-report`, or `db:studio`; they never exit.

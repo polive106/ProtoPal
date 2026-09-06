@@ -4,15 +4,25 @@ description: Automates pre-commit workflow: lint, test, review changes, then com
 disable-model-invocation: true
 ---
 
+## Prerequisite
+
+Run `/simplify` and `/review` **before** this skill, and apply what they find. Both
+rewrite source, so a suite run before them is invalidated by the very next edit.
+
+This skill owns the gate: it is the **only** place the full E2E suite runs, and it runs
+once, here, on source that has stopped moving.
+
 ## Steps
 
-1. **Run lint**: `pnpm lint` — *skip if it already passed and nothing changed since*
+1. **Run lint**: `pnpm lint`
    - Fix any TypeScript errors
-2. **Run tests**: `pnpm test` — *skip if it already passed and nothing changed since*
+2. **Run unit tests**: `pnpm test`
    - Fix any failing tests
-3. **Run API E2E tests**: `pnpm test:e2e:api` (~25s)
-   - Only when the commit touches domain, database, or API code
-   - Fix any failing E2E tests
+3. **Run the full E2E suite**: `pnpm test:e2e` (api + chromium — the same set as CI)
+   - Add `pnpm test:e2e:mobile` only if the mobile layer changed
+   - On failure, re-run **only** the failing spec (by path, or `--grep "<title>"`)
+     until it is green, then re-run the suite once to confirm
+   - Stop and report after two identical failures — a third run will not fix it
 4. **Review changes**: `git diff --staged`
 5. **Format commit message** using conventional commits:
    - `feat: add note deletion`
@@ -24,12 +34,20 @@ disable-model-invocation: true
 
 ## Avoid duplicate test runs
 
-The `pre-commit` hook already runs `pnpm lint` and `pnpm test` on every commit.
-Steps 1–2 exist only to surface a failure *before* the commit is attempted — if you
-have just run them and nothing changed since, skip straight to step 4.
+Steps 1–3 are the **only** full-suite run in the story. `/implement-story` does not run
+them, and neither does `/story-complete` — both defer to this skill. Nothing else should
+run `pnpm test:e2e`. See AGENTS.md → **Test Execution Policy**.
 
-Never run the full `pnpm test:e2e` suite here. That belongs once, at story
-completion (see AGENTS.md → **Test Execution Policy**).
+The `pre-commit` hook re-runs `pnpm lint` and `pnpm test` as a safety net. That is
+expected; do not run them a third time by hand.
+
+### Several commits in one story
+
+Keep commits atomic, but do **not** pay for the E2E suite on each one. Run steps 1–3 on
+the commit that **completes** the story. For an intermediate commit you will build on in
+the same story, skip step 3 and use the narrow rungs instead
+(`pnpm test:e2e:api`, or the single spec you touched) — the completing commit covers the
+whole change.
 
 ## Conventional Commit Types
 

@@ -16,25 +16,21 @@ disable-model-invocation: true
    - Verify test passes
    - Refactor if needed
 6. **Add E2E tests** — use `/add-e2e-tests` skill. Must include **both** API tests (`@api` tag) and UI browser tests (`@ui` tag)
-7. **Verify — once, at the end.** Follow the scope ladder in AGENTS.md
-   (**Test Execution Policy**) while building: run each layer's own package tests
-   as you finish it, and a single spec while writing E2E tests. Only when the
-   whole story is implemented, run the full gate:
-   ```bash
-   pnpm lint
-   pnpm test
-   pnpm test:e2e                # once — api + chromium, same set as CI
-   pnpm test:e2e:mobile         # only if the mobile layer changed
-   ```
-   If something fails, re-run **only** the failing spec until it is green, then
-   re-run the suite once to confirm. Stop and report after two identical
-   failures — do not keep re-running the suite.
+7. **Clean up before committing** — run `/simplify`, then `/review`, and apply what
+   they find. Both rewrite source, so they must happen **before** `/commit`.
+   Do **not** run `pnpm test:e2e` yet: a suite run now is invalidated by the very
+   next edit.
+8. **Commit** — use `/commit`. It runs the gate (`pnpm lint`, `pnpm test`,
+   `pnpm test:e2e`) once and then commits. **Do not run the test suites yourself
+   here** — that is what makes them run twice.
 
-   Record the result (pass/fail + timestamp) so `/story-complete` does not
-   repeat this run.
-8. **Update story status** — mark checkboxes and set status to "Done"
-9. **Update epic README** — set the story's status column to "Done" in the epic README table
-10. **Update USER_FEATURES.md** — add new features for affected user types
+   While building (steps 1–6) you should already have used the scope ladder in
+   AGENTS.md (**Test Execution Policy**): each layer's own package tests as you
+   finish it, and a single spec while writing E2E tests. `/commit` is the first
+   and only full-suite run.
+9. **Update story status** — mark checkboxes and set status to "Done"
+10. **Update epic README** — set the story's status column to "Done" in the epic README table
+11. **Update USER_FEATURES.md** — add new features for affected user types
 
 ## Example: Implementing a Note use case
 
@@ -67,6 +63,8 @@ packages/mobile/maestro/flows/notes/
 
 ## Definition of Done
 - [ ] All acceptance criteria checked
+- [ ] `/simplify` and `/review` run **before** `/commit`, and their fixes applied
+- [ ] Full `pnpm test:e2e` run exactly once, by `/commit`
 - [ ] Unit tests pass (`pnpm test`)
 - [ ] Lint passes (`pnpm lint`)
 - [ ] E2E API tests pass (`@api` tagged tests)

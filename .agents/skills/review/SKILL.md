@@ -3,6 +3,10 @@ name: review
 description: Pre-commit quality checklist covering security, testing, architecture, and code quality.
 ---
 
+Run this **before** the E2E gate, not after — this checklist produces code changes, and
+any suite run before them is invalidated. See AGENTS.md → **Test Execution Policy** →
+*Story gate order*.
+
 ## Checklist
 
 ### Security
@@ -18,6 +22,8 @@ description: Pre-commit quality checklist covering security, testing, architectu
 - [ ] E2E tests cover the feature
 - [ ] All tests pass (`pnpm test`)
 - [ ] Lint passes (`pnpm lint`)
+- [ ] E2E specs exist and are written — the full suite runs at the gate *after* this
+      checklist and `/simplify`, not now
 
 ### Architecture
 - [ ] Domain has no external dependencies

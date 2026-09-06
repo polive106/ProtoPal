@@ -133,10 +133,33 @@ guidance on running a single spec, no `--grep`, no per-package filter, and no st
 repeated failures. Given only "run `pnpm test:e2e`", re-running the whole suite is the only
 tool the agent has when something fails.
 
+### The suite also ran at the wrong point in the story
+
+Even reduced to one run, *when* it runs matters. `/simplify` (and `/review`) rewrite source
+as their whole purpose. A suite that runs before them is invalidated by the very next edit —
+so the old flow either wasted the run or, worse, invited a second one to re-confirm.
+
+The suite now has exactly one owner — `/commit` — and it sits after everything that can
+still change code:
+
+```
+1. Implement layer by layer      → that layer's package tests only
+2. Write the E2E specs           → the single spec being written
+3. /simplify                     → applies reuse/simplification cleanups
+4. /review                       → security + quality checklist; apply fixes
+5. /commit                       → runs the gate (lint, test, test:e2e), then commits
+```
+
+Putting the gate inside `/commit` rather than in a step of its own removes the failure mode
+where `/implement-story` verifies, then `/commit` verifies the same tree again: there is now
+only one place in the whole workflow that types `pnpm test:e2e`, so a duplicate run requires
+someone to go out of their way. When a story needs several atomic commits, the suite runs on
+the commit that completes it; intermediate commits use the narrow rungs.
+
 **Fix:** a new **Test Execution Policy** section in `AGENTS.md` (summarised in `CLAUDE.md`) with:
 
 - a **six-rung scope ladder** — narrowest command that can disprove the change, widen at checkpoints;
-- **full E2E once per story**, at the end;
+- **full E2E once per story**, inside `/commit` — never before `/simplify`;
 - **never re-run a suite that just passed** on unchanged inputs — `/story-complete` now carries
   `/implement-story`'s result forward via a change-scoped lookup table;
 - **on failure, narrow before widening** — re-run the failing spec, not the suite;
@@ -229,10 +252,11 @@ starts the blocking report server — the agent would have stopped there until k
 | `turbo.json` | `test` no longer depends on `build` |
 | `AGENTS.md` | New **Test Execution Policy**; blocking-command table; scoped E2E command examples; watch-mode commands quarantined |
 | `CLAUDE.md` | Summary of the policy at the point the agent reads first |
-| `.agents/skills/implement-story` | Full suite once, at the end; record the result |
+| `.agents/skills/implement-story` | `/simplify` + `/review` inserted before `/commit`; runs no suites itself |
 | `.agents/skills/story-complete` | Do not re-run; change-scoped lookup table |
-| `.agents/skills/commit` | Skip lint/test if already green; `test:e2e:api` only for backend commits; notes the hook re-runs them |
-| `.agents/skills/add-e2e-tests` | Iterate on the single spec, not the suite |
+| `.agents/skills/commit` | Owns the gate: the single `pnpm lint` + `pnpm test` + `pnpm test:e2e` run for the story, plus guidance for multi-commit stories |
+| `.agents/skills/add-e2e-tests` | Iterate on the single spec; no full-suite run from this skill |
+| `.agents/skills/review` | Runs before the gate, since the checklist produces code changes |
 | `.agents/skills/debug` | Read failure artifacts; no `--headed` |
 | `.agents/skills/fix-ci` | Reproduce the failing spec first; local default now equals CI |
 | `README.md`, `docs/getting-started.md` | Removed the false "requires `pnpm dev`"; documented scoped commands |

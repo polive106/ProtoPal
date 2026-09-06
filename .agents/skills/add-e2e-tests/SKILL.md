@@ -107,8 +107,10 @@ appId: com.acme.protopal
    pnpm test:e2e e2e/tests/<feature>/<test-name>.spec.ts
    pnpm test:e2e e2e/tests/<feature>/<test-name>.spec.ts --grep "should create"
    ```
-   Run the full `pnpm test:e2e` once, after the spec is green — not on every edit.
-   Cross-browser (`E2E_BROWSERS=all`) is opt-in and not required for a new spec.
+   **Stop there.** Do not run the full `pnpm test:e2e` from this skill — `/commit` runs
+   it once, after `/simplify` and `/review` (AGENTS.md → **Test Execution Policy** →
+   *Story gate order*). Cross-browser (`E2E_BROWSERS=all`) is opt-in and not required
+   for a new spec.
 
 ### Mobile (Maestro)
 1. Add `testID` props to all interactive React Native components

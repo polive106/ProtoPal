@@ -10,8 +10,9 @@ disable-model-invocation: true
 2. **Status**: Story status set to "Done"
 3. **Epic README**: Epic README status column updated to "Done"
 4. **Tests pass** — do **not** re-run suites that already passed.
-   `/implement-story` ends on a green `pnpm lint` + `pnpm test` + `pnpm test:e2e`.
-   If nothing has changed since, carry that result forward and skip to step 5.
+   `/commit` runs the gate (`pnpm lint` + `pnpm test` + `pnpm test:e2e`) once, after
+   `/simplify` and `/review`, and commits on that result. If nothing has changed since,
+   carry it forward and skip to step 5.
 
    Re-run only what the intervening edits touched:
    | Changed since the last green run | Run |

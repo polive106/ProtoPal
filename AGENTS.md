@@ -296,14 +296,43 @@ you just made**, and widen only at the checkpoints below.
 | 1 | Iterating on one function/component | `pnpm --filter @acme/<pkg> test -- <path>` |
 | 2 | A layer is finished (domain, database, api, frontend) | `pnpm --filter @acme/<pkg> test` |
 | 3 | Writing or fixing one E2E spec | `pnpm test:e2e e2e/tests/<feature>/<name>.spec.ts` |
-| 4 | Backend change, before commit | `pnpm test:e2e:api` |
-| 5 | Before commit | `pnpm lint` + `pnpm test` |
-| 6 | **Once**, at story completion | `pnpm test:e2e` |
+| 4 | Checking a backend change mid-story, without a browser | `pnpm test:e2e:api` |
+| 5 | Inside `/commit`, after `/simplify` and `/review` | `pnpm lint` + `pnpm test` |
+| 6 | Inside `/commit` — **once** per story | `pnpm test:e2e` |
+
+Rungs 1–4 are for iterating. Rungs 5–6 belong to `/commit` and nothing else — do not run
+them yourself before invoking it.
+
+### Story gate order
+
+The full E2E suite runs **exactly once per story**, and it runs **last** — after every
+step that can still change code, immediately before the commit:
+
+```
+1. Implement layer by layer      → rungs 1–2 (that layer's package tests only)
+2. Write the E2E specs           → rung 3 (the single spec you are writing)
+3. /simplify                     → applies reuse/simplification cleanups
+4. /review                       → security + quality checklist; apply any fixes
+5. /commit                       → runs the gate (lint, test, test:e2e), then commits
+```
+
+**`/commit` is the only place the full suite runs.** `/implement-story` does not run it;
+`/story-complete` does not re-run it. If you find yourself typing `pnpm test:e2e`
+outside `/commit`, you are about to duplicate a run.
+
+**Do not run it before step 5 either.** `/simplify` and `/review` both rewrite source, so
+any suite run before them is invalidated by the very next step — the clearest example of
+the waste this policy exists to prevent. Steps 3 and 4 are cheap and change code; the
+suite is expensive and only proves something once the code has stopped moving.
+
+`/simplify` is provided by Claude Code. Under a harness that does not offer it, do the
+equivalent cleanup pass by hand at step 3 — the ordering matters, not the tool.
 
 ### Rules
 
-1. **The full E2E suite runs once per story**, at the end — not per layer, not per
-   commit, not after each test you add.
+1. **The full E2E suite runs once per story, inside `/commit`** — not per layer, not
+   after each test you add, and never before `/simplify`. When a story needs several
+   atomic commits, the suite runs on the one that completes it.
 2. **Never re-run a suite that just passed** when nothing it covers has changed.
    If `/implement-story` finished on a green `pnpm test:e2e`, `/story-complete`
    records that result instead of running it again.
