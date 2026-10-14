@@ -201,7 +201,7 @@ pnpm lint                             # Type check all packages
 
 | Workflow | File | Trigger | What it does |
 |----------|------|---------|-------------|
-| Tests | `test.yml` | push/PR to main | Lint + unit tests + security audit |
+| Tests | `test.yml` | push/PR to main | Lint + unit tests |
 | E2E Tests | `e2e.yml` | push/PR to main | Playwright browser E2E tests |
 | Security Audit | `security-audit.yml` | Weekly (Monday 9am UTC) / manual | Full dependency audit, opens GitHub issue on findings |
 | Mobile E2E Tests | `e2e-mobile.yml` | manual (`workflow_dispatch`) | Builds Android debug APK + runs Maestro flows on emulator |
@@ -210,7 +210,6 @@ pnpm lint                             # Type check all packages
 
 ### Dependency Security
 
-- **Automated scanning**: `pnpm audit --audit-level=high` runs on every push/PR. CI fails on critical or high severity vulnerabilities.
 - **Weekly audit**: A scheduled workflow runs every Monday and opens a GitHub issue if new vulnerabilities are found.
 - **Dependabot**: Configured to create PRs for dependency updates (npm packages and GitHub Actions) weekly.
 - **Lock file integrity**: CI verifies `pnpm-lock.yaml` is not modified by `pnpm install --frozen-lockfile`.
@@ -218,7 +217,7 @@ pnpm lint                             # Type check all packages
 
 ## Recommended Workflow
 
-1. **Create a pull request.** Every change goes through a PR so the [CI workflows](#ci-workflows) (lint, unit tests, E2E, security audit) run against it.
+1. **Create a pull request.** Every change goes through a PR so the [CI workflows](#ci-workflows) (lint, unit tests, E2E) run against it.
 2. **Test it on a PR environment.** Sign up for a deployment service that spins up a preview environment per pull request (for example Render Preview Environments or Railway PR Environments), so you and reviewers can try the change on a live URL before it lands. Give each preview its own Postgres database: set `DATABASE_URL` and run `pnpm --filter @acme/database db:migrate` (plus `db:seed` for sample data) as part of the deploy.
 3. **Merge the pull request** once CI is green and the preview environment checks out.
 
