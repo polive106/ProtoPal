@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { resolve } from 'path';
 
-const E2E_DATABASE_PATH = resolve(__dirname, '../data/e2e-test.db');
+const E2E_DATABASE_PATH = resolve(__dirname, '../data/pglite-e2e');
 
 // Kill any existing dev servers on ports 3000 and 5173
 try {

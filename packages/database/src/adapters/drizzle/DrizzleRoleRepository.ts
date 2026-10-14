@@ -20,22 +20,22 @@ export class DrizzleRoleRepository implements RoleRepository {
       createdAt: now,
       updatedAt: now,
     };
-    this.db.insert(roles).values(row).run();
+    await this.db.insert(roles).values(row);
     return this.mapRow(row);
   }
 
   async findById(id: string): Promise<Role | null> {
-    const row = this.db.select().from(roles).where(eq(roles.id, id)).get();
+    const [row] = await this.db.select().from(roles).where(eq(roles.id, id)).limit(1);
     return row ? this.mapRow(row) : null;
   }
 
   async findByName(name: string): Promise<Role | null> {
-    const row = this.db.select().from(roles).where(eq(roles.name, name)).get();
+    const [row] = await this.db.select().from(roles).where(eq(roles.name, name)).limit(1);
     return row ? this.mapRow(row) : null;
   }
 
   async findAll(): Promise<Role[]> {
-    const rows = this.db.select().from(roles).all();
+    const rows = await this.db.select().from(roles);
     return rows.map((r) => this.mapRow(r));
   }
 

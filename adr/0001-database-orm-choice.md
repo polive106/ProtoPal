@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Accepted — the SQLite-for-local-development part is superseded by [ADR-0007](./0007-pglite-local-database.md) (PGlite). Drizzle remains the ORM.
 
 ## Context
 

@@ -14,7 +14,7 @@ We adopted **Playwright** with the following architecture:
 
 - **`data-testid` selectors only** — no CSS selectors, no text matching. Naming convention: `{page}-{element-type}-{name}` in kebab-case (e.g., `login-input-email`, `notes-btn-edit-{id}`).
 - **Two test projects**: `@api` (API-level tests via `request`) and `@ui` (browser tests via `page`). API tests run first; UI tests depend on them.
-- **Dedicated E2E database** — a separate SQLite file seeded before each run, isolated from development data.
+- **Dedicated E2E database** — a separate PGlite data directory seeded before each run, isolated from development data.
 - **Shared fixtures** — API helpers, test credentials, and `data-testid` constants live in `e2e/fixtures/`.
 - **Tag-based execution** — `@api` and `@ui` tags allow running subsets independently.
 

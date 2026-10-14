@@ -7,16 +7,16 @@ export class DrizzleRateLimitRepository implements RateLimitRepository {
   constructor(private readonly db: DatabaseConnection) {}
 
   async get(key: string): Promise<RateLimitEntry | null> {
-    const row = this.db
+    const [row] = await this.db
       .select()
       .from(rateLimitEntries)
       .where(eq(rateLimitEntries.key, key))
-      .get();
+      .limit(1);
     return row ?? null;
   }
 
   async upsert(entry: RateLimitEntry): Promise<void> {
-    this.db
+    await this.db
       .insert(rateLimitEntries)
       .values(entry)
       .onConflictDoUpdate({
@@ -28,20 +28,19 @@ export class DrizzleRateLimitRepository implements RateLimitRepository {
           prevWindowStart: entry.prevWindowStart,
           expiresAt: entry.expiresAt,
         },
-      })
-      .run();
+      });
   }
 
   async deleteExpired(): Promise<number> {
     const now = Date.now();
-    const result = this.db
+    const deleted = await this.db
       .delete(rateLimitEntries)
       .where(lt(rateLimitEntries.expiresAt, now))
-      .run();
-    return result.changes;
+      .returning({ key: rateLimitEntries.key });
+    return deleted.length;
   }
 
   async deleteAll(): Promise<void> {
-    this.db.delete(rateLimitEntries).run();
+    await this.db.delete(rateLimitEntries);
   }
 }

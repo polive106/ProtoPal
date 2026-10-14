@@ -57,7 +57,7 @@ Domain (zero deps) → Database → API → Frontend → E2E
 
 The scaffold already proves it:
 
-- **Swap databases**: The app ships with both SQLite (local dev/E2E tests) and PostgreSQL (production) adapters. Switching between them is a single injection change. Want MongoDB? Implement the Domain port — the business logic doesn't change
+- **Swap databases**: The app runs on PostgreSQL everywhere — embedded [PGlite](https://pglite.dev) for local dev and tests, a real server in production — selected by `DATABASE_URL`. Want MongoDB? Implement the Domain port — the business logic doesn't change
 - **Swap API frameworks**: This repo started on Hono, then moved to NestJS for a project with stricter security requirements. The migration only touched the API adapter layer — Domain and Database stayed untouched
 
 ### Quality Guardrails
@@ -123,7 +123,7 @@ The typical workflow: kick off `/implement-story` from the Claude mobile app, an
 |---------|-----------|
 | `@acme/shared` | Pure TypeScript types |
 | `@acme/domain` | Entities, ports, use cases (zero deps) |
-| `@acme/database` | Drizzle ORM — SQLite (local) / PostgreSQL (prod) / [MongoDB](docs/mongodb.md) (alternative) |
+| `@acme/database` | Drizzle ORM — PostgreSQL (PGlite locally) / [MongoDB](docs/mongodb.md) (alternative) |
 | `@acme/api` | NestJS REST API |
 | `@acme/design-system` | Radix UI + Tailwind components |
 | `@acme/frontend` | React + Vite + TanStack Router/Query |
@@ -165,7 +165,7 @@ pnpm --filter @acme/api dev           # API only (port 3000)
 pnpm --filter @acme/frontend dev      # Frontend only (port 5173)
 
 # Database
-pnpm --filter @acme/database db:push  # Apply schema to SQLite
+pnpm --filter @acme/database db:generate # Generate a migration after a schema change
 pnpm --filter @acme/database db:seed  # Seed with sample data
 pnpm --filter @acme/database db:studio # Visual database explorer
 ```
@@ -201,7 +201,7 @@ pnpm lint                             # Type check all packages
 
 | Workflow | File | Trigger | What it does |
 |----------|------|---------|-------------|
-| Tests | `test.yml` | push/PR to main | Lint + unit tests + security audit |
+| Tests | `test.yml` | push/PR to main | Lint + unit tests |
 | E2E Tests | `e2e.yml` | push/PR to main | Playwright browser E2E tests |
 | Security Audit | `security-audit.yml` | Weekly (Monday 9am UTC) / manual | Full dependency audit, opens GitHub issue on findings |
 | Mobile E2E Tests | `e2e-mobile.yml` | manual (`workflow_dispatch`) | Builds Android debug APK + runs Maestro flows on emulator |
@@ -210,11 +210,16 @@ pnpm lint                             # Type check all packages
 
 ### Dependency Security
 
-- **Automated scanning**: `pnpm audit --audit-level=high` runs on every push/PR. CI fails on critical or high severity vulnerabilities.
 - **Weekly audit**: A scheduled workflow runs every Monday and opens a GitHub issue if new vulnerabilities are found.
 - **Dependabot**: Configured to create PRs for dependency updates (npm packages and GitHub Actions) weekly.
 - **Lock file integrity**: CI verifies `pnpm-lock.yaml` is not modified by `pnpm install --frozen-lockfile`.
 - **Manual audit**: Run `pnpm audit` locally to check for known vulnerabilities.
+
+## Recommended Workflow
+
+1. **Create a pull request.** Every change goes through a PR so the [CI workflows](#ci-workflows) (lint, unit tests, E2E) run against it.
+2. **Test it on a PR environment.** Sign up for a deployment service that spins up a preview environment per pull request (for example Render Preview Environments or Railway PR Environments), so you and reviewers can try the change on a live URL before it lands. Give each preview its own Postgres database: set `DATABASE_URL` and run `pnpm --filter @acme/database db:migrate` (plus `db:seed` for sample data) as part of the deploy.
+3. **Merge the pull request** once CI is green and the preview environment checks out.
 
 ## Project Structure
 
@@ -222,7 +227,7 @@ pnpm lint                             # Type check all packages
 packages/
   shared/           # Shared TypeScript types
   domain/           # Business logic (entities, ports, use cases)
-  database/         # Drizzle ORM (SQLite local, PostgreSQL prod)
+  database/         # Drizzle ORM (PostgreSQL; PGlite locally)
   api/              # NestJS REST API
   design-system/    # Radix UI + Tailwind components
   frontend/         # React + TanStack Router/Query

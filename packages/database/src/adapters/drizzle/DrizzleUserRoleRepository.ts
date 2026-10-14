@@ -18,7 +18,7 @@ export class DrizzleUserRoleRepository implements UserRoleRepository {
       assignedAt: now,
       assignedBy: dto.assignedBy ?? null,
     };
-    this.db.insert(userRoles).values(row).run();
+    await this.db.insert(userRoles).values(row);
     return {
       id,
       userId: dto.userId,
@@ -29,18 +29,17 @@ export class DrizzleUserRoleRepository implements UserRoleRepository {
   }
 
   async getUserWithRoles(userId: string): Promise<UserWithRoles | null> {
-    const user = this.db.select().from(users).where(eq(users.id, userId)).get();
+    const [user] = await this.db.select().from(users).where(eq(users.id, userId)).limit(1);
     if (!user) return null;
 
-    const userRoleRows = this.db
+    const userRoleRows = await this.db
       .select({
         roleId: userRoles.roleId,
         roleName: roles.name,
       })
       .from(userRoles)
       .innerJoin(roles, eq(userRoles.roleId, roles.id))
-      .where(eq(userRoles.userId, userId))
-      .all();
+      .where(eq(userRoles.userId, userId));
 
     return {
       userId: user.id,
@@ -58,11 +57,10 @@ export class DrizzleUserRoleRepository implements UserRoleRepository {
   }
 
   async findByUserId(userId: string): Promise<UserRole[]> {
-    const rows = this.db
+    const rows = await this.db
       .select()
       .from(userRoles)
-      .where(eq(userRoles.userId, userId))
-      .all();
+      .where(eq(userRoles.userId, userId));
     return rows.map((r) => ({
       id: r.id,
       userId: r.userId,
@@ -73,6 +71,6 @@ export class DrizzleUserRoleRepository implements UserRoleRepository {
   }
 
   async delete(id: string): Promise<void> {
-    this.db.delete(userRoles).where(eq(userRoles.id, id)).run();
+    await this.db.delete(userRoles).where(eq(userRoles.id, id));
   }
 }

@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { sql } from 'drizzle-orm';
-import { createTestConnection, type DatabaseConnection } from '../../connections/sql';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import type { DatabaseConnection } from '../../connections/sql';
+import { setupTestDb, teardownTestDb, clearTables } from './test-helper';
 import { DrizzleUserRepository } from './DrizzleUserRepository';
 import { DrizzleRoleRepository } from './DrizzleRoleRepository';
 
@@ -8,13 +8,16 @@ describe('DrizzleUserRepository', () => {
   let db: DatabaseConnection;
   let repo: DrizzleUserRepository;
 
-  beforeEach(() => {
-    db = createTestConnection();
-    // Create tables
-    db.run(sql`CREATE TABLE IF NOT EXISTS roles (id TEXT PRIMARY KEY, name TEXT NOT NULL UNIQUE, display_name TEXT NOT NULL, description TEXT, is_system INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`);
-    db.run(sql`CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, password_hash TEXT, first_name TEXT NOT NULL, last_name TEXT NOT NULL, is_active INTEGER NOT NULL DEFAULT 1, status TEXT NOT NULL DEFAULT 'pending', token_version INTEGER NOT NULL DEFAULT 0, last_login_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`);
-    db.run(sql`CREATE TABLE IF NOT EXISTS user_roles (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, role_id TEXT NOT NULL REFERENCES roles(id) ON DELETE CASCADE, assigned_at INTEGER NOT NULL, assigned_by TEXT REFERENCES users(id))`);
-    db.run(sql`CREATE TABLE IF NOT EXISTS notes (id TEXT PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`);
+  beforeAll(async () => {
+    db = await setupTestDb();
+  });
+
+  afterAll(async () => {
+    await teardownTestDb();
+  });
+
+  beforeEach(async () => {
+    await clearTables();
     repo = new DrizzleUserRepository(db);
   });
 

@@ -3,7 +3,7 @@ import { resolve, join } from 'path';
 import { existsSync } from 'fs';
 
 const ROOT = resolve(__dirname, '..');
-const E2E_DATABASE_PATH = resolve(ROOT, 'data/e2e-mobile.db');
+const E2E_DATABASE_PATH = resolve(ROOT, 'data/pglite-e2e-mobile');
 const APK_PATH = resolve(
   ROOT,
   'packages/mobile/android/app/build/outputs/apk/debug/app-debug.apk',

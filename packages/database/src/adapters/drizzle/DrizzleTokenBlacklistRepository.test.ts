@@ -1,15 +1,22 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { sql } from 'drizzle-orm';
-import { createTestConnection, type DatabaseConnection } from '../../connections/sql';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import type { DatabaseConnection } from '../../connections/sql';
+import { setupTestDb, teardownTestDb, clearTables } from './test-helper';
 import { DrizzleTokenBlacklistRepository } from './DrizzleTokenBlacklistRepository';
 
 describe('DrizzleTokenBlacklistRepository', () => {
   let db: DatabaseConnection;
   let repo: DrizzleTokenBlacklistRepository;
 
-  beforeEach(() => {
-    db = createTestConnection();
-    db.run(sql`CREATE TABLE IF NOT EXISTS token_blacklist (id TEXT PRIMARY KEY, token_hash TEXT NOT NULL UNIQUE, expires_at INTEGER NOT NULL, created_at INTEGER NOT NULL)`);
+  beforeAll(async () => {
+    db = await setupTestDb();
+  });
+
+  afterAll(async () => {
+    await teardownTestDb();
+  });
+
+  beforeEach(async () => {
+    await clearTables();
     repo = new DrizzleTokenBlacklistRepository(db);
   });
 

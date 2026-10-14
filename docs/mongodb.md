@@ -1,6 +1,6 @@
 # MongoDB Support
 
-ProtoPal supports MongoDB as an alternative database backend alongside Drizzle SQL (SQLite/PostgreSQL). Switching between backends requires only an environment variable change — the domain layer and API endpoints remain identical.
+ProtoPal supports MongoDB as an alternative database backend alongside Drizzle PostgreSQL (PGlite locally). Switching between backends requires only an environment variable change — the domain layer and API endpoints remain identical.
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Set the `MONGODB_URL` environment variable in your `.env` file:
 MONGODB_URL=mongodb://localhost:27017/protopal
 ```
 
-When `MONGODB_URL` is set, the application automatically uses MongoDB. When it is not set (or commented out), the application falls back to SQL (SQLite or PostgreSQL).
+When `MONGODB_URL` is set, the application automatically uses MongoDB. When it is not set (or commented out), the application falls back to PostgreSQL (PGlite, or the server in `DATABASE_URL`).
 
 ### Connection String Format
 
@@ -98,7 +98,7 @@ Comment out or remove `MONGODB_URL` from your `.env` file and restart:
 # MONGODB_URL=mongodb://localhost:27017/protopal
 ```
 
-The application will fall back to SQLite (local dev) or PostgreSQL (if `DATABASE_URL` is set).
+The application will fall back to PGlite (local dev) or PostgreSQL (if `DATABASE_URL` is set).
 
 ## Troubleshooting
 

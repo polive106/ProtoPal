@@ -4,9 +4,9 @@ export {
   getDatabase,
   createTestConnection,
   closeDatabase,
+  closeConnection,
+  migrateDatabase,
   isPostgresUrl,
-  execSQL,
-  querySQL,
   createMongoConnection,
 } from './connections';
 export type { DatabaseConnection, AppConnection, SqlConnection, MongoConnection } from './connections';

@@ -19,17 +19,17 @@ export class DrizzleNoteRepository implements NoteRepository {
       createdAt: now,
       updatedAt: now,
     };
-    this.db.insert(notes).values(row).run();
+    await this.db.insert(notes).values(row);
     return this.mapRow(row);
   }
 
   async findById(id: string): Promise<Note | null> {
-    const row = this.db.select().from(notes).where(eq(notes.id, id)).get();
+    const [row] = await this.db.select().from(notes).where(eq(notes.id, id)).limit(1);
     return row ? this.mapRow(row) : null;
   }
 
   async findByUserId(userId: string): Promise<Note[]> {
-    const rows = this.db.select().from(notes).where(eq(notes.userId, userId)).all();
+    const rows = await this.db.select().from(notes).where(eq(notes.userId, userId));
     return rows.map((r) => this.mapRow(r));
   }
 
@@ -38,14 +38,14 @@ export class DrizzleNoteRepository implements NoteRepository {
     if (data.title !== undefined) updateData.title = data.title;
     if (data.content !== undefined) updateData.content = data.content;
 
-    this.db.update(notes).set(updateData).where(eq(notes.id, id)).run();
+    await this.db.update(notes).set(updateData).where(eq(notes.id, id));
     const updated = await this.findById(id);
     if (!updated) throw new Error('Note not found after update');
     return updated;
   }
 
   async delete(id: string): Promise<void> {
-    this.db.delete(notes).where(eq(notes.id, id)).run();
+    await this.db.delete(notes).where(eq(notes.id, id));
   }
 
   private mapRow(row: any): Note {

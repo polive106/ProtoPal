@@ -1,15 +1,22 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { sql } from 'drizzle-orm';
-import { createTestConnection, type DatabaseConnection } from '../../connections/sql';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import type { DatabaseConnection } from '../../connections/sql';
+import { setupTestDb, teardownTestDb, clearTables } from './test-helper';
 import { DrizzleRateLimitRepository } from './DrizzleRateLimitRepository';
 
 describe('DrizzleRateLimitRepository', () => {
   let db: DatabaseConnection;
   let repo: DrizzleRateLimitRepository;
 
-  beforeEach(() => {
-    db = createTestConnection();
-    db.run(sql`CREATE TABLE IF NOT EXISTS rate_limit_entries (key TEXT PRIMARY KEY, count INTEGER NOT NULL DEFAULT 0, window_start INTEGER NOT NULL, prev_count INTEGER NOT NULL DEFAULT 0, prev_window_start INTEGER, expires_at INTEGER NOT NULL)`);
+  beforeAll(async () => {
+    db = await setupTestDb();
+  });
+
+  afterAll(async () => {
+    await teardownTestDb();
+  });
+
+  beforeEach(async () => {
+    await clearTables();
     repo = new DrizzleRateLimitRepository(db);
   });
 

@@ -44,13 +44,13 @@ export interface MyEntityRepository {
 ## Database Schema Template
 
 ```typescript
-// Add to packages/database/src/schema.sqlite.ts
-export const myEntities = sqliteTable('my_entities', {
+// Add to packages/database/src/schema/schema.ts, then run `pnpm --filter @acme/database db:generate`
+export const myEntities = pgTable('my_entities', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull(),
-  updatedAt: integer('updated_at', { mode: 'timestamp_ms' }).notNull(),
+  createdAt: ts('created_at').notNull(),
+  updatedAt: ts('updated_at').notNull(),
 });
 ```
 

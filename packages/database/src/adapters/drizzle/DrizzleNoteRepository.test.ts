@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { sql } from 'drizzle-orm';
-import { createTestConnection, type DatabaseConnection } from '../../connections/sql';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import { users } from '../../schema';
+import type { DatabaseConnection } from '../../connections/sql';
+import { setupTestDb, teardownTestDb, clearTables } from './test-helper';
 import { DrizzleNoteRepository } from './DrizzleNoteRepository';
 
 describe('DrizzleNoteRepository', () => {
@@ -8,15 +9,27 @@ describe('DrizzleNoteRepository', () => {
   let repo: DrizzleNoteRepository;
   const userId = 'user-1';
 
-  beforeEach(() => {
-    db = createTestConnection();
-    db.run(sql`CREATE TABLE IF NOT EXISTS roles (id TEXT PRIMARY KEY, name TEXT NOT NULL UNIQUE, display_name TEXT NOT NULL, description TEXT, is_system INTEGER NOT NULL DEFAULT 0, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`);
-    db.run(sql`CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, password_hash TEXT, first_name TEXT NOT NULL, last_name TEXT NOT NULL, is_active INTEGER NOT NULL DEFAULT 1, status TEXT NOT NULL DEFAULT 'pending', token_version INTEGER NOT NULL DEFAULT 0, last_login_at INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`);
-    db.run(sql`CREATE TABLE IF NOT EXISTS user_roles (id TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, role_id TEXT NOT NULL REFERENCES roles(id) ON DELETE CASCADE, assigned_at INTEGER NOT NULL, assigned_by TEXT REFERENCES users(id))`);
-    db.run(sql`CREATE TABLE IF NOT EXISTS notes (id TEXT PRIMARY KEY, title TEXT NOT NULL, content TEXT NOT NULL, user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`);
+  beforeAll(async () => {
+    db = await setupTestDb();
+  });
+
+  afterAll(async () => {
+    await teardownTestDb();
+  });
+
+  beforeEach(async () => {
+    await clearTables();
     // Create test user
-    const now = Date.now();
-    db.run(sql`INSERT INTO users (id, email, first_name, last_name, is_active, status, created_at, updated_at) VALUES (${userId}, 'test@example.com', 'John', 'Doe', 1, 'approved', ${now}, ${now})`);
+    const now = new Date();
+    await db.insert(users).values({
+      id: userId,
+      email: 'test@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+      status: 'approved',
+      createdAt: now,
+      updatedAt: now,
+    });
     repo = new DrizzleNoteRepository(db);
   });
 
