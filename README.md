@@ -216,6 +216,12 @@ pnpm lint                             # Type check all packages
 - **Lock file integrity**: CI verifies `pnpm-lock.yaml` is not modified by `pnpm install --frozen-lockfile`.
 - **Manual audit**: Run `pnpm audit` locally to check for known vulnerabilities.
 
+## Recommended Workflow
+
+1. **Create a pull request.** Every change goes through a PR so the [CI workflows](#ci-workflows) (lint, unit tests, E2E, security audit) run against it.
+2. **Test it on a PR environment.** Sign up for a deployment service that spins up a preview environment per pull request (for example Render Preview Environments or Railway PR Environments), so you and reviewers can try the change on a live URL before it lands. Give each preview its own Postgres database: set `DATABASE_URL` and run `pnpm --filter @acme/database db:migrate` (plus `db:seed` for sample data) as part of the deploy.
+3. **Merge the pull request** once CI is green and the preview environment checks out.
+
 ## Project Structure
 
 ```
