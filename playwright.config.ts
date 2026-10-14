@@ -1,7 +1,7 @@
 import { defineConfig, devices } from '@playwright/test';
 import { resolve } from 'path';
 
-const E2E_DATABASE_PATH = resolve(__dirname, './data/e2e-test.db');
+const E2E_DATABASE_PATH = resolve(__dirname, './data/pglite-e2e');
 
 export default defineConfig({
   testDir: './e2e/tests',

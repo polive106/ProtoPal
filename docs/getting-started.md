@@ -37,7 +37,7 @@ pnpm --filter @acme/api dev           # API only (port 3000)
 pnpm --filter @acme/frontend dev      # Frontend only (port 5173)
 
 # Database
-pnpm --filter @acme/database db:push  # Apply schema to SQLite
+pnpm --filter @acme/database db:generate # Generate a migration after a schema change
 pnpm --filter @acme/database db:seed  # Seed with sample data
 pnpm --filter @acme/database db:studio # Visual database explorer
 
@@ -56,7 +56,7 @@ pnpm build                            # Build all packages
 packages/
   shared/         # Shared types (UserStatus, RoleName)
   domain/         # Business logic (entities, ports, use cases)
-  database/       # Drizzle ORM (SQLite local, PostgreSQL prod)
+  database/       # Drizzle ORM (PostgreSQL; PGlite locally)
   api/            # NestJS REST API
   design-system/  # Radix UI + Tailwind components
   frontend/       # React + TanStack Router/Query

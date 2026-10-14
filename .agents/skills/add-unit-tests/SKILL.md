@@ -32,22 +32,32 @@ describe('MyUseCase', () => {
 });
 ```
 
-### Database Tests (in-memory SQLite)
+### Database Tests (in-memory PGlite)
+
+The test database is a real Postgres (PGlite) with all migrations applied. Boot it once per file and truncate between tests:
 
 ```typescript
-import { describe, it, expect, beforeEach } from 'vitest';
-import { sql } from 'drizzle-orm';
-import { createTestConnection } from '../../connection';
-import { MyAdapter } from '../MyAdapter';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import type { DatabaseConnection } from '../../connections/sql';
+import { setupTestDb, teardownTestDb, clearTables, insertTestUser } from './test-helper';
+import { DrizzleMyAdapter } from './DrizzleMyAdapter';
 
-describe('MyAdapter', () => {
+describe('DrizzleMyAdapter', () => {
   let db: DatabaseConnection;
-  let adapter: MyAdapter;
+  let adapter: DrizzleMyAdapter;
 
-  beforeEach(() => {
-    db = createTestConnection();
-    db.run(sql`CREATE TABLE IF NOT EXISTS ...`);
-    adapter = new MyAdapter(db);
+  beforeAll(async () => {
+    db = await setupTestDb();
+  });
+
+  afterAll(async () => {
+    await teardownTestDb();
+  });
+
+  beforeEach(async () => {
+    await clearTables();
+    await insertTestUser(db, 'user-1'); // when rows reference users(id)
+    adapter = new DrizzleMyAdapter(db);
   });
 });
 ```

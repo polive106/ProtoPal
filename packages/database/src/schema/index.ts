@@ -1,1 +1,1 @@
-export * from './schema.sqlite';
+export * from './schema';

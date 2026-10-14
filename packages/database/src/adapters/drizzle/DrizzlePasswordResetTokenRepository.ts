@@ -22,27 +22,26 @@ export class DrizzlePasswordResetTokenRepository implements PasswordResetTokenRe
       usedAt: null,
       createdAt: now,
     };
-    this.db.insert(passwordResetTokens).values(row).run();
+    await this.db.insert(passwordResetTokens).values(row);
     return row;
   }
 
   async findByTokenHash(tokenHash: string): Promise<PasswordResetToken | null> {
-    const row = this.db
+    const [row] = await this.db
       .select()
       .from(passwordResetTokens)
       .where(eq(passwordResetTokens.tokenHash, tokenHash))
-      .get();
+      .limit(1);
     return row ? this.mapRow(row) : null;
   }
 
   async markUsed(id: string): Promise<PasswordResetToken> {
     const now = new Date();
-    const rows = this.db
+    const [row] = await this.db
       .update(passwordResetTokens)
       .set({ usedAt: now })
       .where(eq(passwordResetTokens.id, id))
       .returning();
-    const row = rows.get();
     if (!row) {
       throw new Error('Password reset token not found');
     }
@@ -50,15 +49,14 @@ export class DrizzlePasswordResetTokenRepository implements PasswordResetTokenRe
   }
 
   async invalidateByUserId(userId: string): Promise<void> {
-    this.db
+    await this.db
       .delete(passwordResetTokens)
       .where(
         and(
           eq(passwordResetTokens.userId, userId),
           isNull(passwordResetTokens.usedAt),
         ),
-      )
-      .run();
+      );
   }
 
   private mapRow(row: typeof passwordResetTokens.$inferSelect): PasswordResetToken {

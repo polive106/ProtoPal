@@ -22,22 +22,22 @@ export class DrizzleVerificationTokenRepository implements VerificationTokenRepo
       verifiedAt: null,
       createdAt: now,
     };
-    this.db.insert(verificationTokens).values(row).run();
+    await this.db.insert(verificationTokens).values(row);
     return row;
   }
 
   async findByTokenHash(tokenHash: string): Promise<VerificationToken | null> {
-    const row = this.db
+    const [row] = await this.db
       .select()
       .from(verificationTokens)
       .where(eq(verificationTokens.tokenHash, tokenHash))
-      .get();
+      .limit(1);
     return row ? this.mapRow(row) : null;
   }
 
   async findActiveByUserId(userId: string): Promise<VerificationToken | null> {
     const now = new Date();
-    const row = this.db
+    const [row] = await this.db
       .select()
       .from(verificationTokens)
       .where(
@@ -47,18 +47,17 @@ export class DrizzleVerificationTokenRepository implements VerificationTokenRepo
           gt(verificationTokens.expiresAt, now),
         ),
       )
-      .get();
+      .limit(1);
     return row ? this.mapRow(row) : null;
   }
 
   async markVerified(id: string): Promise<VerificationToken> {
     const now = new Date();
-    const rows = this.db
+    const [row] = await this.db
       .update(verificationTokens)
       .set({ verifiedAt: now })
       .where(eq(verificationTokens.id, id))
       .returning();
-    const row = rows.get();
     if (!row) {
       throw new Error('Verification token not found');
     }
@@ -66,15 +65,14 @@ export class DrizzleVerificationTokenRepository implements VerificationTokenRepo
   }
 
   async invalidateByUserId(userId: string): Promise<void> {
-    this.db
+    await this.db
       .delete(verificationTokens)
       .where(
         and(
           eq(verificationTokens.userId, userId),
           isNull(verificationTokens.verifiedAt),
         ),
-      )
-      .run();
+      );
   }
 
   private mapRow(row: typeof verificationTokens.$inferSelect): VerificationToken {

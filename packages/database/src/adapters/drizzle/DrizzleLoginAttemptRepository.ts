@@ -8,11 +8,11 @@ export class DrizzleLoginAttemptRepository implements LoginAttemptRepository {
   constructor(private readonly db: DatabaseConnection) {}
 
   async findByEmail(email: string): Promise<LoginAttempt | null> {
-    const row = this.db
+    const [row] = await this.db
       .select()
       .from(loginAttempts)
       .where(eq(loginAttempts.email, email))
-      .get();
+      .limit(1);
     return row ? this.mapRow(row) : null;
   }
 
@@ -24,7 +24,7 @@ export class DrizzleLoginAttemptRepository implements LoginAttemptRepository {
   ): Promise<LoginAttempt> {
     const now = new Date();
     const id = randomUUID();
-    this.db
+    await this.db
       .insert(loginAttempts)
       .values({
         id,
@@ -43,27 +43,24 @@ export class DrizzleLoginAttemptRepository implements LoginAttemptRepository {
           lockedUntil,
           lastAttemptAt: now,
         },
-      })
-      .run();
+      });
     const row = await this.findByEmail(email);
     if (!row) throw new Error('Failed to upsert login attempt');
     return row;
   }
 
   async resetAttempts(email: string): Promise<void> {
-    this.db
+    await this.db
       .update(loginAttempts)
       .set({ attempts: 0, lockedUntil: null })
-      .where(eq(loginAttempts.email, email))
-      .run();
+      .where(eq(loginAttempts.email, email));
   }
 
   async unlockAccount(email: string): Promise<void> {
-    this.db
+    await this.db
       .update(loginAttempts)
       .set({ attempts: 0, lockoutCount: 0, lockedUntil: null })
-      .where(eq(loginAttempts.email, email))
-      .run();
+      .where(eq(loginAttempts.email, email));
   }
 
   private mapRow(row: any): LoginAttempt {

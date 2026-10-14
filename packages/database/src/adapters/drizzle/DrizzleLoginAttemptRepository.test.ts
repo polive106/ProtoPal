@@ -1,15 +1,22 @@
-import { describe, it, expect, beforeEach } from 'vitest';
-import { sql } from 'drizzle-orm';
-import { createTestConnection, type DatabaseConnection } from '../../connections/sql';
+import { describe, it, expect, beforeAll, afterAll, beforeEach } from 'vitest';
+import type { DatabaseConnection } from '../../connections/sql';
+import { setupTestDb, teardownTestDb, clearTables } from './test-helper';
 import { DrizzleLoginAttemptRepository } from './DrizzleLoginAttemptRepository';
 
 describe('DrizzleLoginAttemptRepository', () => {
   let db: DatabaseConnection;
   let repo: DrizzleLoginAttemptRepository;
 
-  beforeEach(() => {
-    db = createTestConnection();
-    db.run(sql`CREATE TABLE IF NOT EXISTS login_attempts (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, attempts INTEGER NOT NULL DEFAULT 0, lockout_count INTEGER NOT NULL DEFAULT 0, locked_until INTEGER, last_attempt_at INTEGER NOT NULL, created_at INTEGER NOT NULL)`);
+  beforeAll(async () => {
+    db = await setupTestDb();
+  });
+
+  afterAll(async () => {
+    await teardownTestDb();
+  });
+
+  beforeEach(async () => {
+    await clearTables();
     repo = new DrizzleLoginAttemptRepository(db);
   });
 

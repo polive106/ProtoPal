@@ -42,7 +42,7 @@ A fullstack monorepo with authentication, RBAC, and an example CRUD entity (Note
 |---------|------|
 | `@acme/shared` | Pure TypeScript (shared types) |
 | `@acme/domain` | Pure TypeScript (entities, ports, use-cases) |
-| `@acme/database` | Drizzle + SQLite (local) / PostgreSQL (prod) |
+| `@acme/database` | Drizzle + PostgreSQL (PGlite locally and in tests, postgres-js in prod) |
 | `@acme/api` | NestJS + class-validator |
 | `@acme/design-system` | Radix UI components |
 | `@acme/frontend` | React + Vite + TanStack Router/Query + Tailwind |
@@ -281,7 +281,8 @@ pnpm --filter @acme/frontend dev        # Frontend only (port 5173)
 pnpm dev:mobile                         # Mobile dev (Expo)
 
 # Database
-pnpm --filter @acme/database db:push    # Apply schema to SQLite
+pnpm --filter @acme/database db:generate # Generate a migration after a schema change
+pnpm --filter @acme/database db:migrate  # Apply migrations to the DATABASE_URL Postgres server
 pnpm --filter @acme/database db:seed    # Seed with sample data
 pnpm --filter @acme/database db:studio  # Visual database explorer
 
@@ -302,10 +303,11 @@ pnpm lint                               # Type check all packages
 - **Workspace refs**: `"@acme/domain": "workspace:*"`
 - **IMPORTANT: Any schema change must update the seed script!**
 
-When modifying `packages/database/src/schema.ts`:
-1. Update `packages/database/src/seed.ts` to include the new table/columns
-2. Add realistic sample data for new entities
-3. Maintain referential integrity with existing seed data
+When modifying `packages/database/src/schema/schema.ts`:
+1. Run `pnpm --filter @acme/database db:generate --name <change>` and commit the generated migration in `packages/database/migrations/` (never edit applied migrations)
+2. Update `packages/database/src/seed.ts` to include the new table/columns
+3. Add realistic sample data for new entities
+4. Maintain referential integrity with existing seed data
 
 ## Project Conventions
 

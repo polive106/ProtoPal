@@ -22,7 +22,7 @@ description: Pre-commit quality checklist covering security, testing, architectu
 ### Architecture
 - [ ] Domain has no external dependencies
 - [ ] New entities follow existing patterns
-- [ ] Database schema updated in both sqlite and postgres files
+- [ ] Schema change has a generated migration committed in `packages/database/migrations/`
 - [ ] Seed script updated for schema changes
 
 ### Code Quality

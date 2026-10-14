@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-ProtoPal is a scaffold designed to be forked for real projects. The current persistence layer supports SQLite (local) and PostgreSQL (production) via Drizzle ORM. Some teams prefer document databases, and MongoDB is the most widely adopted. We need to offer MongoDB as an alternative database backend without compromising the existing SQL path or the hexagonal architecture.
+ProtoPal is a scaffold designed to be forked for real projects. The current persistence layer supports PostgreSQL via Drizzle ORM (PGlite locally, see ADR-0007). Some teams prefer document databases, and MongoDB is the most widely adopted. We need to offer MongoDB as an alternative database backend without compromising the existing SQL path or the hexagonal architecture.
 
 Key constraints:
 - The domain layer (`@acme/domain`) must remain database-agnostic — no MongoDB imports
@@ -30,7 +30,7 @@ We will add MongoDB support as an alternative database engine alongside Drizzle 
 
 4. **Restructured `@acme/database` package** — The package is reorganized into `connections/`, `adapters/drizzle/`, `adapters/mongo/`, `schema/`, and `setup/` directories to cleanly separate concerns and make adding future backends straightforward.
 
-5. **`mongodb-memory-server` for testing** — Provides isolated in-memory MongoDB instances for unit tests, analogous to SQLite `:memory:` for the Drizzle adapters.
+5. **`mongodb-memory-server` for testing** — Provides isolated in-memory MongoDB instances for unit tests, analogous to in-memory PGlite for the Drizzle adapters.
 
 ### Architecture
 
@@ -39,7 +39,7 @@ We will add MongoDB support as an alternative database engine alongside Drizzle 
     ↑ implements
 @acme/database
   ├── connections/
-  │   ├── sql.ts          # Drizzle SQLite/PostgreSQL
+  │   ├── sql.ts          # Drizzle PostgreSQL / PGlite
   │   ├── mongo.ts         # MongoDB client
   │   └── index.ts         # Factory: MONGODB_URL → Mongo, else → SQL
   ├── adapters/

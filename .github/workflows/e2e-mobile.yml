@@ -72,7 +72,7 @@ jobs:
     timeout-minutes: 45
 
     env:
-      DATABASE_PATH: ${{ github.workspace }}/data/e2e-mobile.db
+      DATABASE_PATH: ${{ github.workspace }}/data/pglite-e2e-mobile
 
     steps:
       - uses: actions/checkout@v4

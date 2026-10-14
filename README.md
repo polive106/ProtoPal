@@ -57,7 +57,7 @@ Domain (zero deps) → Database → API → Frontend → E2E
 
 The scaffold already proves it:
 
-- **Swap databases**: The app ships with both SQLite (local dev/E2E tests) and PostgreSQL (production) adapters. Switching between them is a single injection change. Want MongoDB? Implement the Domain port — the business logic doesn't change
+- **Swap databases**: The app runs on PostgreSQL everywhere — embedded [PGlite](https://pglite.dev) for local dev and tests, a real server in production — selected by `DATABASE_URL`. Want MongoDB? Implement the Domain port — the business logic doesn't change
 - **Swap API frameworks**: This repo started on Hono, then moved to NestJS for a project with stricter security requirements. The migration only touched the API adapter layer — Domain and Database stayed untouched
 
 ### Quality Guardrails
@@ -123,7 +123,7 @@ The typical workflow: kick off `/implement-story` from the Claude mobile app, an
 |---------|-----------|
 | `@acme/shared` | Pure TypeScript types |
 | `@acme/domain` | Entities, ports, use cases (zero deps) |
-| `@acme/database` | Drizzle ORM — SQLite (local) / PostgreSQL (prod) / [MongoDB](docs/mongodb.md) (alternative) |
+| `@acme/database` | Drizzle ORM — PostgreSQL (PGlite locally) / [MongoDB](docs/mongodb.md) (alternative) |
 | `@acme/api` | NestJS REST API |
 | `@acme/design-system` | Radix UI + Tailwind components |
 | `@acme/frontend` | React + Vite + TanStack Router/Query |
@@ -165,7 +165,7 @@ pnpm --filter @acme/api dev           # API only (port 3000)
 pnpm --filter @acme/frontend dev      # Frontend only (port 5173)
 
 # Database
-pnpm --filter @acme/database db:push  # Apply schema to SQLite
+pnpm --filter @acme/database db:generate # Generate a migration after a schema change
 pnpm --filter @acme/database db:seed  # Seed with sample data
 pnpm --filter @acme/database db:studio # Visual database explorer
 ```
@@ -222,7 +222,7 @@ pnpm lint                             # Type check all packages
 packages/
   shared/           # Shared TypeScript types
   domain/           # Business logic (entities, ports, use cases)
-  database/         # Drizzle ORM (SQLite local, PostgreSQL prod)
+  database/         # Drizzle ORM (PostgreSQL; PGlite locally)
   api/              # NestJS REST API
   design-system/    # Radix UI + Tailwind components
   frontend/         # React + TanStack Router/Query

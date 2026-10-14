@@ -8,32 +8,31 @@ export class DrizzleTokenBlacklistRepository implements TokenBlacklistRepository
   constructor(private readonly db: DatabaseConnection) {}
 
   async add(tokenHash: string, expiresAt: Date): Promise<void> {
-    this.db
+    await this.db
       .insert(tokenBlacklist)
       .values({
         id: randomUUID(),
         tokenHash,
         expiresAt,
         createdAt: new Date(),
-      })
-      .run();
+      });
   }
 
   async exists(tokenHash: string): Promise<boolean> {
-    const row = this.db
+    const [row] = await this.db
       .select({ id: tokenBlacklist.id })
       .from(tokenBlacklist)
       .where(eq(tokenBlacklist.tokenHash, tokenHash))
-      .get();
+      .limit(1);
     return row != null;
   }
 
   async deleteExpired(): Promise<number> {
     const now = new Date();
-    const result = this.db
+    const deleted = await this.db
       .delete(tokenBlacklist)
       .where(lt(tokenBlacklist.expiresAt, now))
-      .run();
-    return result.changes;
+      .returning({ id: tokenBlacklist.id });
+    return deleted.length;
   }
 }
